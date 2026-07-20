@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
+  >
+  <title>Content Idea Organizer — v0.2.4</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="js/i18n.js" defer></script>
+  <script src="js/state.js" defer></script>
+  <script src="js/render.js" defer></script>
+  <script src="js/connections.js" defer></script>
+  <script src="js/storage.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">CONTENT WORKSPACE</p>
+        <h1>Content Idea Organizer</h1>
+        <p class="subtitle" data-i18n="app.subtitle">Соединяй формат, тему и музыку в готовые идеи для контента.</p>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="primary-actions">
+          <button class="button button-secondary" type="button" id="random-button" data-i18n="common.random">
+            Random
+          </button>
+          <button class="button button-primary" type="button" id="create-result-button" disabled data-i18n="common.createResult">
+            Создать результат
+          </button>
+
+          <label
+            class="toggle-control"
+            title="После создания результата автоматически перейти к списку результатов" data-i18n-title="toggle.autoJump.title"
+          >
+            <input
+              type="checkbox"
+              id="auto-jump-results-toggle"
+            >
+            <span class="toggle-control-track" aria-hidden="true">
+              <span class="toggle-control-thumb"></span>
+            </span>
+            <span class="toggle-control-label" data-i18n="toggle.autoJump.label">
+              Автопереход к результатам
+            </span>
+          </label>
+
+          <label
+            class="toggle-control"
+            title="При наведении на ячейку показать все связанные ячейки, результаты и провода" data-i18n-title="toggle.relations.title"
+          >
+            <input
+              type="checkbox"
+              id="relation-mode-toggle"
+            >
+            <span class="toggle-control-track" aria-hidden="true">
+              <span class="toggle-control-thumb"></span>
+            </span>
+            <span class="toggle-control-label" data-i18n="toggle.relations.label">
+              Режим связей
+            </span>
+          </label>
+        </div>
+
+        <div class="data-actions" aria-label="Управление данными" data-i18n-aria="data.aria">
+          <label class="language-control">
+            <span data-i18n="language.label">Язык</span>
+            <select id="language-select" aria-label="Язык интерфейса" data-i18n-aria="language.aria">
+              <option value="ru" data-i18n="language.ru">Русский</option>
+              <option value="en" data-i18n="language.en">English</option>
+            </select>
+          </label>
+
+          <span class="autosave-badge" title="Изменения автоматически сохраняются в браузере" data-i18n="data.autosave" data-i18n-title="data.autosaveTitle">
+            Автосохранение
+          </span>
+          <button
+            class="button button-secondary button-compact"
+            type="button"
+            id="export-data-button"
+            data-i18n="common.export"
+          >
+            Экспорт
+          </button>
+          <button
+            class="button button-secondary button-compact"
+            type="button"
+            id="import-data-button"
+            data-i18n="common.import"
+          >
+            Импорт
+          </button>
+          <button
+            class="button button-ghost-danger button-compact"
+            type="button"
+            id="reset-data-button"
+            data-i18n="common.reset"
+          >
+            Сбросить
+          </button>
+          <input
+            type="file"
+            id="import-data-input"
+            accept="application/json,.json"
+            hidden
+          >
+        </div>
+      </div>
+    </header>
+
+    <section class="selection-preview" aria-label="Текущая комбинация" data-i18n-aria="selection.aria">
+      <span class="selection-preview__label" data-i18n="selection.label">Текущая комбинация</span>
+      <p id="selection-preview-text" data-i18n="selection.instruction">
+        Выбери по одному элементу в каждом столбце.
+      </p>
+    </section>
+
+    <div class="desktop-workspace-layout">
+      <section class="workspace" id="workspace" aria-label="Рабочая доска" data-i18n-aria="workspace.aria">
+      <div class="board-shell" id="board-shell">
+        <svg
+          class="connections-svg"
+          id="connections-svg"
+          aria-hidden="true"
+          focusable="false"
+        ></svg>
+
+        <div class="board">
+        <article class="column column-ideas">
+          <header class="column-header">
+            <div>
+              <span class="column-number">01</span>
+              <h2 data-i18n="columns.ideas">Идеи</h2>
+            </div>
+            <button
+              class="icon-button"
+              type="button"
+              id="add-idea-button"
+              aria-label="Добавить идею"
+              title="Добавить идею"
+              data-i18n-aria="columns.addIdea"
+              data-i18n-title="columns.addIdea"
+            >+</button>
+          </header>
+
+          <div class="column-list" id="ideas-list" aria-live="polite"></div>
+        </article>
+
+        <article class="column column-concepts">
+          <header class="column-header">
+            <div>
+              <span class="column-number">02</span>
+              <h2 data-i18n="columns.concepts">Концепты</h2>
+            </div>
+
+            <div class="column-header-actions">
+              <button
+                class="icon-button icon-button-small"
+                type="button"
+                id="manage-categories-button"
+                aria-label="Управлять категориями"
+                title="Управлять категориями"
+                data-i18n-aria="columns.manageCategories"
+                data-i18n-title="columns.manageCategories"
+              >⚙</button>
+
+              <button
+                class="icon-button"
+                type="button"
+                id="add-concept-button"
+                aria-label="Добавить концепт"
+                title="Добавить концепт"
+                data-i18n-aria="columns.addConcept"
+                data-i18n-title="columns.addConcept"
+              >+</button>
+            </div>
+          </header>
+
+          <div class="column-list" id="concepts-list" aria-live="polite"></div>
+        </article>
+
+        <article class="column column-music">
+          <header class="column-header">
+            <div>
+              <span class="column-number">03</span>
+              <h2 data-i18n="columns.music">Музыка</h2>
+            </div>
+            <button
+              class="icon-button"
+              type="button"
+              id="add-music-button"
+              aria-label="Добавить музыку"
+              title="Добавить музыку"
+              data-i18n-aria="columns.addMusic"
+              data-i18n-title="columns.addMusic"
+            >+</button>
+          </header>
+
+          <div class="column-list" id="music-list" aria-live="polite"></div>
+        </article>
+        </div>
+      </div>
+    </section>
+
+      <aside class="results-section" aria-labelledby="results-title">
+      <div class="results-header">
+        <div>
+          <p class="eyebrow" data-i18n="results.eyebrow">SAVED COMBINATIONS</p>
+          <h2 id="results-title" data-i18n="results.title">Результаты</h2>
+        </div>
+
+        <div class="results-controls">
+          <label class="sort-control">
+            <span data-i18n="results.sort">Сортировка</span>
+            <select id="results-sort">
+              <option value="score-desc" data-i18n="results.sort.score">По итоговому баллу</option>
+              <option value="importance-desc" data-i18n="results.sort.importance">По важности</option>
+              <option value="desire-desc" data-i18n="results.sort.desire">По желанию</option>
+              <option value="created-desc" data-i18n="results.sort.newest">Сначала новые</option>
+              <option value="created-asc" data-i18n="results.sort.oldest">Сначала старые</option>
+              <option value="scheduled-asc" data-i18n="results.sort.scheduled">По ближайшей дате</option>
+            </select>
+          </label>
+
+          <label class="sort-control">
+            <span data-i18n="results.planning">Планирование</span>
+            <select id="results-status-filter">
+              <option value="all" data-i18n="results.filter.all">Все результаты</option>
+              <option value="planned" data-i18n="results.filter.planned">Только запланированные</option>
+              <option value="unscheduled" data-i18n="results.filter.unscheduled">Без даты</option>
+            </select>
+          </label>
+
+          <label class="sort-control">
+            <span data-i18n="results.category">Категория концепта</span>
+            <select id="results-category-filter">
+              <option value="all" data-i18n="results.filter.allCategories">Все категории</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="results-list" id="results-list" aria-live="polite"></div>
+      </aside>
+    </div>
+
+    <footer class="app-footer">
+      <span>Content Idea Organizer</span>
+      <span>v0.2.4</span>
+    </footer>
+  </main>
+
+  <dialog class="modal" id="item-modal">
+    <form class="modal-card" id="item-form">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow" id="item-modal-eyebrow" data-i18n="item.newEyebrow">NEW ITEM</p>
+          <h2 id="item-modal-title" data-i18n="item.defaultTitle">Добавить элемент</h2>
+        </div>
+        <button
+          class="modal-close"
+          type="button"
+          data-close-dialog="item-modal"
+          aria-label="Закрыть"
+          data-i18n-aria="common.close"
+        >×</button>
+      </div>
+
+      <div class="modal-body" id="item-form-fields"></div>
+
+      <p class="form-error" id="item-form-error" role="alert"></p>
+
+      <div class="modal-actions">
+        <button
+          class="button button-secondary"
+          type="button"
+          data-close-dialog="item-modal"
+          data-i18n="common.cancel"
+        >
+          Отмена
+        </button>
+        <button class="button button-primary" type="submit" id="item-submit-button" data-i18n="common.save">
+          Сохранить
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="categories-modal">
+    <section class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow" data-i18n="categories.eyebrow">CONCEPT CATEGORIES</p>
+          <h2 data-i18n="categories.title">Категории концептов</h2>
+        </div>
+        <button
+          class="modal-close"
+          type="button"
+          data-close-dialog="categories-modal"
+          aria-label="Закрыть"
+          data-i18n-aria="common.close"
+        >×</button>
+      </div>
+
+      <div class="category-create-row">
+        <label class="field">
+          <span data-i18n="categories.new">Новая категория</span>
+          <input
+            type="text"
+            id="new-category-name"
+            maxlength="50"
+            placeholder="Например: Животные" data-i18n-placeholder="categories.newPlaceholder"
+          >
+        </label>
+
+        <label class="field category-color-field">
+          <span data-i18n="categories.color">Цвет</span>
+          <input
+            type="color"
+            id="new-category-color"
+            value="#6552c7"
+            aria-label="Цвет новой категории" data-i18n-aria="categories.colorAria"
+          >
+        </label>
+
+        <label class="field category-hex-field">
+          <span>HEX</span>
+          <input
+            type="text"
+            id="new-category-hex"
+            value="#6552C7"
+            maxlength="7"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="#422680"
+            aria-label="HEX-код новой категории" data-i18n-aria="categories.hexAria"
+          >
+        </label>
+
+        <button class="button button-primary" type="button" id="add-category-button" data-i18n="common.add">
+          Добавить
+        </button>
+      </div>
+
+      <p class="form-error" id="category-form-error" role="alert"></p>
+
+      <div class="categories-list" id="categories-list" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button
+          class="button button-secondary"
+          type="button"
+          data-close-dialog="categories-modal"
+          data-i18n="common.close"
+        >
+          Закрыть
+        </button>
+      </div>
+    </section>
+  </dialog>
+
+  <dialog class="modal" id="confirm-modal">
+    <section class="modal-card modal-card-compact">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow" data-i18n="confirm.eyebrow">CONFIRM ACTION</p>
+          <h2 id="confirm-title" data-i18n="confirm.deleteItem">Удалить элемент?</h2>
+        </div>
+        <button
+          class="modal-close"
+          type="button"
+          data-close-dialog="confirm-modal"
+          aria-label="Закрыть"
+          data-i18n-aria="common.close"
+        >×</button>
+      </div>
+
+      <p class="confirm-text" id="confirm-text"></p>
+
+      <div class="modal-actions">
+        <button
+          class="button button-secondary"
+          type="button"
+          data-close-dialog="confirm-modal"
+          data-i18n="common.cancel"
+        >
+          Отмена
+        </button>
+        <button class="button button-danger" type="button" id="confirm-action-button" data-i18n="common.confirm">
+          Подтвердить
+        </button>
+      </div>
+    </section>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

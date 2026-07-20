@@ -1,0 +1,15 @@
+# Operating systems
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.log
+
+# Local backups
+content-idea-organizer-backup-*.json
