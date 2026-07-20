@@ -1,74 +1,100 @@
 # Content Idea Organizer
 
-**Версия:** `v0.1.0`
+**Current version:** `v0.3.0`
 
-Локальное веб-приложение для организации контент-идей. Пользователь соединяет:
+Content Idea Organizer is a local browser app for building content plans by combining three reusable components:
 
-- **идею** — формат видео или поста;
-- **концепт** — тему контента;
-- **музыку** — композицию для публикации;
+- an **idea** — the format or action used in a post or video;
+- a **concept** — the topic of the content;
+- **music** — the track used in the final piece.
 
-и сохраняет комбинацию как отдельный результат.
+Each saved result keeps the selected combination together with scheduling and priority information.
 
-## Возможности MVP
+## Features
 
-- три редактируемых столбца: идеи, концепты и музыка;
-- категории концептов;
-- добавление, редактирование и удаление элементов;
-- выбор трёх компонентов;
-- случайная комбинация через **Random**;
-- сохранение нескольких результатов;
-- видимые SVG-провода между связанными ячейками;
-- планируемая дата и время;
-- важность и желание от 0 до 10;
-- итоговый балл по формуле `важность × 2 + желание`;
-- сортировка и фильтрация результатов;
-- автоматическое сохранение в браузере;
-- экспорт и импорт JSON;
-- полный сброс данных с подтверждением.
+- three editable columns: **Ideas**, **Concepts**, and **Music**;
+- add, edit, and delete items;
+- reusable concept categories;
+- custom category colors with direct HEX input;
+- select one item from each column and save the combination as a result;
+- visible SVG wires between connected cells;
+- reuse the same source item in multiple results;
+- compact results panel designed for desktop use;
+- custom names for saved results;
+- scheduled date and time;
+- **Importance** and **Desire** ratings from `0` to `10`;
+- weighted score formula:
 
-## Запуск
+```text
+score = importance × 2 + desire
+```
 
-### Вариант 1 — быстро
+- sorting by score, importance, desire, creation date, or scheduled date;
+- filtering by planning status and concept category;
+- random combination selection;
+- optional **Connections mode** for inspecting all relationships of a cell;
+- Russian and English interface;
+- automatic browser storage;
+- JSON export, import, and full reset;
+- no accounts, server, build tools, or external dependencies.
 
-Откройте `index.html` в браузере.
+## Run locally
 
-### Вариант 2 — рекомендуется
+### Option 1 — open the file directly
 
-Запустите проект через **VS Code Live Server**:
+Open `index.html` in a modern browser.
 
-1. Откройте папку проекта в VS Code.
-2. Установите расширение **Live Server**, если оно ещё не установлено.
-3. Нажмите правой кнопкой на `index.html`.
-4. Выберите **Open with Live Server**.
+### Option 2 — use a local server
 
-## Хранение данных
+A local server is recommended for the most consistent browser behavior.
 
-Данные автоматически сохраняются в `localStorage`.
+Using VS Code Live Server:
 
-Важно:
+1. Open the project folder in VS Code.
+2. Install the **Live Server** extension.
+3. Right-click `index.html`.
+4. Select **Open with Live Server**.
 
-- хранилище привязано к конкретному браузеру;
-- `file://` и Live Server считаются разными адресами;
-- перед сменой браузера или способа запуска используйте **Экспорт**;
-- затем восстановите данные через **Импорт**.
+You can also use any other simple static server.
 
-## Резервные копии
+## Data and privacy
 
-- **Экспорт** скачивает полный JSON-файл;
-- **Импорт** проверяет структуру и заменяет текущие данные;
-- повреждённые файлы и отсутствующие ссылки отклоняются;
-- **Сбросить** удаляет все пользовательские данные.
+All user data is stored locally in the browser through `localStorage`.
 
-## Структура проекта
+The app does not send ideas, concepts, music, results, or settings to a remote server.
+
+Important:
+
+- browser storage belongs to a specific browser and site address;
+- opening the app through `file://` and through a local server creates separate storage locations;
+- export a JSON backup before changing browser, device, or launch method;
+- use **Import** to restore a backup.
+
+## JSON backups
+
+- **Export** downloads the complete application state;
+- **Import** validates a JSON backup and replaces the current state;
+- **Reset** removes all locally stored user data after confirmation.
+
+## Interface languages
+
+The interface can be switched between:
+
+- Russian;
+- English.
+
+Only application interface text is translated. User-entered ideas, concepts, categories, music, and result names are never translated or modified.
+
+## Project structure
 
 ```text
 content-idea-organizer/
 ├── index.html
 ├── styles.css
 ├── README.md
+├── LICENSE
 ├── CHANGELOG.md
-├── RELEASE_NOTES_v0.1.0.md
+├── RELEASE_NOTES_v0.3.0.md
 ├── VERSION
 ├── PROJECT_PLAN.md
 ├── PROJECT_STATE.md
@@ -81,36 +107,45 @@ content-idea-organizer/
 └── js/
     ├── app.js
     ├── connections.js
+    ├── i18n.js
     ├── render.js
     ├── state.js
     └── storage.js
 ```
 
-## Проверка
+## Browser support
 
-Полный список ручных тестов находится в `TEST_CHECKLIST.md`.
+The app is intended for current desktop versions of:
 
-Синтаксис всех JavaScript-файлов и основные операции модели данных и хранилища проверены автоматически перед сборкой `v0.1.0`.
+- Chrome;
+- Edge;
+- Firefox;
+- other modern Chromium-based browsers.
 
-## Известные ограничения
+## Known limitations
 
-- нет облачной синхронизации;
-- нет аккаунтов и совместной работы;
-- данные по умолчанию находятся только в браузере;
-- провода создаются после сохранения результата, но пока не перетаскиваются мышкой;
-- мобильная версия использует горизонтальную прокрутку рабочей доски.
+- no cloud synchronization;
+- no accounts or collaboration;
+- data is stored only in the current browser unless exported;
+- wires are created from saved results and cannot yet be dragged manually;
+- the app is desktop-first, with a simplified responsive layout on narrower screens.
 
-## GitHub
+## Development
 
-После открытия терминала в папке проекта:
+The project uses plain HTML, CSS, JavaScript, SVG, and `localStorage`.
 
-```bash
-git init
-git add .
-git commit -m "Release v0.1.0"
-git branch -M main
-git remote add origin <URL_РЕПОЗИТОРИЯ>
-git push -u origin main
+There is no installation step and no package manager.
+
+After changing the source files, refresh the browser with:
+
+```text
+Ctrl + F5
 ```
 
-Затем на GitHub создайте Release с тегом `v0.1.0` и приложите архив релиза.
+## Repository
+
+GitHub: `https://github.com/Shrnch/content-idea-organizer`
+
+## License
+
+This project is released under the [MIT License](LICENSE).

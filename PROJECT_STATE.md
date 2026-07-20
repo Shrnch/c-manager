@@ -1,22 +1,20 @@
 # PROJECT STATE
 
-## Текущий этап
-Post-MVP update — Двуязычный интерфейс
+## Current stage
+Public release preparation
 
-## Статус
-Завершён
+## Status
+Completed
 
-## Версия
+## Version
 v0.3.0
 
-## Добавлено
-- Переключатель интерфейса между русским и английским языком.
-- Выбранный язык сохраняется в браузере.
-- Переводятся статические и динамические элементы интерфейса.
-- Переводятся формы, фильтры, сортировка, карточки результатов и уведомления.
-- Даты создания форматируются согласно выбранному языку.
-- Пользовательский контент не переводится и не изменяется.
-- Названия идей, концептов, музыки, категорий и результатов остаются исходными.
+## Release preparation completed
+- README rewritten in English and updated for v0.3.0.
+- MIT License added.
+- English release notes for v0.3.0 added.
+- Repository and release instructions updated.
+- Full release archive prepared.
 
-## Последнее обновление
+## Last updated
 2026-07-20
