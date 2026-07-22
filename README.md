@@ -1,6 +1,6 @@
 # Content Idea Organizer
 
-**Current version:** `v0.4.0`
+**Current version:** `v0.4.1`
 
 Content Idea Organizer is a local browser app for building content plans by combining three reusable components:
 
@@ -13,6 +13,7 @@ Each saved result keeps the selected combination together with scheduling and pr
 ## Features
 
 - three editable columns: **Ideas**, **Concepts**, and **Music**;
+- optional clickable links for ideas, concepts, and music;
 - add, edit, and delete items;
 - reusable concept categories;
 - custom category colors with direct HEX input;
@@ -98,7 +99,7 @@ content-idea-organizer/
 ├── README.md
 ├── LICENSE
 ├── CHANGELOG.md
-├── RELEASE_NOTES_v0.3.0.md
+├── RELEASE_NOTES_v0.4.1.md
 ├── VERSION
 ├── PROJECT_PLAN.md
 ├── PROJECT_STATE.md

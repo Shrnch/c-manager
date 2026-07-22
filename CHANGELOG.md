@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.4.1] — 2026-07-22
+
+### Added
+
+- optional URL field for ideas, concepts, and music;
+- automatic `https://` normalization when a protocol is omitted;
+- secure support for `http://` and `https://` links only;
+- small external-link icon in source cells;
+- compact collapsible links section in result cards;
+- Russian and English labels for link controls.
+
+### UI behavior
+
+- links are never required;
+- result cards with no links do not render any links section;
+- no “missing link” placeholders or empty link panels are displayed;
+- one, two, or three available links are shown only after expanding the compact links row.
+
+
 ## [0.4.0] — 2026-07-22
 
 ### Added

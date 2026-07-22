@@ -1,23 +1,22 @@
 # PROJECT STATE
 
 ## Current stage
-Post-release feature update — Result workflow timeline
+Post-release feature update — Optional source links
 
 ## Status
 Completed
 
 ## Version
-v0.4.0
+v0.4.1
 
 ## Added
-- Planned execution date.
-- Completed date.
-- Planned publication date.
-- Published date.
-- Missing dates use a red attention state.
-- Filled dates use a green state.
-- Existing `scheduledAt` data migrates to `completedAt`.
-- Planning filters and date sorting use planned execution.
+- Optional links for ideas, concepts, and music.
+- Small clickable link icon in each source cell when a link exists.
+- Compact collapsible links block in result cards.
+- Result cards without links stay unchanged and compact.
+- URL validation and safe http/https-only navigation.
+- Link data is included in localStorage and JSON export/import.
+- Russian and English interface text.
 
 ## Last updated
 2026-07-22

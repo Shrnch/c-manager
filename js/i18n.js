@@ -106,6 +106,9 @@
       'item.artistPlaceholder': 'Например: Frank Sinatra',
       'item.trackTitle': 'Название композиции',
       'item.trackPlaceholder': 'Например: My Way',
+      'item.linkOptional': 'Ссылка — необязательно',
+      'item.linkPlaceholder': 'Например: youtube.com/video',
+      'links.open': 'Открыть ссылку: {label}',
 
       'categories.eyebrow': 'CONCEPT CATEGORIES',
       'categories.title': 'Категории концептов',
@@ -156,6 +159,7 @@
       'result.published': 'Выложено',
       'result.dateMissing': 'Нужно указать дату',
       'result.dateSet': 'Дата указана',
+      'result.links': 'Ссылки: {count}',
 
       'dialog.deleteItem.title': 'Удалить элемент?',
       'dialog.deleteItem.used':
@@ -241,7 +245,9 @@
       'errors.ideaEmpty': 'Текст идеи не может быть пустым.',
       'errors.conceptEmpty': 'Текст концепта не может быть пустым.',
       'errors.musicEmpty':
-        'Исполнитель и название композиции обязательны.'
+        'Исполнитель и название композиции обязательны.',
+      'errors.linkInvalid':
+        'Укажи корректную ссылку, например https://example.com.'
     },
 
     en: {
@@ -347,6 +353,9 @@
       'item.artistPlaceholder': 'For example: Frank Sinatra',
       'item.trackTitle': 'Track title',
       'item.trackPlaceholder': 'For example: My Way',
+      'item.linkOptional': 'Link — optional',
+      'item.linkPlaceholder': 'For example: youtube.com/video',
+      'links.open': 'Open link: {label}',
 
       'categories.eyebrow': 'CONCEPT CATEGORIES',
       'categories.title': 'Concept categories',
@@ -397,6 +406,7 @@
       'result.published': 'Published',
       'result.dateMissing': 'Date required',
       'result.dateSet': 'Date set',
+      'result.links': 'Links: {count}',
 
       'dialog.deleteItem.title': 'Delete item?',
       'dialog.deleteItem.used':
@@ -482,7 +492,9 @@
       'errors.ideaEmpty': 'Idea text cannot be empty.',
       'errors.conceptEmpty': 'Concept text cannot be empty.',
       'errors.musicEmpty':
-        'Artist and track title are required.'
+        'Artist and track title are required.',
+      'errors.linkInvalid':
+        'Enter a valid link, for example https://example.com.'
     }
   };
 
@@ -529,7 +541,13 @@
       'Файл не является корректным JSON.':
         'The file is not valid JSON.',
       'HEX-код должен выглядеть так: #422680.':
-        'The HEX code must look like this: #422680.'
+        'The HEX code must look like this: #422680.',
+      'Укажи корректную ссылку, например https://example.com.':
+        'Enter a valid link, for example https://example.com.',
+      'Разрешены только ссылки http:// и https://.':
+        'Only http:// and https:// links are allowed.',
+      'Ссылка не может быть длиннее 2048 символов.':
+        'A link cannot be longer than 2048 characters.'
     }
   };
 

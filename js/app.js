@@ -532,7 +532,17 @@ function renderEverything() {
   equalizeBoardRowHeights();
 }
 
-function createField({ id, label, value = '', placeholder = '', type = 'text' }) {
+function createField({
+  id,
+  label,
+  value = '',
+  placeholder = '',
+  type = 'text',
+  required = true,
+  maxLength = 120,
+  autocomplete = 'off',
+  inputMode = null,
+}) {
   const wrapper = document.createElement('label');
   wrapper.className = 'field';
 
@@ -545,11 +555,32 @@ function createField({ id, label, value = '', placeholder = '', type = 'text' })
   input.name = id;
   input.value = value;
   input.placeholder = placeholder;
-  input.maxLength = 120;
-  input.required = true;
+  input.maxLength = maxLength;
+  input.required = required;
+  input.autocomplete = autocomplete;
+
+  if (inputMode) {
+    input.inputMode = inputMode;
+  }
 
   wrapper.append(labelText, input);
   return wrapper;
+}
+
+function createOptionalLinkField(id, value = '') {
+  const field = createField({
+    id,
+    label: t('item.linkOptional'),
+    value,
+    placeholder: t('item.linkPlaceholder'),
+    required: false,
+    maxLength: 2048,
+    autocomplete: 'url',
+    inputMode: 'url',
+  });
+
+  field.classList.add('optional-link-field');
+  return field;
 }
 
 function createCategorySelect(selectedCategoryId = null) {
@@ -590,7 +621,11 @@ function buildItemFields(type, item = null) {
         label: t('item.ideaText'),
         value: item?.text ?? '',
         placeholder: t('item.ideaPlaceholder'),
-      })
+      }),
+      createOptionalLinkField(
+        'idea-url',
+        item?.url ?? ''
+      )
     );
   }
 
@@ -602,7 +637,11 @@ function buildItemFields(type, item = null) {
         value: item?.text ?? '',
         placeholder: t('item.conceptPlaceholder'),
       }),
-      createCategorySelect(item?.categoryId ?? null)
+      createCategorySelect(item?.categoryId ?? null),
+      createOptionalLinkField(
+        'concept-url',
+        item?.url ?? ''
+      )
     );
   }
 
@@ -619,7 +658,11 @@ function buildItemFields(type, item = null) {
         label: t('item.trackTitle'),
         value: item?.title ?? '',
         placeholder: t('item.trackPlaceholder'),
-      })
+      }),
+      createOptionalLinkField(
+        'music-url',
+        item?.url ?? ''
+      )
     );
   }
 }
@@ -655,15 +698,21 @@ function openItemModal(type, mode = 'create', itemId = null) {
 
 function saveIdea() {
   const text = document.querySelector('#idea-text')?.value ?? '';
+  const url = stateApi.normalizeOptionalUrl(
+    document.querySelector('#idea-url')?.value ?? ''
+  );
 
   if (itemModalMode === 'edit') {
     if (!text.trim()) {
       throw new Error(t('errors.ideaEmpty'));
     }
 
-    stateApi.updateItem('ideas', activeItemId, { text: text.trim() });
+    stateApi.updateItem('ideas', activeItemId, {
+      text: text.trim(),
+      url,
+    });
   } else {
-    stateApi.addIdea(text);
+    stateApi.addIdea(text, url);
   }
 }
 
@@ -675,6 +724,9 @@ function saveConcept() {
   const changes = {
     text: text.trim(),
     categoryId: categoryValue || null,
+    url: stateApi.normalizeOptionalUrl(
+      document.querySelector('#concept-url')?.value ?? ''
+    ),
   };
 
   if (!changes.text) {
@@ -684,13 +736,20 @@ function saveConcept() {
   if (itemModalMode === 'edit') {
     stateApi.updateItem('concepts', activeItemId, changes);
   } else {
-    stateApi.addConcept(changes.text, changes.categoryId);
+    stateApi.addConcept(
+      changes.text,
+      changes.categoryId,
+      changes.url
+    );
   }
 }
 
 function saveMusic() {
   const artist = document.querySelector('#music-artist')?.value ?? '';
   const title = document.querySelector('#music-title')?.value ?? '';
+  const url = stateApi.normalizeOptionalUrl(
+    document.querySelector('#music-url')?.value ?? ''
+  );
 
   if (itemModalMode === 'edit') {
     if (!artist.trim() || !title.trim()) {
@@ -700,9 +759,10 @@ function saveMusic() {
     stateApi.updateItem('music', activeItemId, {
       artist: artist.trim(),
       title: title.trim(),
+      url,
     });
   } else {
-    stateApi.addMusic(artist, title);
+    stateApi.addMusic(artist, title, url);
   }
 }
 
@@ -1846,4 +1906,4 @@ confirmModal?.addEventListener('close', () => {
   pendingConfirmAction = null;
 });
 
-console.log('v0.4.0: таймлайн выполнения и публикации подключён.');
+console.log('v0.4.1: необязательные ссылки источников подключены.');

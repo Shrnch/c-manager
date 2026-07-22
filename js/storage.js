@@ -47,6 +47,47 @@
     return value.trim();
   }
 
+  function normalizeOptionalUrl(value) {
+    const rawValue = String(value ?? '').trim();
+
+    if (!rawValue) {
+      return null;
+    }
+
+    if (rawValue.length > 2048) {
+      throw new Error(
+        'Ссылка не может быть длиннее 2048 символов.'
+      );
+    }
+
+    const candidate = /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(
+      rawValue
+    )
+      ? rawValue
+      : `https://${rawValue}`;
+
+    let parsedUrl;
+
+    try {
+      parsedUrl = new URL(candidate);
+    } catch {
+      throw new Error(
+        'Укажи корректную ссылку, например https://example.com.'
+      );
+    }
+
+    if (
+      parsedUrl.protocol !== 'http:' &&
+      parsedUrl.protocol !== 'https:'
+    ) {
+      throw new Error(
+        'Разрешены только ссылки http:// и https://.'
+      );
+    }
+
+    return parsedUrl.href;
+  }
+
   function normalizeTimestamp(value) {
     if (typeof value !== 'string' || Number.isNaN(Date.parse(value))) {
       return new Date().toISOString();
@@ -174,6 +215,7 @@
           rawItem.text,
           `У идеи №${index + 1} отсутствует текст.`
         ),
+        url: normalizeOptionalUrl(rawItem.url),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }
@@ -242,6 +284,7 @@
           `У концепта №${index + 1} отсутствует текст.`
         ),
         categoryId,
+        url: normalizeOptionalUrl(rawItem.url),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }
@@ -268,6 +311,7 @@
           rawItem.title,
           `У композиции №${index + 1} отсутствует название.`
         ),
+        url: normalizeOptionalUrl(rawItem.url),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }

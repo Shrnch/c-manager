@@ -101,14 +101,58 @@
     return deletedItem;
   }
 
-  function addIdea(text) {
+  function normalizeOptionalUrl(value) {
+    const rawValue = String(value ?? '').trim();
+
+    if (!rawValue) {
+      return null;
+    }
+
+    if (rawValue.length > 2048) {
+      throw new Error(
+        'Ссылка не может быть длиннее 2048 символов.'
+      );
+    }
+
+    const candidate = /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(
+      rawValue
+    )
+      ? rawValue
+      : `https://${rawValue}`;
+
+    let parsedUrl;
+
+    try {
+      parsedUrl = new URL(candidate);
+    } catch {
+      throw new Error(
+        'Укажи корректную ссылку, например https://example.com.'
+      );
+    }
+
+    if (
+      parsedUrl.protocol !== 'http:' &&
+      parsedUrl.protocol !== 'https:'
+    ) {
+      throw new Error(
+        'Разрешены только ссылки http:// и https://.'
+      );
+    }
+
+    return parsedUrl.href;
+  }
+
+  function addIdea(text, url = null) {
     const safeText = String(text).trim();
 
     if (!safeText) {
       throw new Error('Текст идеи не может быть пустым.');
     }
 
-    return addItem('ideas', { text: safeText });
+    return addItem('ideas', {
+      text: safeText,
+      url: normalizeOptionalUrl(url),
+    });
   }
 
   const categoryColorPalette = [
@@ -210,7 +254,7 @@
     return deleteItem('conceptCategories', categoryId);
   }
 
-  function addConcept(text, categoryId = null) {
+  function addConcept(text, categoryId = null, url = null) {
     const safeText = String(text).trim();
 
     if (!safeText) {
@@ -227,10 +271,11 @@
     return addItem('concepts', {
       text: safeText,
       categoryId,
+      url: normalizeOptionalUrl(url),
     });
   }
 
-  function addMusic(artist, title) {
+  function addMusic(artist, title, url = null) {
     const safeArtist = String(artist).trim();
     const safeTitle = String(title).trim();
 
@@ -241,6 +286,7 @@
     return addItem('music', {
       artist: safeArtist,
       title: safeTitle,
+      url: normalizeOptionalUrl(url),
     });
   }
 
@@ -407,6 +453,7 @@
     state,
     createId,
     calculateScore,
+    normalizeOptionalUrl,
     addItem,
     getItemById,
     updateItem,

@@ -23,6 +23,69 @@
     return button;
   }
 
+  function createExternalLink(url, label, className) {
+    const link = document.createElement('a');
+    link.className = className;
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer nofollow';
+    link.setAttribute(
+      'aria-label',
+      t('links.open', { label })
+    );
+    link.title = t('links.open', { label });
+    link.textContent = '↗';
+    return link;
+  }
+
+  function createResultLinks(items) {
+    const availableLinks = items.filter(
+      (item) => Boolean(item.url)
+    );
+
+    if (!availableLinks.length) {
+      return null;
+    }
+
+    const details = document.createElement('details');
+    details.className = 'result-links';
+
+    const summary = document.createElement('summary');
+    summary.className = 'result-links-summary';
+
+    const icon = document.createElement('span');
+    icon.className = 'result-links-icon';
+    icon.textContent = '↗';
+
+    const text = document.createElement('span');
+    text.textContent = t('result.links', {
+      count: availableLinks.length,
+    });
+
+    summary.append(icon, text);
+
+    const list = document.createElement('div');
+    list.className = 'result-links-list';
+
+    availableLinks.forEach((item) => {
+      const link = document.createElement('a');
+      link.className = 'result-link-chip';
+      link.href = item.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer nofollow';
+      link.textContent = item.label;
+      link.setAttribute(
+        'aria-label',
+        t('links.open', { label: item.label })
+      );
+      link.title = item.url;
+      list.append(link);
+    });
+
+    details.append(summary, list);
+    return details;
+  }
+
   function createCellShell(item, type) {
     const row = document.createElement('div');
     row.className = 'content-cell-row';
@@ -37,6 +100,17 @@
 
     const actions = document.createElement('div');
     actions.className = 'cell-actions';
+
+    if (item.url) {
+      actions.append(
+        createExternalLink(
+          item.url,
+          t(`result.${type}`),
+          'cell-action-link'
+        )
+      );
+    }
+
     actions.append(
       createActionButton('edit', t('common.edit'), '✎'),
       createActionButton('delete', t('common.delete'), '×')
@@ -505,6 +579,21 @@
         )
       );
 
+      const resultLinks = createResultLinks([
+        {
+          label: t('result.idea'),
+          url: idea?.url,
+        },
+        {
+          label: t('result.concept'),
+          url: concept?.url,
+        },
+        {
+          label: t('result.music'),
+          url: music?.url,
+        },
+      ]);
+
       const importance = Number(result.importance) || 0;
       const desire = Number(result.desire) || 0;
       const ratings = document.createElement('section');
@@ -557,7 +646,13 @@
         })
       );
 
-      card.append(header, combination, ratings, timeline);
+      card.append(header, combination);
+
+      if (resultLinks) {
+        card.append(resultLinks);
+      }
+
+      card.append(ratings, timeline);
       container.append(card);
     });
   }
