@@ -175,7 +175,7 @@
     });
   }
 
-  function renderMusic(musicItems) {
+  function renderMusic(musicItems, categories) {
     const container = document.querySelector('#music-list');
     if (!container) return;
 
@@ -190,13 +190,34 @@
       const { row, body } = createCellShell(music, 'music');
       body.classList.add('music-cell');
 
+      const category = categories.find(
+        (item) => item.id === music.categoryId
+      );
+
+      const badge = document.createElement('span');
+      badge.className = 'category-badge';
+      badge.textContent =
+        category?.name ?? t('common.uncategorized');
+
+      if (category?.color) {
+        badge.style.setProperty(
+          '--category-color',
+          category.color
+        );
+        row.style.setProperty(
+          '--category-color',
+          category.color
+        );
+        row.classList.add('music-row-colored');
+      }
+
       const artist = document.createElement('strong');
       artist.textContent = music.artist;
 
       const title = document.createElement('span');
       title.textContent = music.title;
 
-      body.append(artist, title);
+      body.append(badge, artist, title);
       container.append(row);
     });
   }
@@ -283,6 +304,113 @@
       deleteButton.type = 'button';
       deleteButton.className = 'small-text-button small-text-button-danger';
       deleteButton.dataset.categoryAction = 'delete';
+      deleteButton.textContent = t('common.delete');
+
+      actions.append(editButton, deleteButton);
+      row.append(info, actions);
+      container.append(row);
+    });
+  }
+
+  function renderMusicCategories(
+    categories,
+    musicItems
+  ) {
+    const container = document.querySelector(
+      '#music-categories-list'
+    );
+    if (!container) return;
+
+    container.replaceChildren();
+
+    if (!categories.length) {
+      const empty = document.createElement('p');
+      empty.className = 'category-empty';
+      empty.textContent = t('musicCategories.empty');
+      container.append(empty);
+      return;
+    }
+
+    categories.forEach((category) => {
+      const musicCount = musicItems.filter(
+        (musicItem) =>
+          musicItem.categoryId === category.id
+      ).length;
+
+      const row = document.createElement('div');
+      row.className = 'category-row';
+      row.dataset.categoryId = category.id;
+
+      const info = document.createElement('div');
+      info.className = 'category-row-info';
+
+      const nameRow = document.createElement('div');
+      nameRow.className = 'category-name-row';
+
+      const colorEditor = document.createElement('span');
+      colorEditor.className = 'category-color-editor';
+
+      const colorInput = document.createElement('input');
+      colorInput.type = 'color';
+      colorInput.className = 'category-inline-color';
+      colorInput.value = category.color || '#6552c7';
+      colorInput.dataset.musicCategoryAction =
+        'color-picker';
+      colorInput.setAttribute(
+        'aria-label',
+        t('categories.colorFor', {
+          name: category.name
+        })
+      );
+      colorInput.title = t('categories.chooseColor');
+
+      const hexInput = document.createElement('input');
+      hexInput.type = 'text';
+      hexInput.className = 'category-inline-hex';
+      hexInput.value = (
+        category.color || '#6552c7'
+      ).toUpperCase();
+      hexInput.maxLength = 7;
+      hexInput.spellcheck = false;
+      hexInput.autocomplete = 'off';
+      hexInput.dataset.musicCategoryAction = 'color-hex';
+      hexInput.setAttribute(
+        'aria-label',
+        t('categories.hexFor', {
+          name: category.name
+        })
+      );
+      hexInput.title = t('categories.hexHint');
+
+      colorEditor.append(colorInput, hexInput);
+
+      const name = document.createElement('strong');
+      name.textContent = category.name;
+
+      nameRow.append(colorEditor, name);
+
+      const count = document.createElement('span');
+      count.textContent = t(
+        'musicCategories.count',
+        { count: musicCount }
+      );
+
+      info.append(nameRow, count);
+
+      const actions = document.createElement('div');
+      actions.className = 'category-row-actions';
+
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.className = 'small-text-button';
+      editButton.dataset.musicCategoryAction = 'edit';
+      editButton.textContent = t('common.change');
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className =
+        'small-text-button small-text-button-danger';
+      deleteButton.dataset.musicCategoryAction = 'delete';
       deleteButton.textContent = t('common.delete');
 
       actions.append(editButton, deleteButton);
@@ -466,6 +594,9 @@
       const category = state.conceptCategories.find(
         (item) => item.id === concept?.categoryId
       );
+      const musicCategory = state.musicCategories.find(
+        (item) => item.id === music?.categoryId
+      );
 
       const card = document.createElement('article');
       card.className = 'result-card';
@@ -570,14 +701,35 @@
 
       combination.append(conceptResultPart);
 
-      combination.append(
-        createResultPart(
-          t('result.music'),
-          music
-            ? `${music.artist} — ${music.title}`
-            : t('result.deletedMusic')
-        )
+      const musicBadge = document.createElement('span');
+      musicBadge.className = 'category-badge';
+      musicBadge.textContent =
+        musicCategory?.name ?? t('common.uncategorized');
+
+      if (musicCategory?.color) {
+        musicBadge.style.setProperty(
+          '--category-color',
+          musicCategory.color
+        );
+      }
+
+      const musicResultPart = createResultPart(
+        t('result.music'),
+        music
+          ? `${music.artist} — ${music.title}`
+          : t('result.deletedMusic'),
+        musicBadge
       );
+      musicResultPart.classList.add('result-part-music');
+
+      if (musicCategory?.color) {
+        musicResultPart.style.setProperty(
+          '--category-color',
+          musicCategory.color
+        );
+      }
+
+      combination.append(musicResultPart);
 
       const resultLinks = createResultLinks([
         {
@@ -660,7 +812,7 @@
   function renderAll(state, visibleResults = state.results) {
     renderIdeas(state.ideas);
     renderConcepts(state.concepts, state.conceptCategories);
-    renderMusic(state.music);
+    renderMusic(state.music, state.musicCategories);
     renderResults(state, visibleResults);
   }
 
@@ -669,6 +821,7 @@
     renderConcepts,
     renderMusic,
     renderCategories,
+    renderMusicCategories,
     renderResults,
     renderAll,
   };

@@ -38,6 +38,25 @@ const newCategoryColorInput = document.querySelector('#new-category-color');
 const newCategoryHexInput = document.querySelector('#new-category-hex');
 const categoryFormError = document.querySelector('#category-form-error');
 
+const musicCategoriesModal = document.querySelector(
+  '#music-categories-modal'
+);
+const musicCategoriesList = document.querySelector(
+  '#music-categories-list'
+);
+const newMusicCategoryInput = document.querySelector(
+  '#new-music-category-name'
+);
+const newMusicCategoryColorInput = document.querySelector(
+  '#new-music-category-color'
+);
+const newMusicCategoryHexInput = document.querySelector(
+  '#new-music-category-hex'
+);
+const musicCategoryFormError = document.querySelector(
+  '#music-category-form-error'
+);
+
 const confirmModal = document.querySelector('#confirm-modal');
 const confirmTitle = document.querySelector('#confirm-title');
 const confirmText = document.querySelector('#confirm-text');
@@ -50,6 +69,9 @@ const resultsList = document.querySelector('#results-list');
 const resultsSort = document.querySelector('#results-sort');
 const resultsStatusFilter = document.querySelector('#results-status-filter');
 const resultsCategoryFilter = document.querySelector('#results-category-filter');
+const resultsMusicCategoryFilter = document.querySelector(
+  '#results-music-category-filter'
+);
 const exportDataButton = document.querySelector('#export-data-button');
 const importDataButton = document.querySelector('#import-data-button');
 const importDataInput = document.querySelector('#import-data-input');
@@ -75,6 +97,7 @@ const resultsView = {
   sortBy: 'score-desc',
   statusFilter: 'all',
   categoryFilter: 'all',
+  musicCategoryFilter: 'all',
 };
 
 const UI_PREFERENCES_KEY =
@@ -182,6 +205,21 @@ function setNewCategoryColor(color) {
 
   if (newCategoryHexInput) {
     newCategoryHexInput.value = normalized;
+  }
+
+  return normalized;
+}
+
+function setNewMusicCategoryColor(color) {
+  const normalized = normalizeHexColor(color);
+
+  if (newMusicCategoryColorInput) {
+    newMusicCategoryColorInput.value =
+      normalized.toLowerCase();
+  }
+
+  if (newMusicCategoryHexInput) {
+    newMusicCategoryHexInput.value = normalized;
   }
 
   return normalized;
@@ -323,6 +361,14 @@ function getResultCategoryId(result) {
   return concept?.categoryId ?? null;
 }
 
+function getResultMusicCategoryId(result) {
+  const musicItem = stateApi.getItemById(
+    'music',
+    result.musicId
+  );
+  return musicItem?.categoryId ?? null;
+}
+
 function getVisibleResults() {
   const visibleResults = stateApi.state.results.filter((result) => {
     const matchesStatus =
@@ -333,10 +379,29 @@ function getVisibleResults() {
     const resultCategoryId = getResultCategoryId(result);
     const matchesCategory =
       resultsView.categoryFilter === 'all' ||
-      (resultsView.categoryFilter === 'uncategorized' && !resultCategoryId) ||
+      (
+        resultsView.categoryFilter === 'uncategorized' &&
+        !resultCategoryId
+      ) ||
       resultsView.categoryFilter === resultCategoryId;
 
-    return matchesStatus && matchesCategory;
+    const resultMusicCategoryId =
+      getResultMusicCategoryId(result);
+    const matchesMusicCategory =
+      resultsView.musicCategoryFilter === 'all' ||
+      (
+        resultsView.musicCategoryFilter ===
+          'uncategorized' &&
+        !resultMusicCategoryId
+      ) ||
+      resultsView.musicCategoryFilter ===
+        resultMusicCategoryId;
+
+    return (
+      matchesStatus &&
+      matchesCategory &&
+      matchesMusicCategory
+    );
   });
 
   const timestamp = (value) => {
@@ -436,6 +501,60 @@ function populateCategoryFilter() {
   resultsCategoryFilter.value = resultsView.categoryFilter;
 }
 
+function populateMusicCategoryFilter() {
+  if (!resultsMusicCategoryFilter) {
+    return;
+  }
+
+  const previousValue =
+    resultsView.musicCategoryFilter;
+  resultsMusicCategoryFilter.replaceChildren();
+
+  const allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent =
+    t('results.filter.allMusicCategories');
+  resultsMusicCategoryFilter.append(allOption);
+
+  stateApi.state.musicCategories
+    .slice()
+    .sort((first, second) =>
+      first.name.localeCompare(
+        second.name,
+        i18n.getLocale()
+      )
+    )
+    .forEach((category) => {
+      const option = document.createElement('option');
+      option.value = category.id;
+      option.textContent = `● ${category.name}`;
+      option.style.color =
+        category.color || '#6552c7';
+      resultsMusicCategoryFilter.append(option);
+    });
+
+  const uncategorizedOption =
+    document.createElement('option');
+  uncategorizedOption.value = 'uncategorized';
+  uncategorizedOption.textContent =
+    t('common.uncategorized');
+  resultsMusicCategoryFilter.append(
+    uncategorizedOption
+  );
+
+  const validValues = Array.from(
+    resultsMusicCategoryFilter.options
+  ).map((option) => option.value);
+
+  resultsView.musicCategoryFilter =
+    validValues.includes(previousValue)
+      ? previousValue
+      : 'all';
+
+  resultsMusicCategoryFilter.value =
+    resultsView.musicCategoryFilter;
+}
+
 function renderResultsView() {
   renderer.renderResults(stateApi.state, getVisibleResults());
 }
@@ -507,6 +626,7 @@ function resetViewAndSelection() {
   resultsView.sortBy = 'score-desc';
   resultsView.statusFilter = 'all';
   resultsView.categoryFilter = 'all';
+  resultsView.musicCategoryFilter = 'all';
 
   if (resultsSort) {
     resultsSort.value = resultsView.sortBy;
@@ -515,16 +635,29 @@ function resetViewAndSelection() {
   if (resultsStatusFilter) {
     resultsStatusFilter.value = resultsView.statusFilter;
   }
+
+  if (resultsMusicCategoryFilter) {
+    resultsMusicCategoryFilter.value =
+      resultsView.musicCategoryFilter;
+  }
 }
 
 function renderEverything() {
   populateCategoryFilter();
+  populateMusicCategoryFilter();
   renderer.renderAll(stateApi.state, getVisibleResults());
 
   if (categoriesModal?.open) {
     renderer.renderCategories(
       stateApi.state.conceptCategories,
       stateApi.state.concepts
+    );
+  }
+
+  if (musicCategoriesModal?.open) {
+    renderer.renderMusicCategories(
+      stateApi.state.musicCategories,
+      stateApi.state.music
     );
   }
 
@@ -583,27 +716,34 @@ function createOptionalLinkField(id, value = '') {
   return field;
 }
 
-function createCategorySelect(selectedCategoryId = null) {
+function createCategorySelect({
+  id,
+  categories,
+  selectedCategoryId = null,
+  label = t('item.category'),
+}) {
   const wrapper = document.createElement('label');
   wrapper.className = 'field';
 
   const labelText = document.createElement('span');
-  labelText.textContent = t('item.category');
+  labelText.textContent = label;
 
   const select = document.createElement('select');
-  select.id = 'concept-category';
-  select.name = 'concept-category';
+  select.id = id;
+  select.name = id;
 
   const emptyOption = document.createElement('option');
   emptyOption.value = '';
-  emptyOption.textContent = t('common.uncategorized');
+  emptyOption.textContent =
+    t('common.uncategorized');
   select.append(emptyOption);
 
-  stateApi.state.conceptCategories.forEach((category) => {
+  categories.forEach((category) => {
     const option = document.createElement('option');
     option.value = category.id;
     option.textContent = category.name;
-    option.selected = category.id === selectedCategoryId;
+    option.selected =
+      category.id === selectedCategoryId;
     select.append(option);
   });
 
@@ -637,7 +777,13 @@ function buildItemFields(type, item = null) {
         value: item?.text ?? '',
         placeholder: t('item.conceptPlaceholder'),
       }),
-      createCategorySelect(item?.categoryId ?? null),
+      createCategorySelect({
+        id: 'concept-category',
+        categories:
+          stateApi.state.conceptCategories,
+        selectedCategoryId:
+          item?.categoryId ?? null,
+      }),
       createOptionalLinkField(
         'concept-url',
         item?.url ?? ''
@@ -658,6 +804,13 @@ function buildItemFields(type, item = null) {
         label: t('item.trackTitle'),
         value: item?.title ?? '',
         placeholder: t('item.trackPlaceholder'),
+      }),
+      createCategorySelect({
+        id: 'music-category',
+        categories: stateApi.state.musicCategories,
+        selectedCategoryId:
+          item?.categoryId ?? null,
+        label: t('item.musicCategory'),
       }),
       createOptionalLinkField(
         'music-url',
@@ -747,6 +900,8 @@ function saveConcept() {
 function saveMusic() {
   const artist = document.querySelector('#music-artist')?.value ?? '';
   const title = document.querySelector('#music-title')?.value ?? '';
+  const categoryValue =
+    document.querySelector('#music-category')?.value ?? '';
   const url = stateApi.normalizeOptionalUrl(
     document.querySelector('#music-url')?.value ?? ''
   );
@@ -759,10 +914,16 @@ function saveMusic() {
     stateApi.updateItem('music', activeItemId, {
       artist: artist.trim(),
       title: title.trim(),
+      categoryId: categoryValue || null,
       url,
     });
   } else {
-    stateApi.addMusic(artist, title, url);
+    stateApi.addMusic(
+      artist,
+      title,
+      categoryValue || null,
+      url
+    );
   }
 }
 
@@ -856,6 +1017,39 @@ function requestCategoryDelete(categoryId) {
   });
 }
 
+function requestMusicCategoryDelete(categoryId) {
+  const category = stateApi.getItemById(
+    'musicCategories',
+    categoryId
+  );
+  if (!category) return;
+
+  const usedCount = stateApi.state.music.filter(
+    (musicItem) =>
+      musicItem.categoryId === categoryId
+  ).length;
+
+  openConfirmation({
+    title: t('dialog.deleteMusicCategory.title'),
+    text: t(
+      usedCount
+        ? 'dialog.deleteMusicCategory.used'
+        : 'dialog.deleteMusicCategory.unused',
+      {
+        name: category.name,
+        count: usedCount
+      }
+    ),
+    buttonText: t('common.delete'),
+    danger: true,
+    action: () => {
+      stateApi.deleteMusicCategory(categoryId);
+      renderEverything();
+      showToast(t('toast.musicCategoryDeleted'));
+    },
+  });
+}
+
 function renameResult(resultId) {
   const result = stateApi.getItemById('results', resultId);
 
@@ -930,6 +1124,28 @@ document.querySelector('#manage-categories-button')?.addEventListener('click', (
   );
   categoriesModal.showModal();
 });
+
+document
+  .querySelector('#manage-music-categories-button')
+  ?.addEventListener('click', () => {
+    musicCategoryFormError.textContent = '';
+    newMusicCategoryInput.value = '';
+
+    if (
+      newMusicCategoryColorInput ||
+      newMusicCategoryHexInput
+    ) {
+      setNewMusicCategoryColor(
+        stateApi.getSuggestedMusicCategoryColor()
+      );
+    }
+
+    renderer.renderMusicCategories(
+      stateApi.state.musicCategories,
+      stateApi.state.music
+    );
+    musicCategoriesModal.showModal();
+  });
 
 document.querySelectorAll('[data-close-dialog]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -1395,6 +1611,269 @@ categoriesList?.addEventListener('change', (event) => {
   }
 });
 
+document
+  .querySelector('#add-music-category-button')
+  ?.addEventListener('click', () => {
+    musicCategoryFormError.textContent = '';
+
+    try {
+      const categoryColor = normalizeHexColor(
+        newMusicCategoryHexInput?.value ||
+          newMusicCategoryColorInput?.value
+      );
+
+      stateApi.addMusicCategory(
+        newMusicCategoryInput.value,
+        categoryColor
+      );
+      newMusicCategoryInput.value = '';
+
+      setNewMusicCategoryColor(
+        stateApi.getSuggestedMusicCategoryColor()
+      );
+
+      renderer.renderMusicCategories(
+        stateApi.state.musicCategories,
+        stateApi.state.music
+      );
+      populateMusicCategoryFilter();
+      showToast(t('toast.musicCategoryAdded'));
+    } catch (error) {
+      musicCategoryFormError.textContent =
+        translateError(error);
+    }
+  });
+
+newMusicCategoryColorInput?.addEventListener(
+  'input',
+  () => {
+    musicCategoryFormError.textContent = '';
+
+    if (newMusicCategoryHexInput) {
+      newMusicCategoryHexInput.value =
+        newMusicCategoryColorInput.value.toUpperCase();
+    }
+  }
+);
+
+newMusicCategoryHexInput?.addEventListener(
+  'input',
+  () => {
+    const rawValue = newMusicCategoryHexInput.value
+      .replace(/\s/g, '')
+      .toUpperCase();
+
+    newMusicCategoryHexInput.value = rawValue;
+
+    try {
+      const normalized = normalizeHexColor(rawValue);
+      musicCategoryFormError.textContent = '';
+
+      if (newMusicCategoryColorInput) {
+        newMusicCategoryColorInput.value =
+          normalized.toLowerCase();
+      }
+    } catch {
+      // Не мешаем пользователю допечатать код.
+    }
+  }
+);
+
+newMusicCategoryHexInput?.addEventListener(
+  'change',
+  () => {
+    try {
+      setNewMusicCategoryColor(
+        newMusicCategoryHexInput.value
+      );
+      musicCategoryFormError.textContent = '';
+    } catch (error) {
+      musicCategoryFormError.textContent =
+        translateError(error);
+      newMusicCategoryHexInput.focus();
+      newMusicCategoryHexInput.select();
+    }
+  }
+);
+
+newMusicCategoryInput?.addEventListener(
+  'keydown',
+  (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      document
+        .querySelector('#add-music-category-button')
+        ?.click();
+    }
+  }
+);
+
+musicCategoriesList?.addEventListener(
+  'click',
+  (event) => {
+    const actionButton = event.target.closest(
+      '[data-music-category-action]'
+    );
+    if (!actionButton) return;
+
+    const row = actionButton.closest('.category-row');
+    const categoryId = row?.dataset.categoryId;
+    const category = stateApi.getItemById(
+      'musicCategories',
+      categoryId
+    );
+
+    if (!category) return;
+
+    if (
+      actionButton.dataset.musicCategoryAction ===
+      'edit'
+    ) {
+      const newName = window.prompt(
+        t('dialog.renameMusicCategory.prompt'),
+        category.name
+      );
+
+      if (newName === null) return;
+
+      try {
+        stateApi.updateMusicCategory(
+          categoryId,
+          newName,
+          category.color
+        );
+        renderEverything();
+        musicCategoryFormError.textContent = '';
+        showToast(t('toast.musicCategoryRenamed'));
+      } catch (error) {
+        musicCategoryFormError.textContent =
+          translateError(error);
+      }
+    }
+
+    if (
+      actionButton.dataset.musicCategoryAction ===
+      'delete'
+    ) {
+      requestMusicCategoryDelete(categoryId);
+    }
+  }
+);
+
+musicCategoriesList?.addEventListener(
+  'input',
+  (event) => {
+    const hexInput = event.target.closest(
+      '[data-music-category-action="color-hex"]'
+    );
+
+    if (!hexInput) {
+      return;
+    }
+
+    hexInput.value = hexInput.value
+      .replace(/\s/g, '')
+      .toUpperCase();
+
+    try {
+      const normalized = normalizeHexColor(
+        hexInput.value
+      );
+      const editor = hexInput.closest(
+        '.category-color-editor'
+      );
+      const picker = editor?.querySelector(
+        '[data-music-category-action="color-picker"]'
+      );
+
+      if (picker) {
+        picker.value = normalized.toLowerCase();
+      }
+
+      musicCategoryFormError.textContent = '';
+    } catch {
+      // Не мешаем пользователю допечатать код.
+    }
+  }
+);
+
+musicCategoriesList?.addEventListener(
+  'change',
+  (event) => {
+    const colorControl = event.target.closest(
+      '[data-music-category-action="color-picker"], ' +
+        '[data-music-category-action="color-hex"]'
+    );
+
+    if (!colorControl) {
+      return;
+    }
+
+    const row = colorControl.closest('.category-row');
+    const categoryId = row?.dataset.categoryId;
+    const category = stateApi.getItemById(
+      'musicCategories',
+      categoryId
+    );
+
+    if (!category) {
+      return;
+    }
+
+    const editor = colorControl.closest(
+      '.category-color-editor'
+    );
+    const picker = editor?.querySelector(
+      '[data-music-category-action="color-picker"]'
+    );
+    const hexInput = editor?.querySelector(
+      '[data-music-category-action="color-hex"]'
+    );
+
+    try {
+      const normalized =
+        colorControl.dataset.musicCategoryAction ===
+        'color-picker'
+          ? normalizeHexColor(colorControl.value)
+          : normalizeHexColor(hexInput?.value);
+
+      if (picker) {
+        picker.value = normalized.toLowerCase();
+      }
+
+      if (hexInput) {
+        hexInput.value = normalized;
+      }
+
+      stateApi.updateMusicCategory(
+        categoryId,
+        category.name,
+        normalized
+      );
+
+      musicCategoryFormError.textContent = '';
+      renderEverything();
+      showToast(
+        t('toast.musicCategoryColorSaved')
+      );
+    } catch (error) {
+      musicCategoryFormError.textContent =
+        translateError(error);
+
+      if (picker) {
+        picker.value = category.color;
+      }
+
+      if (hexInput) {
+        hexInput.value =
+          category.color.toUpperCase();
+        hexInput.focus();
+        hexInput.select();
+      }
+    }
+  }
+);
+
 confirmActionButton?.addEventListener('click', () => {
   if (typeof pendingConfirmAction === 'function') {
     pendingConfirmAction();
@@ -1577,6 +2056,15 @@ resultsCategoryFilter?.addEventListener('change', () => {
   resultsView.categoryFilter = resultsCategoryFilter.value;
   renderResultsView();
 });
+
+resultsMusicCategoryFilter?.addEventListener(
+  'change',
+  () => {
+    resultsView.musicCategoryFilter =
+      resultsMusicCategoryFilter.value;
+    renderResultsView();
+  }
+);
 
 function getRandomItem(items) {
   if (!Array.isArray(items) || !items.length) {
@@ -1834,7 +2322,12 @@ resultsList?.addEventListener('change', (event) => {
   );
 });
 
-[itemModal, categoriesModal, confirmModal].forEach((dialog) => {
+[
+  itemModal,
+  categoriesModal,
+  musicCategoriesModal,
+  confirmModal
+].forEach((dialog) => {
   dialog?.addEventListener('click', (event) => {
     if (event.target === dialog) {
       closeDialog(dialog);
@@ -1906,4 +2399,4 @@ confirmModal?.addEventListener('close', () => {
   pendingConfirmAction = null;
 });
 
-console.log('v0.4.1: необязательные ссылки источников подключены.');
+console.log('v0.5.0: категории музыки и их цвета подключены.');

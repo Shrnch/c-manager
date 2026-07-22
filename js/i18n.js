@@ -63,12 +63,15 @@
       'columns.addConcept': 'Добавить концепт',
       'columns.addMusic': 'Добавить музыку',
       'columns.manageCategories': 'Управлять категориями',
+      'columns.manageMusicCategories':
+        'Управлять категориями музыки',
 
       'results.eyebrow': 'SAVED COMBINATIONS',
       'results.title': 'Результаты',
       'results.sort': 'Сортировка',
       'results.planning': 'План выполнения',
       'results.category': 'Категория концепта',
+      'results.musicCategory': 'Категория музыки',
       'results.sort.score': 'По итоговому баллу',
       'results.sort.importance': 'По важности',
       'results.sort.desire': 'По желанию',
@@ -79,6 +82,8 @@
       'results.filter.planned': 'Выполнение запланировано',
       'results.filter.unscheduled': 'Без плана выполнения',
       'results.filter.allCategories': 'Все категории',
+      'results.filter.allMusicCategories':
+        'Все музыкальные категории',
       'results.filter.uncategorized': 'Без категории',
       'results.empty.title': 'Сохранённых результатов пока нет',
       'results.empty.description':
@@ -102,6 +107,7 @@
       'item.conceptName': 'Название концепта',
       'item.conceptPlaceholder': 'Например: Динозавры',
       'item.category': 'Категория',
+      'item.musicCategory': 'Категория музыки',
       'item.artist': 'Исполнитель',
       'item.artistPlaceholder': 'Например: Frank Sinatra',
       'item.trackTitle': 'Название композиции',
@@ -123,6 +129,19 @@
       'categories.hexFor': 'HEX-код категории {name}',
       'categories.chooseColor': 'Выбрать цвет',
       'categories.hexHint': 'Вставь HEX-код, например #422680',
+
+      'musicCategories.eyebrow': 'MUSIC CATEGORIES',
+      'musicCategories.title': 'Категории музыки',
+      'musicCategories.new': 'Новая музыкальная категория',
+      'musicCategories.newPlaceholder':
+        'Например: Cinematic',
+      'musicCategories.colorAria':
+        'Цвет новой музыкальной категории',
+      'musicCategories.hexAria':
+        'HEX-код новой музыкальной категории',
+      'musicCategories.empty':
+        'Категорий музыки пока нет.',
+      'musicCategories.count': '{count} композиция(ий)',
 
       'confirm.eyebrow': 'CONFIRM ACTION',
       'confirm.deleteItem': 'Удалить элемент?',
@@ -179,6 +198,14 @@
       'dialog.deleteResult.text':
         'Сохранённая комбинация будет удалена. Исходные идея, концепт и музыка останутся.',
       'dialog.renameCategory.prompt': 'Новое название категории:',
+      'dialog.renameMusicCategory.prompt':
+        'Новое название музыкальной категории:',
+      'dialog.deleteMusicCategory.title':
+        'Удалить категорию музыки?',
+      'dialog.deleteMusicCategory.used':
+        'Категория «{name}» используется в {count} композиции(ях). Музыка останется, но станет без категории.',
+      'dialog.deleteMusicCategory.unused':
+        'Категория музыки «{name}» будет удалена.',
       'dialog.import.title': 'Импортировать данные?',
       'dialog.import.text':
         'Текущие идеи, концепты, музыка и результаты будут полностью заменены данными из выбранного файла.',
@@ -203,6 +230,14 @@
       'toast.categoryAdded': 'Категория добавлена.',
       'toast.categoryRenamed': 'Категория переименована.',
       'toast.categoryColorSaved': 'Цвет категории сохранён.',
+      'toast.musicCategoryAdded':
+        'Категория музыки добавлена.',
+      'toast.musicCategoryRenamed':
+        'Категория музыки переименована.',
+      'toast.musicCategoryDeleted':
+        'Категория музыки удалена.',
+      'toast.musicCategoryColorSaved':
+        'Цвет категории музыки сохранён.',
       'toast.autoJumpOn': 'Автопереход к результатам включён.',
       'toast.autoJumpOff': 'Автопереход к результатам выключен.',
       'toast.relationsOn': 'Режим связей включён.',
@@ -311,12 +346,15 @@
       'columns.addConcept': 'Add concept',
       'columns.addMusic': 'Add music',
       'columns.manageCategories': 'Manage categories',
+      'columns.manageMusicCategories':
+        'Manage music categories',
 
       'results.eyebrow': 'SAVED COMBINATIONS',
       'results.title': 'Results',
       'results.sort': 'Sort',
       'results.planning': 'Execution plan',
       'results.category': 'Concept category',
+      'results.musicCategory': 'Music category',
       'results.sort.score': 'Highest score',
       'results.sort.importance': 'Highest importance',
       'results.sort.desire': 'Highest desire',
@@ -327,6 +365,8 @@
       'results.filter.planned': 'Execution planned',
       'results.filter.unscheduled': 'No execution plan',
       'results.filter.allCategories': 'All categories',
+      'results.filter.allMusicCategories':
+        'All music categories',
       'results.filter.uncategorized': 'Uncategorized',
       'results.empty.title': 'No saved results yet',
       'results.empty.description':
@@ -349,6 +389,7 @@
       'item.conceptName': 'Concept name',
       'item.conceptPlaceholder': 'For example: Dinosaurs',
       'item.category': 'Category',
+      'item.musicCategory': 'Music category',
       'item.artist': 'Artist',
       'item.artistPlaceholder': 'For example: Frank Sinatra',
       'item.trackTitle': 'Track title',
@@ -370,6 +411,19 @@
       'categories.hexFor': 'HEX code for category {name}',
       'categories.chooseColor': 'Choose color',
       'categories.hexHint': 'Paste a HEX code, for example #422680',
+
+      'musicCategories.eyebrow': 'MUSIC CATEGORIES',
+      'musicCategories.title': 'Music categories',
+      'musicCategories.new': 'New music category',
+      'musicCategories.newPlaceholder':
+        'For example: Cinematic',
+      'musicCategories.colorAria':
+        'New music category color',
+      'musicCategories.hexAria':
+        'New music category HEX code',
+      'musicCategories.empty':
+        'No music categories yet.',
+      'musicCategories.count': '{count} track(s)',
 
       'confirm.eyebrow': 'CONFIRM ACTION',
       'confirm.deleteItem': 'Delete item?',
@@ -426,6 +480,14 @@
       'dialog.deleteResult.text':
         'The saved combination will be deleted. The original idea, concept, and music will remain.',
       'dialog.renameCategory.prompt': 'New category name:',
+      'dialog.renameMusicCategory.prompt':
+        'New music category name:',
+      'dialog.deleteMusicCategory.title':
+        'Delete music category?',
+      'dialog.deleteMusicCategory.used':
+        'Category “{name}” is used by {count} track(s). The music entries will remain but become uncategorized.',
+      'dialog.deleteMusicCategory.unused':
+        'Music category “{name}” will be deleted.',
       'dialog.import.title': 'Import data?',
       'dialog.import.text':
         'Your current ideas, concepts, music, and results will be fully replaced by the selected file.',
@@ -450,6 +512,14 @@
       'toast.categoryAdded': 'Category added.',
       'toast.categoryRenamed': 'Category renamed.',
       'toast.categoryColorSaved': 'Category color saved.',
+      'toast.musicCategoryAdded':
+        'Music category added.',
+      'toast.musicCategoryRenamed':
+        'Music category renamed.',
+      'toast.musicCategoryDeleted':
+        'Music category deleted.',
+      'toast.musicCategoryColorSaved':
+        'Music category color saved.',
       'toast.autoJumpOn': 'Jump to results enabled.',
       'toast.autoJumpOff': 'Jump to results disabled.',
       'toast.relationsOn': 'Connections mode enabled.',
@@ -516,6 +586,8 @@
         'Concept text cannot be empty.',
       'Указанная категория концепта не существует.':
         'The selected concept category does not exist.',
+      'Указанная категория музыки не существует.':
+        'The selected music category does not exist.',
       'Исполнитель и название композиции обязательны.':
         'Artist and track title are required.',
       'Выбранная идея не существует.':

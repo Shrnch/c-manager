@@ -1,6 +1,6 @@
 # Content Idea Organizer
 
-**Current version:** `v0.4.1`
+**Current version:** `v0.5.0`
 
 Content Idea Organizer is a local browser app for building content plans by combining three reusable components:
 
@@ -16,7 +16,8 @@ Each saved result keeps the selected combination together with scheduling and pr
 - optional clickable links for ideas, concepts, and music;
 - add, edit, and delete items;
 - reusable concept categories;
-- custom category colors with direct HEX input;
+- reusable music categories;
+- custom colors and direct HEX input for both concept and music categories;
 - select one item from each column and save the combination as a result;
 - visible SVG wires between connected cells;
 - reuse the same source item in multiple results;
@@ -35,7 +36,7 @@ score = importance × 2 + desire
 ```
 
 - sorting by score, importance, desire, creation date, or planned execution date;
-- filtering by planning status and concept category;
+- filtering by planning status, concept category, and music category;
 - random combination selection;
 - optional **Connections mode** for inspecting all relationships of a cell;
 - Russian and English interface;

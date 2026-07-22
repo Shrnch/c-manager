@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>Content Idea Organizer — v0.4.1</title>
+  <title>Content Idea Organizer — v0.5.0</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -190,15 +190,27 @@
               <span class="column-number">03</span>
               <h2 data-i18n="columns.music">Музыка</h2>
             </div>
-            <button
-              class="icon-button"
-              type="button"
-              id="add-music-button"
-              aria-label="Добавить музыку"
-              title="Добавить музыку"
-              data-i18n-aria="columns.addMusic"
-              data-i18n-title="columns.addMusic"
-            >+</button>
+            <div class="column-header-actions">
+              <button
+                class="icon-button icon-button-small"
+                type="button"
+                id="manage-music-categories-button"
+                aria-label="Управлять категориями музыки"
+                title="Управлять категориями музыки"
+                data-i18n-aria="columns.manageMusicCategories"
+                data-i18n-title="columns.manageMusicCategories"
+              >⚙</button>
+
+              <button
+                class="icon-button"
+                type="button"
+                id="add-music-button"
+                aria-label="Добавить музыку"
+                title="Добавить музыку"
+                data-i18n-aria="columns.addMusic"
+                data-i18n-title="columns.addMusic"
+              >+</button>
+            </div>
           </header>
 
           <div class="column-list" id="music-list" aria-live="polite"></div>
@@ -242,6 +254,16 @@
               <option value="all" data-i18n="results.filter.allCategories">Все категории</option>
             </select>
           </label>
+
+          <label class="sort-control">
+            <span data-i18n="results.musicCategory">Категория музыки</span>
+            <select id="results-music-category-filter">
+              <option
+                value="all"
+                data-i18n="results.filter.allMusicCategories"
+              >Все музыкальные категории</option>
+            </select>
+          </label>
         </div>
       </div>
 
@@ -251,7 +273,7 @@
 
     <footer class="app-footer">
       <span>Content Idea Organizer</span>
-      <span>v0.4.1</span>
+      <span>v0.5.0</span>
     </footer>
   </main>
 
@@ -356,6 +378,103 @@
           class="button button-secondary"
           type="button"
           data-close-dialog="categories-modal"
+          data-i18n="common.close"
+        >
+          Закрыть
+        </button>
+      </div>
+    </section>
+  </dialog>
+
+
+  <dialog class="modal" id="music-categories-modal">
+    <section class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <div>
+          <p
+            class="eyebrow"
+            data-i18n="musicCategories.eyebrow"
+          >MUSIC CATEGORIES</p>
+          <h2 data-i18n="musicCategories.title">
+            Категории музыки
+          </h2>
+        </div>
+        <button
+          class="modal-close"
+          type="button"
+          data-close-dialog="music-categories-modal"
+          aria-label="Закрыть"
+          data-i18n-aria="common.close"
+        >×</button>
+      </div>
+
+      <div class="category-create-row">
+        <label class="field">
+          <span data-i18n="musicCategories.new">
+            Новая музыкальная категория
+          </span>
+          <input
+            type="text"
+            id="new-music-category-name"
+            maxlength="50"
+            placeholder="Например: Cinematic"
+            data-i18n-placeholder="musicCategories.newPlaceholder"
+          >
+        </label>
+
+        <label class="field category-color-field">
+          <span data-i18n="categories.color">Цвет</span>
+          <input
+            type="color"
+            id="new-music-category-color"
+            value="#2e70aa"
+            aria-label="Цвет новой музыкальной категории"
+            data-i18n-aria="musicCategories.colorAria"
+          >
+        </label>
+
+        <label class="field category-hex-field">
+          <span>HEX</span>
+          <input
+            type="text"
+            id="new-music-category-hex"
+            value="#2E70AA"
+            maxlength="7"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="#2E70AA"
+            aria-label="HEX-код новой музыкальной категории"
+            data-i18n-aria="musicCategories.hexAria"
+          >
+        </label>
+
+        <button
+          class="button button-primary"
+          type="button"
+          id="add-music-category-button"
+          data-i18n="common.add"
+        >
+          Добавить
+        </button>
+      </div>
+
+      <p
+        class="form-error"
+        id="music-category-form-error"
+        role="alert"
+      ></p>
+
+      <div
+        class="categories-list"
+        id="music-categories-list"
+        aria-live="polite"
+      ></div>
+
+      <div class="modal-actions">
+        <button
+          class="button button-secondary"
+          type="button"
+          data-close-dialog="music-categories-modal"
           data-i18n="common.close"
         >
           Закрыть

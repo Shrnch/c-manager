@@ -6,6 +6,7 @@
     'ideas',
     'conceptCategories',
     'concepts',
+    'musicCategories',
     'music',
     'results',
   ];
@@ -19,6 +20,9 @@
     'updateConceptCategory',
     'deleteConceptCategory',
     'addConcept',
+    'addMusicCategory',
+    'updateMusicCategory',
+    'deleteMusicCategory',
     'addMusic',
     'addResult',
     'updateResultTitle',
@@ -196,7 +200,13 @@
     requireObject(rawState, 'Корневой объект данных имеет неверный формат.');
 
     COLLECTION_NAMES.forEach((collectionName) => {
-      if (!Array.isArray(rawState[collectionName])) {
+      const isOptionalLegacyCollection =
+        collectionName === 'musicCategories';
+
+      if (
+        !Array.isArray(rawState[collectionName]) &&
+        !isOptionalLegacyCollection
+      ) {
         throw new Error(
           `В файле отсутствует массив «${collectionName}».`
         );
@@ -292,11 +302,58 @@
       };
     });
 
+    const musicCategories = (
+      Array.isArray(rawState.musicCategories)
+        ? rawState.musicCategories
+        : []
+    ).map((rawItem, index) => {
+      requireObject(
+        rawItem,
+        `Категория музыки №${index + 1} имеет неверный формат.`
+      );
+
+      return {
+        id: requireString(
+          rawItem.id,
+          `У категории музыки №${index + 1} отсутствует ID.`
+        ),
+        name: requireString(
+          rawItem.name,
+          `У категории музыки №${index + 1} отсутствует название.`
+        ),
+        color: normalizeCategoryColor(rawItem.color, index),
+        createdAt: normalizeTimestamp(rawItem.createdAt),
+        ...(rawItem.updatedAt
+          ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }
+          : {}),
+      };
+    });
+
+    const musicCategoryIds = new Set(
+      musicCategories.map((category) => category.id)
+    );
+
     const music = rawState.music.map((rawItem, index) => {
       requireObject(
         rawItem,
         `Композиция №${index + 1} имеет неверный формат.`
       );
+
+      const categoryId =
+        rawItem.categoryId === null ||
+        rawItem.categoryId === undefined ||
+        rawItem.categoryId === ''
+          ? null
+          : requireString(
+              rawItem.categoryId,
+              `У композиции №${index + 1} неверная категория.`
+            );
+
+      if (categoryId && !musicCategoryIds.has(categoryId)) {
+        throw new Error(
+          `Композиция №${index + 1} ссылается на отсутствующую категорию.`
+        );
+      }
 
       return {
         id: requireString(
@@ -311,6 +368,7 @@
           rawItem.title,
           `У композиции №${index + 1} отсутствует название.`
         ),
+        categoryId,
         url: normalizeOptionalUrl(rawItem.url),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
@@ -323,6 +381,7 @@
       ['ideas', ideas],
       ['conceptCategories', conceptCategories],
       ['concepts', concepts],
+      ['musicCategories', musicCategories],
       ['music', music],
     ].forEach(([collectionName, items]) => {
       assertUniqueIds(items, collectionName);
@@ -413,6 +472,7 @@
       ideas,
       conceptCategories,
       concepts,
+      musicCategories,
       music,
       results,
     };

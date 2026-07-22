@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0] — 2026-07-22
+
+### Added
+
+- separate categories for music entries;
+- create, rename, delete, and recolor music categories;
+- direct HEX input for music category colors;
+- category selection while adding or editing music;
+- colored music rows using the selected category color;
+- music category badge and color inside saved results;
+- result filtering by music category;
+- backward-compatible migration for existing saves and JSON backups without `musicCategories`;
+- Russian and English interface text for the new controls.
+
+
 ## [0.4.1] — 2026-07-22
 
 ### Added

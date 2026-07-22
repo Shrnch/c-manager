@@ -5,6 +5,7 @@
     ideas: [],
     conceptCategories: [],
     concepts: [],
+    musicCategories: [],
     music: [],
     results: [],
   };
@@ -185,6 +186,13 @@
     );
   }
 
+  function getSuggestedMusicCategoryColor() {
+    return normalizeCategoryColor(
+      null,
+      state.musicCategories.length
+    );
+  }
+
   function addConceptCategory(name, color = null) {
     const safeName = String(name).trim();
 
@@ -275,7 +283,86 @@
     });
   }
 
-  function addMusic(artist, title, url = null) {
+  function addMusicCategory(name, color = null) {
+    const safeName = String(name).trim();
+
+    if (!safeName) {
+      throw new Error('Название категории не может быть пустым.');
+    }
+
+    const duplicate = state.musicCategories.some(
+      (category) =>
+        category.name.toLowerCase() === safeName.toLowerCase()
+    );
+
+    if (duplicate) {
+      throw new Error('Категория с таким названием уже существует.');
+    }
+
+    return addItem('musicCategories', {
+      name: safeName,
+      color: normalizeCategoryColor(
+        color,
+        state.musicCategories.length
+      ),
+    });
+  }
+
+  function updateMusicCategory(
+    categoryId,
+    name,
+    color = null
+  ) {
+    const safeName = String(name).trim();
+    const currentCategory = getItemById(
+      'musicCategories',
+      categoryId
+    );
+
+    if (!currentCategory) {
+      return null;
+    }
+
+    if (!safeName) {
+      throw new Error('Название категории не может быть пустым.');
+    }
+
+    const duplicate = state.musicCategories.some(
+      (category) =>
+        category.id !== categoryId &&
+        category.name.toLowerCase() === safeName.toLowerCase()
+    );
+
+    if (duplicate) {
+      throw new Error('Категория с таким названием уже существует.');
+    }
+
+    return updateItem('musicCategories', categoryId, {
+      name: safeName,
+      color: normalizeCategoryColor(
+        color ?? currentCategory.color,
+        state.musicCategories.indexOf(currentCategory)
+      ),
+    });
+  }
+
+  function deleteMusicCategory(categoryId) {
+    state.music.forEach((musicItem) => {
+      if (musicItem.categoryId === categoryId) {
+        musicItem.categoryId = null;
+        musicItem.updatedAt = createTimestamp();
+      }
+    });
+
+    return deleteItem('musicCategories', categoryId);
+  }
+
+  function addMusic(
+    artist,
+    title,
+    categoryId = null,
+    url = null
+  ) {
     const safeArtist = String(artist).trim();
     const safeTitle = String(title).trim();
 
@@ -283,9 +370,17 @@
       throw new Error('Исполнитель и название композиции обязательны.');
     }
 
+    if (
+      categoryId !== null &&
+      !getItemById('musicCategories', categoryId)
+    ) {
+      throw new Error('Указанная категория музыки не существует.');
+    }
+
     return addItem('music', {
       artist: safeArtist,
       title: safeTitle,
+      categoryId,
       url: normalizeOptionalUrl(url),
     });
   }
@@ -442,10 +537,33 @@
     addConcept('Dark tower', categories.games.id);
     addConcept('Double decker bus', categories.portrait.id);
 
-    addMusic('Queen', 'Bohemian Rhapsody — remix');
-    addMusic('Frank Sinatra', 'My Way');
-    addMusic('Wonder Girls', 'Rewind — sped up');
-    addMusic('Magnetic', 'City Night Remix');
+    const musicCategories = {
+      dramatic: addMusicCategory('Dramatic', '#8a4fb0'),
+      classic: addMusicCategory('Classic', '#80651f'),
+      retro: addMusicCategory('Retro', '#a44870'),
+      electronic: addMusicCategory('Electronic', '#2e70aa'),
+    };
+
+    addMusic(
+      'Queen',
+      'Bohemian Rhapsody — remix',
+      musicCategories.dramatic.id
+    );
+    addMusic(
+      'Frank Sinatra',
+      'My Way',
+      musicCategories.classic.id
+    );
+    addMusic(
+      'Wonder Girls',
+      'Rewind — sped up',
+      musicCategories.retro.id
+    );
+    addMusic(
+      'Magnetic',
+      'City Night Remix',
+      musicCategories.electronic.id
+    );
     addMusic('Moshi Moshi', 'Original');
   }
 
@@ -461,10 +579,14 @@
     addIdea,
     normalizeCategoryColor,
     getSuggestedCategoryColor,
+    getSuggestedMusicCategoryColor,
     addConceptCategory,
     updateConceptCategory,
     deleteConceptCategory,
     addConcept,
+    addMusicCategory,
+    updateMusicCategory,
+    deleteMusicCategory,
     addMusic,
     addResult,
     updateResultTitle,
