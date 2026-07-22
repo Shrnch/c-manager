@@ -327,8 +327,8 @@ function getVisibleResults() {
   const visibleResults = stateApi.state.results.filter((result) => {
     const matchesStatus =
       resultsView.statusFilter === 'all' ||
-      (resultsView.statusFilter === 'planned' && Boolean(result.scheduledAt)) ||
-      (resultsView.statusFilter === 'unscheduled' && !result.scheduledAt);
+      (resultsView.statusFilter === 'planned' && Boolean(result.plannedExecutionAt)) ||
+      (resultsView.statusFilter === 'unscheduled' && !result.plannedExecutionAt);
 
     const resultCategoryId = getResultCategoryId(result);
     const matchesCategory =
@@ -377,8 +377,8 @@ function getVisibleResults() {
 
       case 'scheduled-asc':
         return (
-          scheduledTimestamp(first.scheduledAt) -
-            scheduledTimestamp(second.scheduledAt) ||
+          scheduledTimestamp(first.plannedExecutionAt) -
+            scheduledTimestamp(second.plannedExecutionAt) ||
           timestamp(second.createdAt) - timestamp(first.createdAt)
         );
 
@@ -1750,20 +1750,27 @@ resultsList?.addEventListener('change', (event) => {
     return;
   }
 
-  const input = event.target.closest('[data-result-action="schedule"]');
+  const input = event.target.closest(
+    '[data-result-action="timeline-date"]'
+  );
   if (!input) return;
 
   const card = input.closest('.result-card');
   const resultId = card?.dataset.resultId;
+  const fieldName = input.dataset.timelineField;
 
-  if (!resultId) return;
+  if (!resultId || !fieldName) return;
 
-  stateApi.updateResultSchedule(resultId, input.value);
+  stateApi.updateResultTimelineDate(
+    resultId,
+    fieldName,
+    input.value
+  );
   renderResultsView();
   showToast(
     input.value
-      ? t('toast.scheduleSet')
-      : t('toast.scheduleCleared')
+      ? t('toast.timelineDateSet')
+      : t('toast.timelineDateCleared')
   );
 });
 
@@ -1839,4 +1846,4 @@ confirmModal?.addEventListener('close', () => {
   pendingConfirmAction = null;
 });
 
-console.log('v0.3.0: переключение RU / EN подключено.');
+console.log('v0.4.0: таймлайн выполнения и публикации подключён.');

@@ -2147,3 +2147,133 @@ input:focus-visible {
     justify-content: space-between;
   }
 }
+
+
+/* =========================================================
+   v0.4.0 — result execution and publication timeline
+   ========================================================= */
+
+.result-timeline {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding: 8px 9px 9px;
+  border-top: 1px solid var(--border);
+  background: color-mix(
+    in srgb,
+    var(--surface-muted) 34%,
+    var(--surface)
+  );
+}
+
+.result-timeline-field {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+  padding: 7px;
+  border: 1px solid;
+  border-radius: 9px;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.result-timeline-field-missing {
+  border-color: color-mix(
+    in srgb,
+    #b84f4f 64%,
+    var(--border)
+  );
+  background: color-mix(
+    in srgb,
+    #d96a6a 12%,
+    var(--surface)
+  );
+}
+
+.result-timeline-field-set {
+  border-color: color-mix(
+    in srgb,
+    #4f8f63 64%,
+    var(--border)
+  );
+  background: color-mix(
+    in srgb,
+    #67a878 14%,
+    var(--surface)
+  );
+}
+
+.result-timeline-field-header {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.result-timeline-label {
+  min-width: 0;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.result-timeline-status {
+  flex: 0 0 auto;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.result-timeline-field-missing .result-timeline-status {
+  color: #9d3434;
+}
+
+.result-timeline-field-set .result-timeline-status {
+  color: #39724a;
+}
+
+.result-timeline-input-wrapper {
+  padding: 5px 6px;
+  border-color: color-mix(
+    in srgb,
+    currentColor 24%,
+    var(--border)
+  );
+  background: color-mix(
+    in srgb,
+    var(--white) 88%,
+    transparent
+  );
+}
+
+.result-timeline-field-missing
+  .result-timeline-input-wrapper {
+  border-color: color-mix(
+    in srgb,
+    #b84f4f 46%,
+    var(--border)
+  );
+}
+
+.result-timeline-field-set
+  .result-timeline-input-wrapper {
+  border-color: color-mix(
+    in srgb,
+    #4f8f63 46%,
+    var(--border)
+  );
+}
+
+.result-timeline-input-wrapper input {
+  font-size: 10px;
+}
+
+@media (max-width: 520px) {
+  .result-timeline {
+    grid-template-columns: 1fr;
+  }
+}

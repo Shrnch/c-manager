@@ -21,6 +21,8 @@
     'addConcept',
     'addMusic',
     'addResult',
+    'updateResultTitle',
+    'updateResultTimelineDate',
     'updateResultSchedule',
     'updateResultScore',
     'deleteResultsByReference',
@@ -53,13 +55,13 @@
     return value;
   }
 
-  function normalizeScheduledAt(value) {
+  function normalizeResultDate(value) {
     if (value === null || value === undefined || value === '') {
       return null;
     }
 
     if (typeof value !== 'string') {
-      throw new Error('Назначенная дата результата имеет неверный формат.');
+      throw new Error('Дата этапа результата имеет неверный формат.');
     }
 
     const safeValue = value.trim();
@@ -70,7 +72,7 @@
       !datetimeLocalPattern.test(safeValue) ||
       Number.isNaN(Date.parse(safeValue))
     ) {
-      throw new Error('Назначенная дата результата имеет неверный формат.');
+      throw new Error('Дата этапа результата имеет неверный формат.');
     }
 
     return safeValue;
@@ -342,7 +344,18 @@
         importance,
         desire,
         score: importance * 2 + desire,
-        scheduledAt: normalizeScheduledAt(rawItem.scheduledAt),
+        plannedExecutionAt: normalizeResultDate(
+          rawItem.plannedExecutionAt
+        ),
+        completedAt: normalizeResultDate(
+          rawItem.completedAt ?? rawItem.scheduledAt
+        ),
+        plannedPublicationAt: normalizeResultDate(
+          rawItem.plannedPublicationAt
+        ),
+        publishedAt: normalizeResultDate(
+          rawItem.publishedAt
+        ),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }

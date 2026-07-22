@@ -251,7 +251,10 @@
     title = null,
     importance = 0,
     desire = 0,
-    scheduledAt = null,
+    plannedExecutionAt = null,
+    completedAt = null,
+    plannedPublicationAt = null,
+    publishedAt = null,
   }) {
     if (!getItemById('ideas', ideaId)) {
       throw new Error('Выбранная идея не существует.');
@@ -275,7 +278,10 @@
       importance: Number(importance),
       desire: Number(desire),
       score: calculateScore(importance, desire),
-      scheduledAt,
+      plannedExecutionAt,
+      completedAt,
+      plannedPublicationAt,
+      publishedAt,
     });
   }
 
@@ -302,10 +308,33 @@
     ) ?? null;
   }
 
-  function updateResultSchedule(resultId, scheduledAt) {
+  const RESULT_TIMELINE_FIELDS = new Set([
+    'plannedExecutionAt',
+    'completedAt',
+    'plannedPublicationAt',
+    'publishedAt',
+  ]);
+
+  function updateResultTimelineDate(
+    resultId,
+    fieldName,
+    value
+  ) {
+    if (!RESULT_TIMELINE_FIELDS.has(fieldName)) {
+      throw new Error('Неизвестный этап результата.');
+    }
+
     return updateItem('results', resultId, {
-      scheduledAt: scheduledAt || null,
+      [fieldName]: value || null,
     });
+  }
+
+  function updateResultSchedule(resultId, scheduledAt) {
+    return updateResultTimelineDate(
+      resultId,
+      'completedAt',
+      scheduledAt
+    );
   }
 
   function updateResultScore(resultId, importance, desire) {
@@ -393,6 +422,7 @@
     addResult,
     updateResultTitle,
     findDuplicateResult,
+    updateResultTimelineDate,
     updateResultSchedule,
     updateResultScore,
     deleteResultsByReference,

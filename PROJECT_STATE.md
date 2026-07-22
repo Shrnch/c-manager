@@ -1,20 +1,23 @@
 # PROJECT STATE
 
 ## Current stage
-Public release preparation
+Post-release feature update — Result workflow timeline
 
 ## Status
 Completed
 
 ## Version
-v0.3.0
+v0.4.0
 
-## Release preparation completed
-- README rewritten in English and updated for v0.3.0.
-- MIT License added.
-- English release notes for v0.3.0 added.
-- Repository and release instructions updated.
-- Full release archive prepared.
+## Added
+- Planned execution date.
+- Completed date.
+- Planned publication date.
+- Published date.
+- Missing dates use a red attention state.
+- Filled dates use a green state.
+- Existing `scheduledAt` data migrates to `completedAt`.
+- Planning filters and date sorting use planned execution.
 
 ## Last updated
-2026-07-20
+2026-07-22

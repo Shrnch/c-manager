@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.4.0] — 2026-07-22
+
+### Added
+
+- four date stages for every result:
+  - planned execution;
+  - completed;
+  - planned publication;
+  - published;
+- red attention state for stages without a date;
+- green completed state for stages with a date;
+- automatic migration of the previous `scheduledAt` value into `completedAt`;
+- Russian and English labels for all new stages.
+
+### Changed
+
+- the previous “Date and time” field is now “Completed”;
+- planning filters and scheduled-date sorting now use the planned execution date;
+- result cards display the four stages in a compact two-column timeline.
+
+
 ## [0.3.0] — 2026-07-20
 
 ### Added

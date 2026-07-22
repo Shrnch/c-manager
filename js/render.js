@@ -291,6 +291,49 @@
     return control;
   }
 
+  function createTimelineField({
+    fieldName,
+    label,
+    value,
+  }) {
+    const field = document.createElement('label');
+    field.className = 'result-timeline-field';
+    field.classList.add(
+      value ? 'result-timeline-field-set' : 'result-timeline-field-missing'
+    );
+
+    const header = document.createElement('span');
+    header.className = 'result-timeline-field-header';
+
+    const labelText = document.createElement('span');
+    labelText.className = 'result-timeline-label';
+    labelText.textContent = label;
+
+    const status = document.createElement('small');
+    status.className = 'result-timeline-status';
+    status.textContent = value
+      ? t('result.dateSet')
+      : t('result.dateMissing');
+
+    header.append(labelText, status);
+
+    const wrapper = document.createElement('span');
+    wrapper.className = 'datetime-wrapper result-timeline-input-wrapper';
+
+    const input = document.createElement('input');
+    input.type = 'datetime-local';
+    input.dataset.resultAction = 'timeline-date';
+    input.dataset.timelineField = fieldName;
+    input.value = value ?? '';
+    input.setAttribute('aria-label', label);
+    input.title = label;
+
+    wrapper.append(input);
+    field.append(header, wrapper);
+
+    return field;
+  }
+
   function createResultsEmptyState({
     title = t('results.empty.title'),
     description =
@@ -484,34 +527,37 @@
 
       ratings.append(importanceControl, desireControl);
 
-      const footer = document.createElement('footer');
-      footer.className = 'result-card-footer';
+      const timeline = document.createElement('section');
+      timeline.className = 'result-timeline';
+      timeline.setAttribute(
+        'aria-label',
+        t('result.timelineAria')
+      );
 
-      const scheduleLabel = document.createElement('label');
-      scheduleLabel.className = 'result-schedule-field';
+      timeline.append(
+        createTimelineField({
+          fieldName: 'plannedExecutionAt',
+          label: t('result.plannedExecution'),
+          value: result.plannedExecutionAt,
+        }),
+        createTimelineField({
+          fieldName: 'completedAt',
+          label: t('result.completed'),
+          value: result.completedAt,
+        }),
+        createTimelineField({
+          fieldName: 'plannedPublicationAt',
+          label: t('result.plannedPublication'),
+          value: result.plannedPublicationAt,
+        }),
+        createTimelineField({
+          fieldName: 'publishedAt',
+          label: t('result.published'),
+          value: result.publishedAt,
+        })
+      );
 
-      const scheduleText = document.createElement('span');
-      scheduleText.textContent = t('result.schedule');
-
-      const scheduleWrapper = document.createElement('span');
-      scheduleWrapper.className = 'datetime-wrapper';
-
-      const scheduleInput = document.createElement('input');
-      scheduleInput.type = 'datetime-local';
-      scheduleInput.dataset.resultAction = 'schedule';
-      scheduleInput.value = result.scheduledAt ?? '';
-
-      scheduleWrapper.append(scheduleInput);
-      scheduleLabel.append(scheduleText, scheduleWrapper);
-
-      const status = document.createElement('span');
-      status.className = 'result-status';
-      status.textContent = result.scheduledAt
-        ? t('result.planned')
-        : t('result.noDate');
-
-      footer.append(scheduleLabel, status);
-      card.append(header, combination, ratings, footer);
+      card.append(header, combination, ratings, timeline);
       container.append(card);
     });
   }

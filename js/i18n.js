@@ -67,17 +67,17 @@
       'results.eyebrow': 'SAVED COMBINATIONS',
       'results.title': 'Результаты',
       'results.sort': 'Сортировка',
-      'results.planning': 'Планирование',
+      'results.planning': 'План выполнения',
       'results.category': 'Категория концепта',
       'results.sort.score': 'По итоговому баллу',
       'results.sort.importance': 'По важности',
       'results.sort.desire': 'По желанию',
       'results.sort.newest': 'Сначала новые',
       'results.sort.oldest': 'Сначала старые',
-      'results.sort.scheduled': 'По ближайшей дате',
+      'results.sort.scheduled': 'По ближайшему выполнению',
       'results.filter.all': 'Все результаты',
-      'results.filter.planned': 'Только запланированные',
-      'results.filter.unscheduled': 'Без даты',
+      'results.filter.planned': 'Выполнение запланировано',
+      'results.filter.unscheduled': 'Без плана выполнения',
       'results.filter.allCategories': 'Все категории',
       'results.filter.uncategorized': 'Без категории',
       'results.empty.title': 'Сохранённых результатов пока нет',
@@ -149,9 +149,13 @@
       'result.importanceHelp': 'Вес в итоговом балле: ×2',
       'result.desireHelp': 'Вес в итоговом балле: ×1',
       'result.ratingValue': '{label}: {value} из 10',
-      'result.schedule': 'Дата и время',
-      'result.planned': 'Запланировано',
-      'result.noDate': 'Дата не назначена',
+      'result.timelineAria': 'Этапы выполнения и публикации',
+      'result.plannedExecution': 'Запланировано выполнение',
+      'result.completed': 'Сделано',
+      'result.plannedPublication': 'Запланирована публикация',
+      'result.published': 'Выложено',
+      'result.dateMissing': 'Нужно указать дату',
+      'result.dateSet': 'Дата указана',
 
       'dialog.deleteItem.title': 'Удалить элемент?',
       'dialog.deleteItem.used':
@@ -211,8 +215,8 @@
         'Случайная комбинация выбрана. Нажми «Создать результат», чтобы сохранить её.',
       'toast.randomUnavailable':
         'Random недоступен: добавь элементы в столбцы — {columns}.',
-      'toast.scheduleSet': 'Дата и время назначены.',
-      'toast.scheduleCleared': 'Дата и время очищены.',
+      'toast.timelineDateSet': 'Дата этапа сохранена.',
+      'toast.timelineDateCleared': 'Дата этапа очищена.',
       'toast.corruptedData':
         'Сохранённые данные были повреждены. Загружен стартовый набор.',
       'toast.autosaveFailed':
@@ -305,17 +309,17 @@
       'results.eyebrow': 'SAVED COMBINATIONS',
       'results.title': 'Results',
       'results.sort': 'Sort',
-      'results.planning': 'Planning',
+      'results.planning': 'Execution plan',
       'results.category': 'Concept category',
       'results.sort.score': 'Highest score',
       'results.sort.importance': 'Highest importance',
       'results.sort.desire': 'Highest desire',
       'results.sort.newest': 'Newest first',
       'results.sort.oldest': 'Oldest first',
-      'results.sort.scheduled': 'Nearest scheduled date',
+      'results.sort.scheduled': 'Nearest planned execution',
       'results.filter.all': 'All results',
-      'results.filter.planned': 'Scheduled only',
-      'results.filter.unscheduled': 'Without a date',
+      'results.filter.planned': 'Execution planned',
+      'results.filter.unscheduled': 'No execution plan',
       'results.filter.allCategories': 'All categories',
       'results.filter.uncategorized': 'Uncategorized',
       'results.empty.title': 'No saved results yet',
@@ -386,9 +390,13 @@
       'result.importanceHelp': 'Weight in total score: ×2',
       'result.desireHelp': 'Weight in total score: ×1',
       'result.ratingValue': '{label}: {value} out of 10',
-      'result.schedule': 'Date and time',
-      'result.planned': 'Scheduled',
-      'result.noDate': 'No date assigned',
+      'result.timelineAria': 'Execution and publication stages',
+      'result.plannedExecution': 'Execution planned',
+      'result.completed': 'Completed',
+      'result.plannedPublication': 'Publication planned',
+      'result.published': 'Published',
+      'result.dateMissing': 'Date required',
+      'result.dateSet': 'Date set',
 
       'dialog.deleteItem.title': 'Delete item?',
       'dialog.deleteItem.used':
@@ -448,8 +456,8 @@
         'Random combination selected. Click “Create result” to save it.',
       'toast.randomUnavailable':
         'Random is unavailable: add items to these columns — {columns}.',
-      'toast.scheduleSet': 'Date and time assigned.',
-      'toast.scheduleCleared': 'Date and time cleared.',
+      'toast.timelineDateSet': 'Stage date saved.',
+      'toast.timelineDateCleared': 'Stage date cleared.',
       'toast.corruptedData':
         'Saved data was corrupted. The starter set has been loaded.',
       'toast.autosaveFailed':
@@ -508,6 +516,10 @@
         'The result name cannot be longer than 80 characters.',
       'Назначенная дата результата имеет неверный формат.':
         'The scheduled result date has an invalid format.',
+      'Дата этапа результата имеет неверный формат.':
+        'The result stage date has an invalid format.',
+      'Неизвестный этап результата.':
+        'Unknown result stage.',
       'Корневой объект данных имеет неверный формат.':
         'The root data object has an invalid format.',
       'localStorage недоступен.':

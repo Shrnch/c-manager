@@ -1,6 +1,6 @@
 # Content Idea Organizer
 
-**Current version:** `v0.3.0`
+**Current version:** `v0.4.0`
 
 Content Idea Organizer is a local browser app for building content plans by combining three reusable components:
 
@@ -21,7 +21,11 @@ Each saved result keeps the selected combination together with scheduling and pr
 - reuse the same source item in multiple results;
 - compact results panel designed for desktop use;
 - custom names for saved results;
-- scheduled date and time;
+- four-stage execution and publication timeline:
+  - planned execution;
+  - completed;
+  - planned publication;
+  - published;
 - **Importance** and **Desire** ratings from `0` to `10`;
 - weighted score formula:
 
@@ -29,7 +33,7 @@ Each saved result keeps the selected combination together with scheduling and pr
 score = importance × 2 + desire
 ```
 
-- sorting by score, importance, desire, creation date, or scheduled date;
+- sorting by score, importance, desire, creation date, or planned execution date;
 - filtering by planning status and concept category;
 - random combination selection;
 - optional **Connections mode** for inspecting all relationships of a cell;
