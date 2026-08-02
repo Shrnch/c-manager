@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.0.0] — 2026-08-02
+
+### First stable release
+
+This release marks the project as **c-manager v1.0.0**.
+
+### Changed
+
+- project renamed from **Content Idea Organizer** to **c-manager**;
+- application title, footer, README, documentation, and release branding updated;
+- repository references updated to `Shrnch/c-manager`;
+- release archive root folder renamed to `c-manager`.
+
+### Included in v1.0.0
+
+- Ideas, Concepts, and Music workflow;
+- concept and music categories with custom colors;
+- optional clickable links for source items;
+- result scoring, sorting, and filtering;
+- four-stage execution/publication timeline;
+- Completed and Archive workflows;
+- monthly content planning calendar;
+- RU / EN interface;
+- JSON export/import and local browser persistence;
+- relation visualization with SVG wires.
+
+### Compatibility
+
+- existing browser data remains compatible;
+- legacy internal localStorage keys are intentionally preserved so upgrading does not wipe saved ideas, concepts, music, results, categories, dates, archive state, or UI preferences.
+
+
 ## [0.7.0] — 2026-08-02
 
 ### Added

@@ -1,33 +1,31 @@
 # PROJECT STATE
 
 ## Current stage
-Post-release feature update — Content planning calendar
+First stable public release
 
 ## Status
 Completed
 
 ## Version
-v0.7.0
+v1.0.0
 
-## Added
-- Dedicated Calendar tab.
-- Monthly day-cell calendar view.
-- Four visual timeline stages: planned execution, completed, planned publication, published.
-- Day detail panel.
-- Overdue planned-stage indication.
-- Month navigation and Today shortcut.
-- Planning coverage metrics.
-- Quick navigation back to results.
-- Russian and English translations.
+## Project name
+c-manager
 
-## Calendar data source
-The calendar is derived from the existing result timeline fields:
-- `plannedExecutionAt`
-- `completedAt`
-- `plannedPublicationAt`
-- `publishedAt`
+## Release scope
+- Ideas, Concepts, and Music workflow.
+- Concept and music categories with colors.
+- Optional source links.
+- Saved results with scoring and planning.
+- Execution/publication timeline.
+- Completed and Archive workflows.
+- Content planning calendar.
+- RU / EN interface.
+- JSON backup and restore.
+- Local browser persistence.
 
-Archived results are excluded. Active and completed results remain visible.
+## Compatibility
+Legacy internal localStorage keys are preserved intentionally so existing browser data remains available after upgrading from earlier versions.
 
 ## Last updated
 2026-08-02

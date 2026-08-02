@@ -1,8 +1,8 @@
-# Content Idea Organizer
+# c-manager
 
-**Current version:** `v0.7.0`
+**Current version:** `v1.0.0`
 
-Content Idea Organizer is a local browser app for building content plans by combining three reusable components:
+c-manager is a local browser app for building content plans by combining three reusable components:
 
 - an **idea** — the format or action used in a post or video;
 - a **concept** — the topic of the content;
@@ -96,7 +96,7 @@ Only application interface text is translated. User-entered ideas, concepts, cat
 ## Project structure
 
 ```text
-content-idea-organizer/
+c-manager/
 ├── index.html
 ├── styles.css
 ├── README.md
@@ -152,7 +152,7 @@ Ctrl + F5
 
 ## Repository
 
-GitHub: `https://github.com/Shrnch/content-idea-organizer`
+GitHub: `https://github.com/Shrnch/c-manager`
 
 ## License
 
