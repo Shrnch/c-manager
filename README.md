@@ -1,6 +1,6 @@
 # c-manager
 
-**Current version:** `v1.0.0`
+**Current version:** `v1.1.0`
 
 c-manager is a local browser app for building content plans by combining three reusable components:
 
@@ -17,6 +17,7 @@ Each saved result keeps the selected combination together with scheduling and pr
 - add, edit, and delete items;
 - reusable concept categories;
 - reusable music categories;
+- filter concept and music source columns by category;
 - custom colors and direct HEX input for both concept and music categories;
 - select one item from each column and save the combination as a result;
 - visible SVG wires between connected cells;

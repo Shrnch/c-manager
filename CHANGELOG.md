@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0] — 2026-08-02
+
+### Added
+
+- category filter directly in the Concepts column header;
+- category filter directly in the Music column header;
+- “All categories” and “Uncategorized” options;
+- concept and music filters work independently;
+- Random selection respects the currently visible concept and music category filters.
+
+### Behavior
+
+- filtering only changes what is visible in the source columns;
+- no items are deleted or modified;
+- active items hidden by a category filter remain in storage and can be shown again by switching back to “All categories”.
+
+
 ## [1.0.0] — 2026-08-02
 
 ### First stable release

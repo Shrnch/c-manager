@@ -124,6 +124,12 @@ const resultsCategoryFilter = document.querySelector('#results-category-filter')
 const resultsMusicCategoryFilter = document.querySelector(
   '#results-music-category-filter'
 );
+const conceptColumnCategoryFilter = document.querySelector(
+  '#concept-column-category-filter'
+);
+const musicColumnCategoryFilter = document.querySelector(
+  '#music-column-category-filter'
+);
 const exportDataButton = document.querySelector('#export-data-button');
 const importDataButton = document.querySelector('#import-data-button');
 const importDataInput = document.querySelector('#import-data-input');
@@ -158,6 +164,11 @@ const resultsView = {
   statusFilter: 'all',
   categoryFilter: 'all',
   musicCategoryFilter: 'all',
+};
+
+const sourceColumnFilters = {
+  conceptCategoryId: 'all',
+  musicCategoryId: 'all',
 };
 
 const UI_PREFERENCES_KEY =
@@ -864,6 +875,150 @@ function populateMusicCategoryFilter() {
     resultsView.musicCategoryFilter;
 }
 
+function populateSourceColumnFilters() {
+  if (conceptColumnCategoryFilter) {
+    const previousValue =
+      sourceColumnFilters.conceptCategoryId;
+
+    conceptColumnCategoryFilter.replaceChildren();
+
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent =
+      t('columns.allConceptCategories');
+    conceptColumnCategoryFilter.append(allOption);
+
+    stateApi.state.conceptCategories
+      .slice()
+      .sort((first, second) =>
+        first.name.localeCompare(
+          second.name,
+          i18n.getLocale()
+        )
+      )
+      .forEach((category) => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = `● ${category.name}`;
+        option.style.color =
+          category.color || '#6552c7';
+        conceptColumnCategoryFilter.append(option);
+      });
+
+    const uncategorizedOption =
+      document.createElement('option');
+    uncategorizedOption.value = 'uncategorized';
+    uncategorizedOption.textContent =
+      t('common.uncategorized');
+    conceptColumnCategoryFilter.append(
+      uncategorizedOption
+    );
+
+    const validValues = Array.from(
+      conceptColumnCategoryFilter.options
+    ).map((option) => option.value);
+
+    sourceColumnFilters.conceptCategoryId =
+      validValues.includes(previousValue)
+        ? previousValue
+        : 'all';
+
+    conceptColumnCategoryFilter.value =
+      sourceColumnFilters.conceptCategoryId;
+  }
+
+  if (musicColumnCategoryFilter) {
+    const previousValue =
+      sourceColumnFilters.musicCategoryId;
+
+    musicColumnCategoryFilter.replaceChildren();
+
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent =
+      t('columns.allMusicCategories');
+    musicColumnCategoryFilter.append(allOption);
+
+    stateApi.state.musicCategories
+      .slice()
+      .sort((first, second) =>
+        first.name.localeCompare(
+          second.name,
+          i18n.getLocale()
+        )
+      )
+      .forEach((category) => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = `● ${category.name}`;
+        option.style.color =
+          category.color || '#6552c7';
+        musicColumnCategoryFilter.append(option);
+      });
+
+    const uncategorizedOption =
+      document.createElement('option');
+    uncategorizedOption.value = 'uncategorized';
+    uncategorizedOption.textContent =
+      t('common.uncategorized');
+    musicColumnCategoryFilter.append(
+      uncategorizedOption
+    );
+
+    const validValues = Array.from(
+      musicColumnCategoryFilter.options
+    ).map((option) => option.value);
+
+    sourceColumnFilters.musicCategoryId =
+      validValues.includes(previousValue)
+        ? previousValue
+        : 'all';
+
+    musicColumnCategoryFilter.value =
+      sourceColumnFilters.musicCategoryId;
+  }
+}
+
+function getVisibleSourceItems() {
+  const activeConcepts = stateApi.state.concepts.filter(
+    (item) => getWorkflowStatus(item) === 'active'
+  );
+
+  const activeMusic = stateApi.state.music.filter(
+    (item) => getWorkflowStatus(item) === 'active'
+  );
+
+  const concepts = activeConcepts.filter((concept) => {
+    const selected =
+      sourceColumnFilters.conceptCategoryId;
+
+    return (
+      selected === 'all' ||
+      (
+        selected === 'uncategorized' &&
+        !concept.categoryId
+      ) ||
+      selected === concept.categoryId
+    );
+  });
+
+  const music = activeMusic.filter((musicItem) => {
+    const selected =
+      sourceColumnFilters.musicCategoryId;
+
+    return (
+      selected === 'all' ||
+      (
+        selected === 'uncategorized' &&
+        !musicItem.categoryId
+      ) ||
+      selected === musicItem.categoryId
+    );
+  });
+
+  return { concepts, music };
+}
+
 function renderResultsView() {
   renderer.renderResults(stateApi.state, getVisibleResults());
 }
@@ -954,10 +1109,29 @@ function resetViewAndSelection() {
 function renderEverything() {
   populateCategoryFilter();
   populateMusicCategoryFilter();
-  renderer.renderAll(
+  populateSourceColumnFilters();
+
+  const visibleSourceItems =
+    getVisibleSourceItems();
+
+  renderer.renderIdeas(
+    stateApi.state.ideas.filter(
+      (item) => getWorkflowStatus(item) === 'active'
+    )
+  );
+  renderer.renderConcepts(
+    visibleSourceItems.concepts,
+    stateApi.state.conceptCategories
+  );
+  renderer.renderMusic(
+    visibleSourceItems.music,
+    stateApi.state.musicCategories
+  );
+  renderer.renderResults(
     stateApi.state,
     getVisibleResults()
   );
+
   updateViewCounts();
 
   if (categoriesModal?.open) {
@@ -2519,6 +2693,24 @@ resultsMusicCategoryFilter?.addEventListener(
   }
 );
 
+conceptColumnCategoryFilter?.addEventListener(
+  'change',
+  () => {
+    sourceColumnFilters.conceptCategoryId =
+      conceptColumnCategoryFilter.value;
+    renderEverything();
+  }
+);
+
+musicColumnCategoryFilter?.addEventListener(
+  'change',
+  () => {
+    sourceColumnFilters.musicCategoryId =
+      musicColumnCategoryFilter.value;
+    renderEverything();
+  }
+);
+
 function getRandomItem(items) {
   if (!Array.isArray(items) || !items.length) {
     return null;
@@ -2547,9 +2739,20 @@ function brieflyHighlightRandomSelection() {
 }
 
 document.querySelector('#random-button')?.addEventListener('click', () => {
-  const randomIdea = getRandomItem(stateApi.state.ideas);
-  const randomConcept = getRandomItem(stateApi.state.concepts);
-  const randomMusic = getRandomItem(stateApi.state.music);
+  const visibleSourceItems =
+    getVisibleSourceItems();
+
+  const randomIdea = getRandomItem(
+    stateApi.state.ideas.filter(
+      (item) => getWorkflowStatus(item) === 'active'
+    )
+  );
+  const randomConcept = getRandomItem(
+    visibleSourceItems.concepts
+  );
+  const randomMusic = getRandomItem(
+    visibleSourceItems.music
+  );
 
   const missingColumns = [];
 
@@ -3003,4 +3206,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v0.7.0: календарь контент-плана подключён.');
+console.log('v1.1.0: фильтры категорий в колонках подключены.');

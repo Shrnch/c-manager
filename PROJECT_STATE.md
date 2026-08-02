@@ -1,31 +1,20 @@
 # PROJECT STATE
 
 ## Current stage
-First stable public release
+Source column category filtering
 
 ## Status
 Completed
 
 ## Version
-v1.0.0
+v1.1.0
 
-## Project name
-c-manager
-
-## Release scope
-- Ideas, Concepts, and Music workflow.
-- Concept and music categories with colors.
-- Optional source links.
-- Saved results with scoring and planning.
-- Execution/publication timeline.
-- Completed and Archive workflows.
-- Content planning calendar.
-- RU / EN interface.
-- JSON backup and restore.
-- Local browser persistence.
-
-## Compatibility
-Legacy internal localStorage keys are preserved intentionally so existing browser data remains available after upgrading from earlier versions.
+## Added
+- Concepts column category filter.
+- Music column category filter.
+- All categories and Uncategorized options.
+- Independent filtering for Concepts and Music.
+- Random selection respects visible source filters.
 
 ## Last updated
 2026-08-02

@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.0.0</title>
+  <title>c-manager — v1.1.0</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -219,6 +219,20 @@
             </div>
 
             <div class="column-header-actions">
+
+            <select
+              class="column-category-filter"
+              id="concept-column-category-filter"
+              aria-label="Фильтр категорий концептов"
+              data-i18n-aria="columns.filterConceptCategories"
+            >
+              <option
+                value="all"
+                data-i18n="columns.allConceptCategories"
+              >
+                Все категории
+              </option>
+            </select>
               <button
                 class="icon-button icon-button-small"
                 type="button"
@@ -251,6 +265,20 @@
               <h2 data-i18n="columns.music">Музыка</h2>
             </div>
             <div class="column-header-actions">
+
+              <select
+                class="column-category-filter"
+                id="music-column-category-filter"
+                aria-label="Фильтр категорий музыки"
+                data-i18n-aria="columns.filterMusicCategories"
+              >
+                <option
+                  value="all"
+                  data-i18n="columns.allMusicCategories"
+                >
+                  Все категории
+                </option>
+              </select>
               <button
                 class="icon-button icon-button-small"
                 type="button"
@@ -528,7 +556,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.0.0</span>
+      <span>v1.1.0</span>
     </footer>
   </main>
 

@@ -106,6 +106,14 @@
       'columns.manageCategories': 'Управлять категориями',
       'columns.manageMusicCategories':
         'Управлять категориями музыки',
+      'columns.filterConceptCategories':
+        'Фильтр категорий концептов',
+      'columns.filterMusicCategories':
+        'Фильтр категорий музыки',
+      'columns.allConceptCategories':
+        'Все категории',
+      'columns.allMusicCategories':
+        'Все категории',
 
       'results.eyebrow': 'SAVED COMBINATIONS',
       'results.title': 'Результаты',
@@ -467,6 +475,14 @@
       'columns.manageCategories': 'Manage categories',
       'columns.manageMusicCategories':
         'Manage music categories',
+      'columns.filterConceptCategories':
+        'Filter concept categories',
+      'columns.filterMusicCategories':
+        'Filter music categories',
+      'columns.allConceptCategories':
+        'All categories',
+      'columns.allMusicCategories':
+        'All categories',
 
       'results.eyebrow': 'SAVED COMBINATIONS',
       'results.title': 'Results',
