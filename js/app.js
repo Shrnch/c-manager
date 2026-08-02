@@ -2742,29 +2742,36 @@ document.querySelector('#random-button')?.addEventListener('click', () => {
   const visibleSourceItems =
     getVisibleSourceItems();
 
-  const randomIdea = getRandomItem(
-    stateApi.state.ideas.filter(
-      (item) => getWorkflowStatus(item) === 'active'
-    )
+  const activeIdeas = stateApi.state.ideas.filter(
+    (item) => getWorkflowStatus(item) === 'active'
   );
-  const randomConcept = getRandomItem(
-    visibleSourceItems.concepts
-  );
-  const randomMusic = getRandomItem(
-    visibleSourceItems.music
-  );
+
+  const needsIdea = !selection.ideaId;
+  const needsConcept = !selection.conceptId;
+  const needsMusic = !selection.musicId;
+
+  if (!needsIdea && !needsConcept && !needsMusic) {
+    showToast(t('toast.randomEverythingLocked'));
+    return;
+  }
 
   const missingColumns = [];
 
-  if (!randomIdea) {
+  if (needsIdea && !activeIdeas.length) {
     missingColumns.push(t('random.ideas'));
   }
 
-  if (!randomConcept) {
+  if (
+    needsConcept &&
+    !visibleSourceItems.concepts.length
+  ) {
     missingColumns.push(t('random.concepts'));
   }
 
-  if (!randomMusic) {
+  if (
+    needsMusic &&
+    !visibleSourceItems.music.length
+  ) {
     missingColumns.push(t('random.music'));
   }
 
@@ -2777,15 +2784,38 @@ document.querySelector('#random-button')?.addEventListener('click', () => {
     return;
   }
 
-  selection.ideaId = randomIdea.id;
-  selection.conceptId = randomConcept.id;
-  selection.musicId = randomMusic.id;
+  if (needsIdea) {
+    selection.ideaId =
+      getRandomItem(activeIdeas).id;
+  }
+
+  if (needsConcept) {
+    selection.conceptId =
+      getRandomItem(
+        visibleSourceItems.concepts
+      ).id;
+  }
+
+  if (needsMusic) {
+    selection.musicId =
+      getRandomItem(
+        visibleSourceItems.music
+      ).id;
+  }
 
   updateSelectionInterface();
   brieflyHighlightRandomSelection();
 
+  const randomizedCount = [
+    needsIdea,
+    needsConcept,
+    needsMusic,
+  ].filter(Boolean).length;
+
   showToast(
-    t('toast.randomSelected')
+    t('toast.randomFilledEmpty', {
+      count: randomizedCount
+    })
   );
 });
 
@@ -3206,4 +3236,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.1.0: фильтры категорий в колонках подключены.');
+console.log('v1.2.0: частичный Random подключён.');

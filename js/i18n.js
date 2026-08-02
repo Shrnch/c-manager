@@ -333,6 +333,10 @@
       'toast.reset': 'Все данные удалены.',
       'toast.randomSelected':
         'Случайная комбинация выбрана. Нажми «Создать результат», чтобы сохранить её.',
+      'toast.randomFilledEmpty':
+        'Random заполнил свободные ячейки: {count}.',
+      'toast.randomEverythingLocked':
+        'Все три ячейки уже выбраны. Сними выбор с того, что хочешь перерандомить.',
       'toast.randomUnavailable':
         'Random недоступен: добавь элементы в столбцы — {columns}.',
       'toast.timelineDateSet': 'Дата этапа сохранена.',
@@ -700,6 +704,10 @@
       'toast.reset': 'All data deleted.',
       'toast.randomSelected':
         'Random combination selected. Click “Create result” to save it.',
+      'toast.randomFilledEmpty':
+        'Random filled {count} unselected slot(s).',
+      'toast.randomEverythingLocked':
+        'All three slots are selected. Deselect anything you want to randomize.',
       'toast.randomUnavailable':
         'Random is unavailable: add items to these columns — {columns}.',
       'toast.timelineDateSet': 'Stage date saved.',

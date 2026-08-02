@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0] — 2026-08-02
+
+### Changed
+
+- Random now preserves source cells that are already selected;
+- with one selected source, Random fills the other two;
+- with two selected sources, Random fills only the remaining source;
+- with no selections, Random fills all three;
+- with all three selected, Random changes nothing and asks the user to deselect the slot they want to randomize;
+- concept and music category filters continue to constrain Random pools.
+
+
 ## [1.1.0] — 2026-08-02
 
 ### Added
