@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.1] — 2026-08-02
+
+### Fixed
+
+- Random-generated selections are no longer treated as manually locked;
+- pressing Random repeatedly now rerandomizes every slot that was not selected manually;
+- manually selected Idea / Concept / Music cells stay fixed across repeated Random presses;
+- when more than one eligible item exists, repeated Random avoids returning the same item immediately where possible;
+- clearing or deselecting a manual choice also removes its lock.
+
+
 ## [1.2.0] — 2026-08-02
 
 ### Changed

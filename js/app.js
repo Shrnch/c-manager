@@ -23,6 +23,12 @@ const selection = {
   musicId: null,
 };
 
+const manualSelectionLocks = {
+  ideaId: false,
+  conceptId: false,
+  musicId: false,
+};
+
 const itemModal = document.querySelector('#item-modal');
 const itemForm = document.querySelector('#item-form');
 const itemFields = document.querySelector('#item-form-fields');
@@ -437,6 +443,10 @@ function clearSelection() {
   selection.ideaId = null;
   selection.conceptId = null;
   selection.musicId = null;
+
+  manualSelectionLocks.ideaId = false;
+  manualSelectionLocks.conceptId = false;
+  manualSelectionLocks.musicId = false;
 }
 
 function clearSelectionForItem(type, itemId) {
@@ -444,6 +454,7 @@ function clearSelectionForItem(type, itemId) {
 
   if (config && selection[config.selectionKey] === itemId) {
     selection[config.selectionKey] = null;
+    manualSelectionLocks[config.selectionKey] = false;
   }
 }
 
@@ -451,8 +462,14 @@ function toggleSelection(type, itemId) {
   const config = typeConfig[type];
   if (!config) return;
 
-  selection[config.selectionKey] =
-    selection[config.selectionKey] === itemId ? null : itemId;
+  const selectionKey = config.selectionKey;
+  const isDeselecting =
+    selection[selectionKey] === itemId;
+
+  selection[selectionKey] =
+    isDeselecting ? null : itemId;
+  manualSelectionLocks[selectionKey] =
+    !isDeselecting;
 
   updateSelectionInterface();
 }
@@ -2711,13 +2728,27 @@ musicColumnCategoryFilter?.addEventListener(
   }
 );
 
-function getRandomItem(items) {
+function getRandomItem(items, currentId = null) {
   if (!Array.isArray(items) || !items.length) {
     return null;
   }
 
-  const randomIndex = Math.floor(Math.random() * items.length);
-  return items[randomIndex];
+  const alternativeItems =
+    currentId && items.length > 1
+      ? items.filter(
+          (item) => item.id !== currentId
+        )
+      : items;
+
+  const pool = alternativeItems.length
+    ? alternativeItems
+    : items;
+
+  const randomIndex = Math.floor(
+    Math.random() * pool.length
+  );
+
+  return pool[randomIndex];
 }
 
 function brieflyHighlightRandomSelection() {
@@ -2746,9 +2777,12 @@ document.querySelector('#random-button')?.addEventListener('click', () => {
     (item) => getWorkflowStatus(item) === 'active'
   );
 
-  const needsIdea = !selection.ideaId;
-  const needsConcept = !selection.conceptId;
-  const needsMusic = !selection.musicId;
+  const needsIdea =
+    !manualSelectionLocks.ideaId;
+  const needsConcept =
+    !manualSelectionLocks.conceptId;
+  const needsMusic =
+    !manualSelectionLocks.musicId;
 
   if (!needsIdea && !needsConcept && !needsMusic) {
     showToast(t('toast.randomEverythingLocked'));
@@ -2786,21 +2820,38 @@ document.querySelector('#random-button')?.addEventListener('click', () => {
 
   if (needsIdea) {
     selection.ideaId =
-      getRandomItem(activeIdeas).id;
+      getRandomItem(
+        activeIdeas,
+        selection.ideaId
+      ).id;
   }
 
   if (needsConcept) {
     selection.conceptId =
       getRandomItem(
-        visibleSourceItems.concepts
+        visibleSourceItems.concepts,
+        selection.conceptId
       ).id;
   }
 
   if (needsMusic) {
     selection.musicId =
       getRandomItem(
-        visibleSourceItems.music
+        visibleSourceItems.music,
+        selection.musicId
       ).id;
+  }
+
+  if (needsIdea) {
+    manualSelectionLocks.ideaId = false;
+  }
+
+  if (needsConcept) {
+    manualSelectionLocks.conceptId = false;
+  }
+
+  if (needsMusic) {
+    manualSelectionLocks.musicId = false;
   }
 
   updateSelectionInterface();
@@ -3236,4 +3287,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.2.0: частичный Random подключён.');
+console.log('v1.2.1: повторный частичный Random исправлен.');

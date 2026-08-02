@@ -1,21 +1,20 @@
 # PROJECT STATE
 
 ## Current stage
-Partial Random selection
+Repeated partial Random fix
 
 ## Status
 Completed
 
 ## Version
-v1.2.0
+v1.2.1
 
-## Changed
-- Existing source selections act as locks for Random.
-- No selection = randomize all three.
-- One selected source = randomize two.
-- Two selected sources = randomize one.
-- Three selected sources = keep the combination and show a hint.
-- Concept and Music category filters still constrain Random.
+## Fixed
+- Manual selections and Random selections are tracked separately.
+- Only manual selections are locked.
+- Repeated Random rerolls all unlocked slots.
+- Random tries to avoid the immediately previous item when alternatives exist.
+- Deselecting a manual cell removes its lock.
 
 ## Last updated
 2026-08-02
