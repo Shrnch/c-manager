@@ -14,6 +14,7 @@
   const MUTATING_METHODS = [
     'addItem',
     'updateItem',
+    'setWorkflowStatus',
     'deleteItem',
     'addIdea',
     'addConceptCategory',
@@ -90,6 +91,33 @@
     }
 
     return parsedUrl.href;
+  }
+
+  const WORKFLOW_STATUSES = new Set([
+    'active',
+    'completed',
+    'archived',
+  ]);
+
+  function normalizeWorkflowStatus(value) {
+    return WORKFLOW_STATUSES.has(value)
+      ? value
+      : 'active';
+  }
+
+  function normalizeStatusChangedAt(value, status) {
+    if (status === 'active') {
+      return null;
+    }
+
+    if (
+      typeof value === 'string' &&
+      !Number.isNaN(Date.parse(value))
+    ) {
+      return value;
+    }
+
+    return new Date().toISOString();
   }
 
   function normalizeTimestamp(value) {
@@ -226,6 +254,17 @@
           `У идеи №${index + 1} отсутствует текст.`
         ),
         url: normalizeOptionalUrl(rawItem.url),
+        workflowStatus:
+          normalizeWorkflowStatus(
+            rawItem.workflowStatus
+          ),
+        statusChangedAt:
+          normalizeStatusChangedAt(
+            rawItem.statusChangedAt,
+            normalizeWorkflowStatus(
+              rawItem.workflowStatus
+            )
+          ),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }
@@ -295,6 +334,17 @@
         ),
         categoryId,
         url: normalizeOptionalUrl(rawItem.url),
+        workflowStatus:
+          normalizeWorkflowStatus(
+            rawItem.workflowStatus
+          ),
+        statusChangedAt:
+          normalizeStatusChangedAt(
+            rawItem.statusChangedAt,
+            normalizeWorkflowStatus(
+              rawItem.workflowStatus
+            )
+          ),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }
@@ -370,6 +420,17 @@
         ),
         categoryId,
         url: normalizeOptionalUrl(rawItem.url),
+        workflowStatus:
+          normalizeWorkflowStatus(
+            rawItem.workflowStatus
+          ),
+        statusChangedAt:
+          normalizeStatusChangedAt(
+            rawItem.statusChangedAt,
+            normalizeWorkflowStatus(
+              rawItem.workflowStatus
+            )
+          ),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }
@@ -459,6 +520,17 @@
         publishedAt: normalizeResultDate(
           rawItem.publishedAt
         ),
+        workflowStatus:
+          normalizeWorkflowStatus(
+            rawItem.workflowStatus
+          ),
+        statusChangedAt:
+          normalizeStatusChangedAt(
+            rawItem.statusChangedAt,
+            normalizeWorkflowStatus(
+              rawItem.workflowStatus
+            )
+          ),
         createdAt: normalizeTimestamp(rawItem.createdAt),
         ...(rawItem.updatedAt
           ? { updatedAt: normalizeTimestamp(rawItem.updatedAt) }

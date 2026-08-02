@@ -1,6 +1,6 @@
 # Content Idea Organizer
 
-**Current version:** `v0.5.0`
+**Current version:** `v0.7.0`
 
 Content Idea Organizer is a local browser app for building content plans by combining three reusable components:
 
@@ -23,6 +23,8 @@ Each saved result keeps the selected combination together with scheduling and pr
 - reuse the same source item in multiple results;
 - compact results panel designed for desktop use;
 - custom names for saved results;
+- completed and archived result workflows with separate tabs;
+- monthly content calendar with day cells, stage colors, day details, and planning metrics;
 - four-stage execution and publication timeline:
   - planned execution;
   - completed;

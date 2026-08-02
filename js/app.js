@@ -61,6 +61,58 @@ const confirmModal = document.querySelector('#confirm-modal');
 const confirmTitle = document.querySelector('#confirm-title');
 const confirmText = document.querySelector('#confirm-text');
 const confirmActionButton = document.querySelector('#confirm-action-button');
+const confirmOptions = document.querySelector(
+  '#confirm-options'
+);
+const confirmOptionsList = document.querySelector(
+  '#confirm-options-list'
+);
+
+const workspaceView = document.querySelector(
+  '#workspace-view'
+);
+const calendarView = document.querySelector(
+  '#calendar-view'
+);
+const calendarGrid = document.querySelector(
+  '#calendar-grid'
+);
+const calendarDayDetails = document.querySelector(
+  '#calendar-day-details'
+);
+const calendarPrevMonth = document.querySelector(
+  '#calendar-prev-month'
+);
+const calendarNextMonth = document.querySelector(
+  '#calendar-next-month'
+);
+const calendarTodayButton = document.querySelector(
+  '#calendar-today-button'
+);
+const statusView = document.querySelector(
+  '#status-view'
+);
+const statusViewTitle = document.querySelector(
+  '#status-view-title'
+);
+const statusViewDescription =
+  document.querySelector(
+    '#status-view-description'
+  );
+const statusViewContent = document.querySelector(
+  '#status-view-content'
+);
+const workspaceActions = document.querySelector(
+  '#workspace-actions'
+);
+const completedViewCount =
+  document.querySelector(
+    '#completed-view-count'
+  );
+const archivedViewCount =
+  document.querySelector(
+    '#archived-view-count'
+  );
 
 const toast = document.querySelector('#toast');
 const previewText = document.querySelector('#selection-preview-text');
@@ -92,6 +144,14 @@ let activeItemType = null;
 let activeItemId = null;
 let pendingConfirmAction = null;
 let toastTimer = null;
+let currentAppView = 'workspace';
+let calendarCursor = new Date(
+  new Date().getFullYear(),
+  new Date().getMonth(),
+  1
+);
+let calendarSelectedDateKey =
+  renderer?.getDateKey?.(new Date()) ?? null;
 
 const resultsView = {
   sortBy: 'score-desc',
@@ -248,13 +308,43 @@ function openConfirmation({
   text,
   buttonText = t('common.confirm'),
   danger = true,
+  options = [],
   action,
 }) {
   confirmTitle.textContent = title;
   confirmText.textContent = text;
   confirmActionButton.textContent = buttonText;
-  confirmActionButton.classList.toggle('button-danger', danger);
-  confirmActionButton.classList.toggle('button-primary', !danger);
+  confirmActionButton.classList.toggle(
+    'button-danger',
+    danger
+  );
+  confirmActionButton.classList.toggle(
+    'button-primary',
+    !danger
+  );
+
+  confirmOptionsList?.replaceChildren();
+
+  options.forEach((option) => {
+    const label = document.createElement('label');
+    label.className = 'workflow-option';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.value = option.value;
+    input.checked = option.checked === true;
+
+    const textElement = document.createElement('span');
+    textElement.textContent = option.label;
+
+    label.append(input, textElement);
+    confirmOptionsList?.append(label);
+  });
+
+  if (confirmOptions) {
+    confirmOptions.hidden = !options.length;
+  }
+
   pendingConfirmAction = action;
   confirmModal.showModal();
 }
@@ -356,6 +446,225 @@ function toggleSelection(type, itemId) {
   updateSelectionInterface();
 }
 
+function getWorkflowStatus(item) {
+  return item?.workflowStatus ?? 'active';
+}
+
+function getActiveResults() {
+  return stateApi.state.results.filter(
+    (result) =>
+      getWorkflowStatus(result) === 'active'
+  );
+}
+
+function getWorkflowCount(status) {
+  return [
+    ...stateApi.state.results,
+    ...stateApi.state.ideas,
+    ...stateApi.state.concepts,
+    ...stateApi.state.music,
+  ].filter(
+    (item) => getWorkflowStatus(item) === status
+  ).length;
+}
+
+function updateViewCounts() {
+  if (completedViewCount) {
+    completedViewCount.textContent = String(
+      getWorkflowCount('completed')
+    );
+  }
+
+  if (archivedViewCount) {
+    archivedViewCount.textContent = String(
+      getWorkflowCount('archived')
+    );
+  }
+}
+
+function renderCalendarView() {
+  renderer.renderCalendarView(
+    stateApi.state,
+    {
+      cursorDate: calendarCursor,
+      selectedDateKey:
+        calendarSelectedDateKey,
+    }
+  );
+}
+
+function moveCalendarMonth(offset) {
+  calendarCursor = new Date(
+    calendarCursor.getFullYear(),
+    calendarCursor.getMonth() + offset,
+    1
+  );
+
+  calendarSelectedDateKey =
+    renderer.getDateKey(calendarCursor);
+
+  renderCalendarView();
+}
+
+function showCalendarToday() {
+  const today = new Date();
+
+  calendarCursor = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+  calendarSelectedDateKey =
+    renderer.getDateKey(today);
+
+  renderCalendarView();
+}
+
+function resetResultFiltersForCalendarOpen() {
+  resultsView.sortBy = 'score-desc';
+  resultsView.statusFilter = 'all';
+  resultsView.categoryFilter = 'all';
+  resultsView.musicCategoryFilter = 'all';
+
+  if (resultsSort) {
+    resultsSort.value =
+      resultsView.sortBy;
+  }
+
+  if (resultsStatusFilter) {
+    resultsStatusFilter.value =
+      resultsView.statusFilter;
+  }
+
+  populateCategoryFilter();
+  populateMusicCategoryFilter();
+}
+
+function openCalendarResult(
+  resultId,
+  workflowStatus
+) {
+  if (workflowStatus === 'completed') {
+    setAppView('completed');
+    return;
+  }
+
+  resetResultFiltersForCalendarOpen();
+  setAppView('workspace');
+  renderResultsView();
+
+  window.requestAnimationFrame(() => {
+    const card = resultsList?.querySelector(
+      `.result-card[data-result-id="${resultId}"]`
+    );
+
+    if (!card) {
+      return;
+    }
+
+    card.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+    card.classList.add(
+      'result-card-calendar-focus'
+    );
+
+    window.setTimeout(() => {
+      card.classList.remove(
+        'result-card-calendar-focus'
+      );
+    }, 1800);
+  });
+}
+
+function setAppView(viewName) {
+  const safeView = [
+    'workspace',
+    'calendar',
+    'completed',
+    'archived',
+  ].includes(viewName)
+    ? viewName
+    : 'workspace';
+
+  currentAppView = safeView;
+
+  if (workspaceView) {
+    workspaceView.hidden =
+      safeView !== 'workspace';
+  }
+
+  if (calendarView) {
+    calendarView.hidden =
+      safeView !== 'calendar';
+  }
+
+  if (statusView) {
+    statusView.hidden =
+      safeView === 'workspace' ||
+      safeView === 'calendar';
+  }
+
+  if (workspaceActions) {
+    workspaceActions.hidden =
+      safeView !== 'workspace';
+  }
+
+  document
+    .querySelectorAll('[data-app-view]')
+    .forEach((button) => {
+      button.classList.toggle(
+        'view-tab-active',
+        button.dataset.appView === safeView
+      );
+      button.setAttribute(
+        'aria-current',
+        button.dataset.appView === safeView
+          ? 'page'
+          : 'false'
+      );
+    });
+
+  clearCellRelationInspection();
+
+  if (safeView === 'workspace') {
+    equalizeBoardRowHeights();
+    connections?.scheduleDraw();
+    return;
+  }
+
+  if (safeView === 'calendar') {
+    renderCalendarView();
+    return;
+  }
+
+  const status = safeView === 'completed'
+    ? 'completed'
+    : 'archived';
+
+  if (statusViewTitle) {
+    statusViewTitle.textContent = t(
+      status === 'completed'
+        ? 'status.completedTitle'
+        : 'status.archiveTitle'
+    );
+  }
+
+  if (statusViewDescription) {
+    statusViewDescription.textContent = t(
+      status === 'completed'
+        ? 'status.completedDescription'
+        : 'status.archiveDescription'
+    );
+  }
+
+  renderer.renderStatusView(
+    stateApi.state,
+    status
+  );
+}
+
 function getResultCategoryId(result) {
   const concept = stateApi.getItemById('concepts', result.conceptId);
   return concept?.categoryId ?? null;
@@ -370,7 +679,7 @@ function getResultMusicCategoryId(result) {
 }
 
 function getVisibleResults() {
-  const visibleResults = stateApi.state.results.filter((result) => {
+  const visibleResults = getActiveResults().filter((result) => {
     const matchesStatus =
       resultsView.statusFilter === 'all' ||
       (resultsView.statusFilter === 'planned' && Boolean(result.plannedExecutionAt)) ||
@@ -645,7 +954,11 @@ function resetViewAndSelection() {
 function renderEverything() {
   populateCategoryFilter();
   populateMusicCategoryFilter();
-  renderer.renderAll(stateApi.state, getVisibleResults());
+  renderer.renderAll(
+    stateApi.state,
+    getVisibleResults()
+  );
+  updateViewCounts();
 
   if (categoriesModal?.open) {
     renderer.renderCategories(
@@ -662,7 +975,12 @@ function renderEverything() {
   }
 
   updateSelectionInterface();
-  equalizeBoardRowHeights();
+
+  if (currentAppView === 'workspace') {
+    equalizeBoardRowHeights();
+  } else {
+    setAppView(currentAppView);
+  }
 }
 
 function createField({
@@ -1050,6 +1368,133 @@ function requestMusicCategoryDelete(categoryId) {
   });
 }
 
+function requestResultWorkflowChange(
+  resultId,
+  targetStatus
+) {
+  const result = stateApi.getItemById(
+    'results',
+    resultId
+  );
+
+  if (!result) {
+    return;
+  }
+
+  const idea = stateApi.getItemById(
+    'ideas',
+    result.ideaId
+  );
+  const concept = stateApi.getItemById(
+    'concepts',
+    result.conceptId
+  );
+  const music = stateApi.getItemById(
+    'music',
+    result.musicId
+  );
+
+  const isArchive =
+    targetStatus === 'archived';
+
+  openConfirmation({
+    title: t(
+      isArchive
+        ? 'workflow.archiveTitle'
+        : 'workflow.completeTitle'
+    ),
+    text: t(
+      isArchive
+        ? 'workflow.archiveText'
+        : 'workflow.completeText'
+    ),
+    buttonText: t(
+      isArchive
+        ? 'result.archive'
+        : 'result.markCompleted'
+    ),
+    danger: isArchive,
+    options: [
+      {
+        value: 'idea',
+        label: t('workflow.alsoIdea', {
+          name:
+            idea?.text ??
+            t('result.deletedIdea'),
+        }),
+      },
+      {
+        value: 'concept',
+        label: t('workflow.alsoConcept', {
+          name:
+            concept?.text ??
+            t('result.deletedConcept'),
+        }),
+      },
+      {
+        value: 'music',
+        label: t('workflow.alsoMusic', {
+          name: music
+            ? `${music.artist} — ${music.title}`
+            : t('result.deletedMusic'),
+        }),
+      },
+    ],
+    action: (selectedOptions) => {
+      stateApi.setWorkflowStatus(
+        'results',
+        resultId,
+        targetStatus
+      );
+
+      const sourceMap = {
+        idea: {
+          collection: 'ideas',
+          id: result.ideaId,
+          type: 'idea',
+        },
+        concept: {
+          collection: 'concepts',
+          id: result.conceptId,
+          type: 'concept',
+        },
+        music: {
+          collection: 'music',
+          id: result.musicId,
+          type: 'music',
+        },
+      };
+
+      selectedOptions.forEach((optionName) => {
+        const source = sourceMap[optionName];
+
+        if (!source) {
+          return;
+        }
+
+        stateApi.setWorkflowStatus(
+          source.collection,
+          source.id,
+          targetStatus
+        );
+        clearSelectionForItem(
+          source.type,
+          source.id
+        );
+      });
+
+      renderEverything();
+      showToast(
+        t(
+          isArchive
+            ? 'toast.resultArchived'
+            : 'toast.resultCompleted'
+        )
+      );
+    },
+  });
+}
+
 function renameResult(resultId) {
   const result = stateApi.getItemById('results', resultId);
 
@@ -1230,7 +1675,7 @@ function inspectCellRelations(sourceRow) {
     return;
   }
 
-  const relatedResults = stateApi.state.results.filter(
+  const relatedResults = getActiveResults().filter(
     (result) => result[referenceKey] === itemId
   );
 
@@ -1875,8 +2320,16 @@ musicCategoriesList?.addEventListener(
 );
 
 confirmActionButton?.addEventListener('click', () => {
+  const selectedOptions = new Set(
+    Array.from(
+      confirmOptionsList?.querySelectorAll(
+        'input[type="checkbox"]:checked'
+      ) ?? []
+    ).map((input) => input.value)
+  );
+
   if (typeof pendingConfirmAction === 'function') {
-    pendingConfirmAction();
+    pendingConfirmAction(selectedOptions);
   }
 
   pendingConfirmAction = null;
@@ -2154,6 +2607,130 @@ createResultButton?.addEventListener('click', () => {
   createSelectedResult();
 });
 
+calendarPrevMonth?.addEventListener(
+  'click',
+  () => {
+    moveCalendarMonth(-1);
+  }
+);
+
+calendarNextMonth?.addEventListener(
+  'click',
+  () => {
+    moveCalendarMonth(1);
+  }
+);
+
+calendarTodayButton?.addEventListener(
+  'click',
+  () => {
+    showCalendarToday();
+  }
+);
+
+calendarGrid?.addEventListener(
+  'click',
+  (event) => {
+    const day = event.target.closest(
+      '[data-calendar-date]'
+    );
+
+    if (!day) {
+      return;
+    }
+
+    calendarSelectedDateKey =
+      day.dataset.calendarDate;
+
+    const selectedDate =
+      new Date(
+        `${calendarSelectedDateKey}T12:00`
+      );
+
+    if (
+      !Number.isNaN(
+        selectedDate.getTime()
+      ) &&
+      (
+        selectedDate.getMonth() !==
+          calendarCursor.getMonth() ||
+        selectedDate.getFullYear() !==
+          calendarCursor.getFullYear()
+      )
+    ) {
+      calendarCursor = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        1
+      );
+    }
+
+    renderCalendarView();
+  }
+);
+
+calendarDayDetails?.addEventListener(
+  'click',
+  (event) => {
+    const button = event.target.closest(
+      '[data-calendar-result-action="open"]'
+    );
+
+    if (!button) {
+      return;
+    }
+
+    openCalendarResult(
+      button.dataset.resultId,
+      button.dataset.workflowStatus
+    );
+  }
+);
+
+document
+  .querySelector('.view-tabs')
+  ?.addEventListener('click', (event) => {
+    const button = event.target.closest(
+      '[data-app-view]'
+    );
+
+    if (!button) {
+      return;
+    }
+
+    setAppView(button.dataset.appView);
+  });
+
+statusViewContent?.addEventListener(
+  'click',
+  (event) => {
+    const button = event.target.closest(
+      '[data-status-action="restore"]'
+    );
+
+    if (!button) {
+      return;
+    }
+
+    const collectionName =
+      button.dataset.collection;
+    const itemId = button.dataset.itemId;
+
+    if (!collectionName || !itemId) {
+      return;
+    }
+
+    stateApi.setWorkflowStatus(
+      collectionName,
+      itemId,
+      'active'
+    );
+
+    renderEverything();
+    showToast(t('toast.restoredToWork'));
+  }
+);
+
 resultsList?.addEventListener('pointerover', (event) => {
   const card = event.target.closest('.result-card');
 
@@ -2207,6 +2784,27 @@ resultsList?.addEventListener('click', (event) => {
   const resultId = card?.dataset.resultId;
 
   if (!resultId) return;
+
+  if (
+    action.dataset.resultAction ===
+    'mark-completed'
+  ) {
+    requestResultWorkflowChange(
+      resultId,
+      'completed'
+    );
+    return;
+  }
+
+  if (
+    action.dataset.resultAction === 'archive'
+  ) {
+    requestResultWorkflowChange(
+      resultId,
+      'archived'
+    );
+    return;
+  }
 
   if (action.dataset.resultAction === 'rename') {
     renameResult(resultId);
@@ -2384,7 +2982,7 @@ if (stateApi && renderer && connections && storage) {
   }
 
   renderEverything();
-  connections.init(() => stateApi.state.results);
+  connections.init(() => getActiveResults());
 
   if (loadResult.loaded) {
     showToast(t('toast.restored'));
@@ -2397,6 +2995,12 @@ if (stateApi && renderer && connections && storage) {
 
 confirmModal?.addEventListener('close', () => {
   pendingConfirmAction = null;
+
+  if (confirmOptions) {
+    confirmOptions.hidden = true;
+  }
+
+  confirmOptionsList?.replaceChildren();
 });
 
-console.log('v0.5.0: категории музыки и их цвета подключены.');
+console.log('v0.7.0: календарь контент-плана подключён.');

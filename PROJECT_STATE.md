@@ -1,22 +1,33 @@
 # PROJECT STATE
 
 ## Current stage
-Post-release feature update — Music categories
+Post-release feature update — Content planning calendar
 
 ## Status
 Completed
 
 ## Version
-v0.5.0
+v0.7.0
 
 ## Added
-- Separate category collection for music.
-- Music category creation, rename, delete, and color editing.
-- Music category selection in the music item form.
-- Colored music rows and colored music sections in results.
-- Independent result filter for music categories.
-- Backward-compatible migration from v0.4.1 data.
+- Dedicated Calendar tab.
+- Monthly day-cell calendar view.
+- Four visual timeline stages: planned execution, completed, planned publication, published.
+- Day detail panel.
+- Overdue planned-stage indication.
+- Month navigation and Today shortcut.
+- Planning coverage metrics.
+- Quick navigation back to results.
 - Russian and English translations.
 
+## Calendar data source
+The calendar is derived from the existing result timeline fields:
+- `plannedExecutionAt`
+- `completedAt`
+- `plannedPublicationAt`
+- `publishedAt`
+
+Archived results are excluded. Active and completed results remain visible.
+
 ## Last updated
-2026-07-22
+2026-08-02

@@ -432,6 +432,1094 @@
     }).format(date);
   }
 
+  function getWorkflowStatus(item) {
+    return item?.workflowStatus ?? 'active';
+  }
+
+  function getStatusItemLabel(type, item) {
+    if (!item) {
+      return '';
+    }
+
+    if (type === 'idea' || type === 'concept') {
+      return item.text;
+    }
+
+    if (type === 'music') {
+      return `${item.artist} — ${item.title}`;
+    }
+
+    return item.title || item.id;
+  }
+
+  function createRestoreButton(
+    collectionName,
+    itemId
+  ) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className =
+      'button button-secondary button-compact status-restore-button';
+    button.dataset.statusAction = 'restore';
+    button.dataset.collection = collectionName;
+    button.dataset.itemId = itemId;
+    button.textContent = t('status.restore');
+    return button;
+  }
+
+  function createStatusSourceCard({
+    collectionName,
+    type,
+    item,
+    category = null,
+  }) {
+    const card = document.createElement('article');
+    card.className = 'status-item-card';
+
+    const content = document.createElement('div');
+    content.className = 'status-item-card-content';
+
+    const typeLabel = document.createElement('span');
+    typeLabel.className = 'status-item-type';
+    typeLabel.textContent = t(`result.${type}`);
+
+    const title = document.createElement('strong');
+    title.textContent = getStatusItemLabel(
+      type,
+      item
+    );
+
+    content.append(typeLabel, title);
+
+    if (category) {
+      const badge = document.createElement('span');
+      badge.className = 'category-badge';
+      badge.textContent = category.name;
+
+      if (category.color) {
+        badge.style.setProperty(
+          '--category-color',
+          category.color
+        );
+      }
+
+      content.append(badge);
+    }
+
+    card.append(
+      content,
+      createRestoreButton(
+        collectionName,
+        item.id
+      )
+    );
+
+    return card;
+  }
+
+  function createStatusResultCard(
+    state,
+    result,
+    index
+  ) {
+    const idea = state.ideas.find(
+      (item) => item.id === result.ideaId
+    );
+    const concept = state.concepts.find(
+      (item) => item.id === result.conceptId
+    );
+    const music = state.music.find(
+      (item) => item.id === result.musicId
+    );
+
+    const card = document.createElement('article');
+    card.className =
+      'status-item-card status-result-card';
+
+    const content = document.createElement('div');
+    content.className = 'status-item-card-content';
+
+    const typeLabel = document.createElement('span');
+    typeLabel.className = 'status-item-type';
+    typeLabel.textContent = t('status.result');
+
+    const title = document.createElement('strong');
+    title.textContent =
+      result.title ||
+      t('result.defaultName', {
+        number: String(index + 1).padStart(
+          2,
+          '0'
+        ),
+      });
+
+    const combination = document.createElement('small');
+    combination.className =
+      'status-result-combination';
+    combination.textContent = [
+      idea?.text ?? t('result.deletedIdea'),
+      concept?.text ?? t('result.deletedConcept'),
+      music
+        ? `${music.artist} — ${music.title}`
+        : t('result.deletedMusic'),
+    ].join(' • ');
+
+    content.append(
+      typeLabel,
+      title,
+      combination
+    );
+
+    card.append(
+      content,
+      createRestoreButton(
+        'results',
+        result.id
+      )
+    );
+
+    return card;
+  }
+
+  function createStatusGroup(
+    title,
+    items,
+    cardBuilder
+  ) {
+    const section = document.createElement('section');
+    section.className = 'status-group';
+
+    const header = document.createElement('header');
+    header.className = 'status-group-header';
+
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+
+    const count = document.createElement('span');
+    count.className = 'status-count-badge';
+    count.textContent = String(items.length);
+
+    header.append(heading, count);
+
+    const list = document.createElement('div');
+    list.className = 'status-group-list';
+
+    if (items.length) {
+      items.forEach((item, index) => {
+        list.append(cardBuilder(item, index));
+      });
+    } else {
+      const empty = document.createElement('p');
+      empty.className = 'status-group-empty';
+      empty.textContent =
+        t('status.groupEmpty');
+      list.append(empty);
+    }
+
+    section.append(header, list);
+    return section;
+  }
+
+  function renderStatusView(state, status) {
+    const container = document.querySelector(
+      '#status-view-content'
+    );
+
+    if (!container) {
+      return;
+    }
+
+    const results = state.results.filter(
+      (item) => getWorkflowStatus(item) === status
+    );
+    const ideas = state.ideas.filter(
+      (item) => getWorkflowStatus(item) === status
+    );
+    const concepts = state.concepts.filter(
+      (item) => getWorkflowStatus(item) === status
+    );
+    const music = state.music.filter(
+      (item) => getWorkflowStatus(item) === status
+    );
+
+    container.replaceChildren(
+      createStatusGroup(
+        t('status.results'),
+        results,
+        (result, index) =>
+          createStatusResultCard(
+            state,
+            result,
+            index
+          )
+      ),
+      createStatusGroup(
+        t('status.ideas'),
+        ideas,
+        (idea) =>
+          createStatusSourceCard({
+            collectionName: 'ideas',
+            type: 'idea',
+            item: idea,
+          })
+      ),
+      createStatusGroup(
+        t('status.concepts'),
+        concepts,
+        (concept) =>
+          createStatusSourceCard({
+            collectionName: 'concepts',
+            type: 'concept',
+            item: concept,
+            category:
+              state.conceptCategories.find(
+                (category) =>
+                  category.id ===
+                  concept.categoryId
+              ) ?? null,
+          })
+      ),
+      createStatusGroup(
+        t('status.music'),
+        music,
+        (musicItem) =>
+          createStatusSourceCard({
+            collectionName: 'music',
+            type: 'music',
+            item: musicItem,
+            category:
+              state.musicCategories.find(
+                (category) =>
+                  category.id ===
+                  musicItem.categoryId
+              ) ?? null,
+          })
+      )
+    );
+  }
+
+  const CALENDAR_STAGES = [
+    {
+      key: 'planned-execution',
+      field: 'plannedExecutionAt',
+      translationKey: 'calendar.stage.plannedExecution',
+      planned: true,
+      resolutionField: 'completedAt',
+      priority: 1,
+    },
+    {
+      key: 'completed',
+      field: 'completedAt',
+      translationKey: 'calendar.stage.completed',
+      planned: false,
+      resolutionField: null,
+      priority: 2,
+    },
+    {
+      key: 'planned-publication',
+      field: 'plannedPublicationAt',
+      translationKey: 'calendar.stage.plannedPublication',
+      planned: true,
+      resolutionField: 'publishedAt',
+      priority: 3,
+    },
+    {
+      key: 'published',
+      field: 'publishedAt',
+      translationKey: 'calendar.stage.published',
+      planned: false,
+      resolutionField: null,
+      priority: 4,
+    },
+  ];
+
+  function getDateKey(date) {
+    const safeDate =
+      date instanceof Date ? date : new Date(date);
+
+    if (Number.isNaN(safeDate.getTime())) {
+      return null;
+    }
+
+    const year = safeDate.getFullYear();
+    const month = String(
+      safeDate.getMonth() + 1
+    ).padStart(2, '0');
+    const day = String(
+      safeDate.getDate()
+    ).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  function getDateFromKey(dateKey) {
+    const match = String(dateKey ?? '').match(
+      /^(\d{4})-(\d{2})-(\d{2})$/
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    const date = new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3])
+    );
+
+    return Number.isNaN(date.getTime())
+      ? null
+      : date;
+  }
+
+  function parseCalendarDateTime(value) {
+    if (!value) {
+      return null;
+    }
+
+    const match = String(value).match(
+      /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    const date = new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3]),
+      Number(match[4]),
+      Number(match[5])
+    );
+
+    return Number.isNaN(date.getTime())
+      ? null
+      : date;
+  }
+
+  function getCalendarResultTitle(
+    result,
+    resultIndex
+  ) {
+    return (
+      result.title ||
+      t('result.defaultName', {
+        number: String(resultIndex + 1).padStart(
+          2,
+          '0'
+        ),
+      })
+    );
+  }
+
+  function buildCalendarEvents(state) {
+    const events = [];
+
+    state.results.forEach((result, resultIndex) => {
+      if (getWorkflowStatus(result) === 'archived') {
+        return;
+      }
+
+      const idea = state.ideas.find(
+        (item) => item.id === result.ideaId
+      );
+      const concept = state.concepts.find(
+        (item) => item.id === result.conceptId
+      );
+      const music = state.music.find(
+        (item) => item.id === result.musicId
+      );
+
+      CALENDAR_STAGES.forEach((stage) => {
+        const rawValue = result[stage.field];
+        const date = parseCalendarDateTime(
+          rawValue
+        );
+
+        if (!date) {
+          return;
+        }
+
+        events.push({
+          id: `${result.id}:${stage.key}`,
+          resultId: result.id,
+          resultTitle: getCalendarResultTitle(
+            result,
+            resultIndex
+          ),
+          workflowStatus:
+            getWorkflowStatus(result),
+          stageKey: stage.key,
+          stageField: stage.field,
+          stageTranslationKey:
+            stage.translationKey,
+          stagePriority: stage.priority,
+          isPlanned: stage.planned,
+          isResolved:
+            !stage.resolutionField ||
+            Boolean(
+              result[stage.resolutionField]
+            ),
+          value: rawValue,
+          date,
+          dateKey: getDateKey(date),
+          ideaText:
+            idea?.text ??
+            t('result.deletedIdea'),
+          conceptText:
+            concept?.text ??
+            t('result.deletedConcept'),
+          musicText: music
+            ? `${music.artist} — ${music.title}`
+            : t('result.deletedMusic'),
+        });
+      });
+    });
+
+    events.sort((first, second) => (
+      first.date.getTime() -
+        second.date.getTime() ||
+      first.stagePriority -
+        second.stagePriority ||
+      first.resultTitle.localeCompare(
+        second.resultTitle,
+        i18n?.getLocale?.() ?? 'ru-RU'
+      )
+    ));
+
+    return events;
+  }
+
+  function getCalendarMetrics(
+    state,
+    now = new Date()
+  ) {
+    const events = buildCalendarEvents(state);
+    const today = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    const todayKey = getDateKey(today);
+
+    const nextSevenEnd = new Date(today);
+    nextSevenEnd.setDate(
+      nextSevenEnd.getDate() + 6
+    );
+    const nextSevenEndKey =
+      getDateKey(nextSevenEnd);
+
+    const plannedEvents = events.filter(
+      (event) => event.isPlanned
+    );
+
+    const futurePlannedEvents =
+      plannedEvents.filter(
+        (event) =>
+          event.dateKey >= todayKey
+      );
+
+    const furthestFutureDate =
+      futurePlannedEvents.length
+        ? futurePlannedEvents.reduce(
+            (latest, event) =>
+              event.date > latest
+                ? event.date
+                : latest,
+            futurePlannedEvents[0].date
+          )
+        : null;
+
+    const plannedAheadDays =
+      furthestFutureDate
+        ? Math.max(
+            0,
+            Math.round(
+              (
+                new Date(
+                  furthestFutureDate.getFullYear(),
+                  furthestFutureDate.getMonth(),
+                  furthestFutureDate.getDate()
+                ).getTime() -
+                today.getTime()
+              ) /
+                86400000
+            )
+          )
+        : null;
+
+    const nextSevenEvents = events.filter(
+      (event) =>
+        event.dateKey >= todayKey &&
+        event.dateKey <= nextSevenEndKey
+    ).length;
+
+    const visibleResults = state.results.filter(
+      (result) =>
+        getWorkflowStatus(result) !== 'archived'
+    );
+
+    const readyToPublish =
+      visibleResults.filter(
+        (result) =>
+          Boolean(result.completedAt) &&
+          !result.publishedAt
+      ).length;
+
+    const scheduledPublications =
+      visibleResults.filter(
+        (result) =>
+          Boolean(result.plannedPublicationAt) &&
+          !result.publishedAt
+      ).length;
+
+    return {
+      plannedAheadDays,
+      nextSevenEvents,
+      readyToPublish,
+      scheduledPublications,
+    };
+  }
+
+  function formatCalendarDate(
+    date,
+    options
+  ) {
+    return new Intl.DateTimeFormat(
+      i18n?.getLocale?.() ?? 'ru-RU',
+      options
+    ).format(date);
+  }
+
+  function formatCalendarTime(value) {
+    const date = parseCalendarDateTime(
+      value
+    );
+
+    if (!date) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat(
+      i18n?.getLocale?.() ?? 'ru-RU',
+      {
+        hour: '2-digit',
+        minute: '2-digit',
+      }
+    ).format(date);
+  }
+
+  function createCalendarEventPreview(
+    event,
+    todayKey
+  ) {
+    const preview = document.createElement('div');
+    preview.className =
+      `calendar-event-preview calendar-event-${event.stageKey}`;
+
+    const isOverdue =
+      event.isPlanned &&
+      !event.isResolved &&
+      event.dateKey < todayKey;
+
+    if (isOverdue) {
+      preview.classList.add(
+        'calendar-event-overdue'
+      );
+    }
+
+    const dot = document.createElement('i');
+    dot.className =
+      `calendar-stage-dot calendar-stage-${event.stageKey}`;
+
+    const label = document.createElement('span');
+    label.textContent = event.resultTitle;
+
+    preview.append(dot, label);
+    return preview;
+  }
+
+  function createCalendarDayDetail(
+    event,
+    todayKey
+  ) {
+    const card = document.createElement('article');
+    card.className =
+      `calendar-detail-card calendar-detail-${event.stageKey}`;
+
+    const header = document.createElement('div');
+    header.className =
+      'calendar-detail-card-header';
+
+    const stage = document.createElement('span');
+    stage.className =
+      `calendar-stage-badge calendar-stage-${event.stageKey}`;
+    stage.textContent = t(
+      event.stageTranslationKey
+    );
+
+    const time = document.createElement('time');
+    time.dateTime = event.value;
+    time.textContent =
+      formatCalendarTime(event.value);
+
+    header.append(stage, time);
+
+    const title = document.createElement('strong');
+    title.className =
+      'calendar-detail-title';
+    title.textContent = event.resultTitle;
+
+    const combination =
+      document.createElement('p');
+    combination.className =
+      'calendar-detail-combination';
+    combination.textContent = [
+      event.ideaText,
+      event.conceptText,
+      event.musicText,
+    ].join(' • ');
+
+    const footer = document.createElement('div');
+    footer.className =
+      'calendar-detail-footer';
+
+    const isOverdue =
+      event.isPlanned &&
+      !event.isResolved &&
+      event.dateKey < todayKey;
+
+    const stateBadge =
+      document.createElement('span');
+    stateBadge.className =
+      'calendar-detail-state';
+
+    if (isOverdue) {
+      stateBadge.classList.add(
+        'calendar-detail-state-overdue'
+      );
+      stateBadge.textContent =
+        t('calendar.overdue');
+    } else if (
+      event.workflowStatus === 'completed'
+    ) {
+      stateBadge.textContent =
+        t('views.completed');
+    } else {
+      stateBadge.textContent =
+        t('calendar.inWorkspace');
+    }
+
+    const openButton =
+      document.createElement('button');
+    openButton.type = 'button';
+    openButton.className =
+      'small-text-button calendar-open-result';
+    openButton.dataset.calendarResultAction =
+      'open';
+    openButton.dataset.resultId =
+      event.resultId;
+    openButton.dataset.workflowStatus =
+      event.workflowStatus;
+    openButton.textContent =
+      event.workflowStatus === 'completed'
+        ? t('calendar.openCompleted')
+        : t('calendar.openResult');
+
+    footer.append(
+      stateBadge,
+      openButton
+    );
+
+    card.append(
+      header,
+      title,
+      combination,
+      footer
+    );
+
+    return card;
+  }
+
+  function renderCalendarView(
+    state,
+    {
+      cursorDate = new Date(),
+      selectedDateKey = null,
+    } = {}
+  ) {
+    const grid = document.querySelector(
+      '#calendar-grid'
+    );
+    const weekdays = document.querySelector(
+      '#calendar-weekdays'
+    );
+    const monthTitle = document.querySelector(
+      '#calendar-month-title'
+    );
+    const selectedDateTitle =
+      document.querySelector(
+        '#calendar-selected-date-title'
+      );
+    const details = document.querySelector(
+      '#calendar-day-details'
+    );
+
+    if (
+      !grid ||
+      !weekdays ||
+      !monthTitle ||
+      !selectedDateTitle ||
+      !details
+    ) {
+      return;
+    }
+
+    const safeCursor = new Date(
+      cursorDate.getFullYear(),
+      cursorDate.getMonth(),
+      1
+    );
+    const today = new Date();
+    const todayKey = getDateKey(today);
+
+    const effectiveSelectedDateKey =
+      selectedDateKey || todayKey;
+
+    const events = buildCalendarEvents(state);
+    const eventsByDate = new Map();
+
+    events.forEach((event) => {
+      if (!eventsByDate.has(event.dateKey)) {
+        eventsByDate.set(
+          event.dateKey,
+          []
+        );
+      }
+
+      eventsByDate.get(event.dateKey).push(
+        event
+      );
+    });
+
+    const metrics = getCalendarMetrics(
+      state,
+      today
+    );
+
+    const plannedAheadElement =
+      document.querySelector(
+        '#calendar-metric-planned-ahead'
+      );
+    const nextSevenElement =
+      document.querySelector(
+        '#calendar-metric-next-seven'
+      );
+    const readyElement =
+      document.querySelector(
+        '#calendar-metric-ready'
+      );
+    const publicationPlanElement =
+      document.querySelector(
+        '#calendar-metric-publication-plan'
+      );
+
+    if (plannedAheadElement) {
+      plannedAheadElement.textContent =
+        metrics.plannedAheadDays === null
+          ? '—'
+          : t(
+              'calendar.metric.daysValue',
+              {
+                count:
+                  metrics.plannedAheadDays,
+              }
+            );
+    }
+
+    if (nextSevenElement) {
+      nextSevenElement.textContent = String(
+        metrics.nextSevenEvents
+      );
+    }
+
+    if (readyElement) {
+      readyElement.textContent = String(
+        metrics.readyToPublish
+      );
+    }
+
+    if (publicationPlanElement) {
+      publicationPlanElement.textContent =
+        String(
+          metrics.scheduledPublications
+        );
+    }
+
+    monthTitle.textContent =
+      formatCalendarDate(
+        safeCursor,
+        {
+          month: 'long',
+          year: 'numeric',
+        }
+      );
+
+    weekdays.replaceChildren();
+
+    const mondayReference =
+      new Date(2026, 0, 5);
+
+    for (let offset = 0; offset < 7; offset += 1) {
+      const weekdayDate =
+        new Date(mondayReference);
+      weekdayDate.setDate(
+        weekdayDate.getDate() + offset
+      );
+
+      const weekday =
+        document.createElement('span');
+      weekday.textContent =
+        formatCalendarDate(
+          weekdayDate,
+          { weekday: 'short' }
+        );
+      weekdays.append(weekday);
+    }
+
+    const firstDay = new Date(
+      safeCursor.getFullYear(),
+      safeCursor.getMonth(),
+      1
+    );
+    const mondayIndex =
+      (firstDay.getDay() + 6) % 7;
+    const gridStart = new Date(
+      firstDay
+    );
+    gridStart.setDate(
+      gridStart.getDate() - mondayIndex
+    );
+
+    grid.replaceChildren();
+
+    for (
+      let dayOffset = 0;
+      dayOffset < 42;
+      dayOffset += 1
+    ) {
+      const date = new Date(gridStart);
+      date.setDate(
+        date.getDate() + dayOffset
+      );
+
+      const dateKey = getDateKey(date);
+      const dayEvents =
+        eventsByDate.get(dateKey) ?? [];
+
+      const day = document.createElement('button');
+      day.type = 'button';
+      day.className = 'calendar-day';
+      day.dataset.calendarDate = dateKey;
+      day.setAttribute('role', 'gridcell');
+
+      const isCurrentMonth =
+        date.getMonth() ===
+          safeCursor.getMonth() &&
+        date.getFullYear() ===
+          safeCursor.getFullYear();
+
+      if (!isCurrentMonth) {
+        day.classList.add(
+          'calendar-day-outside'
+        );
+      }
+
+      if (dateKey === todayKey) {
+        day.classList.add(
+          'calendar-day-today'
+        );
+      }
+
+      if (
+        dateKey ===
+        effectiveSelectedDateKey
+      ) {
+        day.classList.add(
+          'calendar-day-selected'
+        );
+      }
+
+      if (dayEvents.length) {
+        day.classList.add(
+          'calendar-day-has-events'
+        );
+
+        const dominantEvent = dayEvents.reduce(
+          (current, event) =>
+            event.stagePriority >
+            current.stagePriority
+              ? event
+              : current,
+          dayEvents[0]
+        );
+
+        day.classList.add(
+          `calendar-day-dominant-${dominantEvent.stageKey}`
+        );
+      }
+
+      const top = document.createElement('div');
+      top.className = 'calendar-day-top';
+
+      const number = document.createElement('span');
+      number.className =
+        'calendar-day-number';
+      number.textContent = String(
+        date.getDate()
+      );
+
+      top.append(number);
+
+      if (dayEvents.length) {
+        const eventCount =
+          document.createElement('span');
+        eventCount.className =
+          'calendar-day-count';
+        eventCount.textContent = String(
+          dayEvents.length
+        );
+        top.append(eventCount);
+      }
+
+      const markerRow =
+        document.createElement('div');
+      markerRow.className =
+        'calendar-day-stage-markers';
+
+      Array.from(
+        new Set(
+          dayEvents.map(
+            (event) => event.stageKey
+          )
+        )
+      ).forEach((stageKey) => {
+        const marker =
+          document.createElement('i');
+        marker.className =
+          `calendar-stage-dot calendar-stage-${stageKey}`;
+        markerRow.append(marker);
+      });
+
+      const previewList =
+        document.createElement('div');
+      previewList.className =
+        'calendar-day-events';
+
+      dayEvents
+        .slice(0, 3)
+        .forEach((event) => {
+          previewList.append(
+            createCalendarEventPreview(
+              event,
+              todayKey
+            )
+          );
+        });
+
+      if (dayEvents.length > 3) {
+        const more =
+          document.createElement('span');
+        more.className =
+          'calendar-day-more';
+        more.textContent = t(
+          'calendar.moreEvents',
+          {
+            count:
+              dayEvents.length - 3,
+          }
+        );
+        previewList.append(more);
+      }
+
+      day.append(
+        top,
+        markerRow,
+        previewList
+      );
+
+      day.setAttribute(
+        'aria-label',
+        t('calendar.dayAria', {
+          date: formatCalendarDate(
+            date,
+            {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            }
+          ),
+          count: dayEvents.length,
+        })
+      );
+
+      grid.append(day);
+    }
+
+    const selectedDate =
+      getDateFromKey(
+        effectiveSelectedDateKey
+      ) ?? today;
+
+    selectedDateTitle.textContent =
+      formatCalendarDate(
+        selectedDate,
+        {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }
+      );
+
+    details.replaceChildren();
+
+    const selectedEvents =
+      eventsByDate.get(
+        getDateKey(selectedDate)
+      ) ?? [];
+
+    if (!selectedEvents.length) {
+      const empty =
+        document.createElement('div');
+      empty.className =
+        'calendar-day-empty';
+
+      const icon =
+        document.createElement('span');
+      icon.textContent = '○';
+
+      const text =
+        document.createElement('p');
+      text.textContent =
+        t('calendar.noEvents');
+
+      empty.append(icon, text);
+      details.append(empty);
+      return;
+    }
+
+    selectedEvents.forEach((event) => {
+      details.append(
+        createCalendarDayDetail(
+          event,
+          todayKey
+        )
+      );
+    });
+  }
+
   function createResultPart(label, value, extra = null) {
     const part = document.createElement('div');
     part.className = 'result-part';
@@ -570,7 +1658,10 @@
     container.replaceChildren();
 
     if (!visibleResults.length) {
-      const hasSavedResults = state.results.length > 0;
+      const hasSavedResults = state.results.some(
+        (result) =>
+          getWorkflowStatus(result) === 'active'
+      );
 
       container.append(
         createResultsEmptyState(
@@ -642,6 +1733,52 @@
 
       scoreBadge.append(scoreLabel, scoreValue);
 
+      const moreMenu = document.createElement('details');
+      moreMenu.className = 'result-more-menu';
+
+      const moreSummary = document.createElement('summary');
+      moreSummary.className =
+        'result-header-button result-more-button';
+      moreSummary.setAttribute(
+        'aria-label',
+        t('result.moreActions')
+      );
+      moreSummary.title = t('result.moreActions');
+      moreSummary.textContent = '⋮';
+
+      const morePopover = document.createElement('div');
+      morePopover.className =
+        'result-more-popover';
+
+      const completeButton =
+        document.createElement('button');
+      completeButton.type = 'button';
+      completeButton.className =
+        'result-more-action result-more-action-complete';
+      completeButton.dataset.resultAction =
+        'mark-completed';
+      completeButton.textContent =
+        t('result.markCompleted');
+
+      const archiveButton =
+        document.createElement('button');
+      archiveButton.type = 'button';
+      archiveButton.className =
+        'result-more-action result-more-action-archive';
+      archiveButton.dataset.resultAction =
+        'archive';
+      archiveButton.textContent =
+        t('result.archive');
+
+      morePopover.append(
+        completeButton,
+        archiveButton
+      );
+      moreMenu.append(
+        moreSummary,
+        morePopover
+      );
+
       const renameButton = document.createElement('button');
       renameButton.type = 'button';
       renameButton.className =
@@ -665,6 +1802,7 @@
 
       headerActions.append(
         scoreBadge,
+        moreMenu,
         renameButton,
         deleteButton
       );
@@ -810,9 +1948,25 @@
   }
 
   function renderAll(state, visibleResults = state.results) {
-    renderIdeas(state.ideas);
-    renderConcepts(state.concepts, state.conceptCategories);
-    renderMusic(state.music, state.musicCategories);
+    const activeIdeas = state.ideas.filter(
+      (item) => getWorkflowStatus(item) === 'active'
+    );
+    const activeConcepts = state.concepts.filter(
+      (item) => getWorkflowStatus(item) === 'active'
+    );
+    const activeMusic = state.music.filter(
+      (item) => getWorkflowStatus(item) === 'active'
+    );
+
+    renderIdeas(activeIdeas);
+    renderConcepts(
+      activeConcepts,
+      state.conceptCategories
+    );
+    renderMusic(
+      activeMusic,
+      state.musicCategories
+    );
     renderResults(state, visibleResults);
   }
 
@@ -823,6 +1977,11 @@
     renderCategories,
     renderMusicCategories,
     renderResults,
+    renderCalendarView,
+    buildCalendarEvents,
+    getCalendarMetrics,
+    getDateKey,
+    renderStatusView,
     renderAll,
   };
 })(window);

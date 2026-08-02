@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>Content Idea Organizer — v0.5.0</title>
+  <title>Content Idea Organizer — v0.7.0</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -26,7 +26,7 @@
       </div>
 
       <div class="topbar-actions">
-        <div class="primary-actions">
+        <div class="primary-actions" id="workspace-actions">
           <button class="button button-secondary" type="button" id="random-button" data-i18n="common.random">
             Random
           </button>
@@ -113,6 +113,66 @@
       </div>
     </header>
 
+
+    <nav
+      class="view-tabs"
+      aria-label="Разделы приложения"
+      data-i18n-aria="views.aria"
+    >
+      <button
+        class="view-tab view-tab-active"
+        type="button"
+        data-app-view="workspace"
+      >
+        <span data-i18n="views.workspace">
+          Рабочая область
+        </span>
+      </button>
+
+
+      <button
+        class="view-tab"
+        type="button"
+        data-app-view="calendar"
+      >
+        <span data-i18n="views.calendar">
+          Календарь
+        </span>
+      </button>
+
+      <button
+        class="view-tab"
+        type="button"
+        data-app-view="completed"
+      >
+        <span data-i18n="views.completed">
+          Выполнено
+        </span>
+        <span
+          class="view-tab-count"
+          id="completed-view-count"
+        >0</span>
+      </button>
+
+      <button
+        class="view-tab"
+        type="button"
+        data-app-view="archived"
+      >
+        <span data-i18n="views.archive">
+          Архив
+        </span>
+        <span
+          class="view-tab-count"
+          id="archived-view-count"
+        >0</span>
+      </button>
+    </nav>
+
+    <section
+      class="app-view"
+      id="workspace-view"
+    >
     <section class="selection-preview" aria-label="Текущая комбинация" data-i18n-aria="selection.aria">
       <span class="selection-preview__label" data-i18n="selection.label">Текущая комбинация</span>
       <p id="selection-preview-text" data-i18n="selection.instruction">
@@ -271,9 +331,204 @@
       </aside>
     </div>
 
+
+    </section>
+
+
+    <section
+      class="app-view calendar-view"
+      id="calendar-view"
+      hidden
+    >
+      <header class="calendar-view-header">
+        <div>
+          <p
+            class="eyebrow"
+            data-i18n="calendar.eyebrow"
+          >
+            CONTENT PIPELINE
+          </p>
+          <h2 data-i18n="calendar.title">
+            Календарь контента
+          </h2>
+          <p
+            class="calendar-view-description"
+            data-i18n="calendar.description"
+          >
+            Общая картина выполнения и публикаций по дням.
+          </p>
+        </div>
+      </header>
+
+      <div class="calendar-metrics" aria-live="polite">
+        <article class="calendar-metric">
+          <span data-i18n="calendar.metric.plannedAhead">
+            План вперёд
+          </span>
+          <strong id="calendar-metric-planned-ahead">—</strong>
+        </article>
+
+        <article class="calendar-metric">
+          <span data-i18n="calendar.metric.nextSeven">
+            Событий за 7 дней
+          </span>
+          <strong id="calendar-metric-next-seven">0</strong>
+        </article>
+
+        <article class="calendar-metric">
+          <span data-i18n="calendar.metric.ready">
+            Готово к публикации
+          </span>
+          <strong id="calendar-metric-ready">0</strong>
+        </article>
+
+        <article class="calendar-metric">
+          <span data-i18n="calendar.metric.scheduledPublication">
+            Публикаций в плане
+          </span>
+          <strong id="calendar-metric-publication-plan">0</strong>
+        </article>
+      </div>
+
+      <div class="calendar-layout">
+        <section class="calendar-panel">
+          <div class="calendar-toolbar">
+            <div class="calendar-month-navigation">
+              <button
+                class="button button-secondary button-compact"
+                type="button"
+                id="calendar-prev-month"
+                aria-label="Предыдущий месяц"
+                data-i18n-aria="calendar.previousMonth"
+              >
+                ←
+              </button>
+
+              <button
+                class="button button-secondary button-compact"
+                type="button"
+                id="calendar-today-button"
+                data-i18n="calendar.today"
+              >
+                Сегодня
+              </button>
+
+              <button
+                class="button button-secondary button-compact"
+                type="button"
+                id="calendar-next-month"
+                aria-label="Следующий месяц"
+                data-i18n-aria="calendar.nextMonth"
+              >
+                →
+              </button>
+            </div>
+
+            <h3 id="calendar-month-title"></h3>
+          </div>
+
+          <div
+            class="calendar-legend"
+            aria-label="Легенда календаря"
+            data-i18n-aria="calendar.legendAria"
+          >
+            <span class="calendar-legend-item">
+              <i class="calendar-stage-dot calendar-stage-planned-execution"></i>
+              <span data-i18n="calendar.stage.plannedExecution">
+                Запланировано выполнение
+              </span>
+            </span>
+
+            <span class="calendar-legend-item">
+              <i class="calendar-stage-dot calendar-stage-completed"></i>
+              <span data-i18n="calendar.stage.completed">
+                Сделано
+              </span>
+            </span>
+
+            <span class="calendar-legend-item">
+              <i class="calendar-stage-dot calendar-stage-planned-publication"></i>
+              <span data-i18n="calendar.stage.plannedPublication">
+                Запланирована публикация
+              </span>
+            </span>
+
+            <span class="calendar-legend-item">
+              <i class="calendar-stage-dot calendar-stage-published"></i>
+              <span data-i18n="calendar.stage.published">
+                Выложено
+              </span>
+            </span>
+          </div>
+
+          <div class="calendar-grid-shell">
+            <div
+              class="calendar-weekdays"
+              id="calendar-weekdays"
+              aria-hidden="true"
+            ></div>
+
+            <div
+              class="calendar-grid"
+              id="calendar-grid"
+              role="grid"
+              aria-label="Календарь контент-плана"
+              data-i18n-aria="calendar.gridAria"
+            ></div>
+          </div>
+        </section>
+
+        <aside class="calendar-day-panel">
+          <div class="calendar-day-panel-header">
+            <p
+              class="eyebrow"
+              data-i18n="calendar.dayEyebrow"
+            >
+              DAY OVERVIEW
+            </p>
+            <h3 id="calendar-selected-date-title"></h3>
+          </div>
+
+          <div
+            class="calendar-day-details"
+            id="calendar-day-details"
+            aria-live="polite"
+          ></div>
+        </aside>
+      </div>
+    </section>
+
+    <section
+      class="app-view status-view"
+      id="status-view"
+      hidden
+    >
+      <header class="status-view-header">
+        <div>
+          <p
+            class="eyebrow"
+            id="status-view-eyebrow"
+          >STATUS LIST</p>
+          <h2 id="status-view-title">
+            Выполнено
+          </h2>
+          <p
+            class="status-view-description"
+            id="status-view-description"
+          ></p>
+        </div>
+      </header>
+
+      <div
+        class="status-view-content"
+        id="status-view-content"
+        aria-live="polite"
+      ></div>
+    </section>
+
     <footer class="app-footer">
       <span>Content Idea Organizer</span>
-      <span>v0.5.0</span>
+      <span>v0.7.0</span>
     </footer>
   </main>
 
@@ -500,6 +755,19 @@
       </div>
 
       <p class="confirm-text" id="confirm-text"></p>
+
+      <fieldset
+        class="confirm-options"
+        id="confirm-options"
+        hidden
+      >
+        <legend
+          data-i18n="workflow.relatedItems"
+        >
+          Также изменить связанные элементы
+        </legend>
+        <div id="confirm-options-list"></div>
+      </fieldset>
 
       <div class="modal-actions">
         <button

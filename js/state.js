@@ -12,6 +12,25 @@
 
   const state = structuredClone(initialState);
 
+  const WORKFLOW_COLLECTIONS = new Set([
+    'ideas',
+    'concepts',
+    'music',
+    'results',
+  ]);
+
+  const WORKFLOW_STATUSES = new Set([
+    'active',
+    'completed',
+    'archived',
+  ]);
+
+  function normalizeWorkflowStatus(value) {
+    return WORKFLOW_STATUSES.has(value)
+      ? value
+      : 'active';
+  }
+
   function createId(prefix = 'item') {
     const randomPart = Math.random().toString(36).slice(2, 8);
     const timePart = Date.now().toString(36);
@@ -51,8 +70,20 @@
       throw new TypeError('Данные элемента должны быть объектом.');
     }
 
+    const workflowFields =
+      WORKFLOW_COLLECTIONS.has(collectionName)
+        ? {
+            workflowStatus: normalizeWorkflowStatus(
+              itemData.workflowStatus
+            ),
+            statusChangedAt:
+              itemData.statusChangedAt ?? null,
+          }
+        : {};
+
     const item = {
       ...itemData,
+      ...workflowFields,
       id: itemData.id ?? createId(collectionName),
       createdAt: itemData.createdAt ?? createTimestamp(),
     };
@@ -88,6 +119,32 @@
 
     collection[itemIndex] = updatedItem;
     return updatedItem;
+  }
+
+  function setWorkflowStatus(
+    collectionName,
+    itemId,
+    status
+  ) {
+    if (!WORKFLOW_COLLECTIONS.has(collectionName)) {
+      throw new Error(
+        'Эта коллекция не поддерживает статусы.'
+      );
+    }
+
+    const safeStatus = normalizeWorkflowStatus(status);
+
+    if (safeStatus !== status) {
+      throw new Error('Неизвестный статус элемента.');
+    }
+
+    return updateItem(collectionName, itemId, {
+      workflowStatus: safeStatus,
+      statusChangedAt:
+        safeStatus === 'active'
+          ? null
+          : createTimestamp(),
+    });
   }
 
   function deleteItem(collectionName, itemId) {
@@ -571,10 +628,12 @@
     state,
     createId,
     calculateScore,
+    normalizeWorkflowStatus,
     normalizeOptionalUrl,
     addItem,
     getItemById,
     updateItem,
+    setWorkflowStatus,
     deleteItem,
     addIdea,
     normalizeCategoryColor,

@@ -29,6 +29,47 @@
       'common.change': 'Изменить',
       'common.uncategorized': 'Без категории',
 
+      'views.aria': 'Разделы приложения',
+      'views.workspace': 'Рабочая область',
+      'views.calendar': 'Календарь',
+      'views.completed': 'Выполнено',
+      'views.archive': 'Архив',
+
+      'calendar.eyebrow': 'CONTENT PIPELINE',
+      'calendar.title': 'Календарь контента',
+      'calendar.description':
+        'Общая картина выполнения и публикаций по дням. Архивные результаты здесь не показываются.',
+      'calendar.previousMonth': 'Предыдущий месяц',
+      'calendar.nextMonth': 'Следующий месяц',
+      'calendar.today': 'Сегодня',
+      'calendar.legendAria': 'Легенда календаря',
+      'calendar.gridAria': 'Календарь контент-плана',
+      'calendar.dayEyebrow': 'DAY OVERVIEW',
+      'calendar.stage.plannedExecution':
+        'Запланировано выполнение',
+      'calendar.stage.completed': 'Сделано',
+      'calendar.stage.plannedPublication':
+        'Запланирована публикация',
+      'calendar.stage.published': 'Выложено',
+      'calendar.metric.plannedAhead': 'План вперёд',
+      'calendar.metric.nextSeven':
+        'Событий за 7 дней',
+      'calendar.metric.ready':
+        'Готово к публикации',
+      'calendar.metric.scheduledPublication':
+        'Публикаций в плане',
+      'calendar.metric.daysValue': '{count} дн.',
+      'calendar.dayAria':
+        '{date}. Событий: {count}',
+      'calendar.moreEvents': '+ ещё {count}',
+      'calendar.noEvents':
+        'На этот день ничего не запланировано и не отмечено.',
+      'calendar.overdue': 'Просрочено',
+      'calendar.inWorkspace': 'В работе',
+      'calendar.openResult': 'Открыть результат',
+      'calendar.openCompleted':
+        'Открыть «Выполнено»',
+
       'toggle.autoJump.label': 'Автопереход к результатам',
       'toggle.autoJump.title':
         'После создания результата автоматически перейти к списку результатов',
@@ -179,6 +220,10 @@
       'result.dateMissing': 'Нужно указать дату',
       'result.dateSet': 'Дата указана',
       'result.links': 'Ссылки: {count}',
+      'result.moreActions': 'Другие действия',
+      'result.markCompleted':
+        'Отметить как выполненное',
+      'result.archive': 'Архивировать',
 
       'dialog.deleteItem.title': 'Удалить элемент?',
       'dialog.deleteItem.used':
@@ -219,6 +264,34 @@
         'Полностью одинаковый результат уже существует. Создать ещё одну копию?',
       'dialog.duplicate.button': 'Создать повторно',
 
+      'workflow.relatedItems':
+        'Также изменить связанные элементы',
+      'workflow.completeTitle':
+        'Точно отметить результат как выполненный?',
+      'workflow.completeText':
+        'Результат переместится во вкладку «Выполнено». Ниже можно дополнительно отметить связанные идею, концепт и музыку.',
+      'workflow.archiveTitle':
+        'Точно архивировать результат?',
+      'workflow.archiveText':
+        'Результат переместится в архив. Ниже можно дополнительно архивировать связанные идею, концепт и музыку.',
+      'workflow.alsoIdea': 'Идея: {name}',
+      'workflow.alsoConcept': 'Концепт: {name}',
+      'workflow.alsoMusic': 'Музыка: {name}',
+
+      'status.completedTitle': 'Выполнено',
+      'status.completedDescription':
+        'Здесь находятся выполненные результаты и связанные элементы, которые были отмечены отдельно.',
+      'status.archiveTitle': 'Архив',
+      'status.archiveDescription':
+        'Здесь находятся архивные результаты, идеи, концепты и музыка.',
+      'status.result': 'Результат',
+      'status.results': 'Результаты',
+      'status.ideas': 'Идеи',
+      'status.concepts': 'Концепты',
+      'status.music': 'Музыка',
+      'status.restore': 'Вернуть в работу',
+      'status.groupEmpty': 'В этом разделе пока ничего нет.',
+
       'toast.resultSaved': 'Результат сохранён.',
       'toast.itemDeleted': 'Элемент удалён.',
       'toast.categoryDeleted': 'Категория удалена.',
@@ -256,6 +329,12 @@
         'Random недоступен: добавь элементы в столбцы — {columns}.',
       'toast.timelineDateSet': 'Дата этапа сохранена.',
       'toast.timelineDateCleared': 'Дата этапа очищена.',
+      'toast.resultCompleted':
+        'Результат перемещён во «Выполнено».',
+      'toast.resultArchived':
+        'Результат перемещён в архив.',
+      'toast.restoredToWork':
+        'Элемент возвращён в рабочую область.',
       'toast.corruptedData':
         'Сохранённые данные были повреждены. Загружен стартовый набор.',
       'toast.autosaveFailed':
@@ -311,6 +390,46 @@
       'common.edit': 'Edit',
       'common.change': 'Edit',
       'common.uncategorized': 'Uncategorized',
+
+      'views.aria': 'Application sections',
+      'views.workspace': 'Workspace',
+      'views.calendar': 'Calendar',
+      'views.completed': 'Completed',
+      'views.archive': 'Archive',
+
+      'calendar.eyebrow': 'CONTENT PIPELINE',
+      'calendar.title': 'Content calendar',
+      'calendar.description':
+        'A day-by-day overview of execution and publication. Archived results are hidden.',
+      'calendar.previousMonth': 'Previous month',
+      'calendar.nextMonth': 'Next month',
+      'calendar.today': 'Today',
+      'calendar.legendAria': 'Calendar legend',
+      'calendar.gridAria': 'Content planning calendar',
+      'calendar.dayEyebrow': 'DAY OVERVIEW',
+      'calendar.stage.plannedExecution':
+        'Execution planned',
+      'calendar.stage.completed': 'Completed',
+      'calendar.stage.plannedPublication':
+        'Publication planned',
+      'calendar.stage.published': 'Published',
+      'calendar.metric.plannedAhead': 'Planned ahead',
+      'calendar.metric.nextSeven':
+        'Events in 7 days',
+      'calendar.metric.ready':
+        'Ready to publish',
+      'calendar.metric.scheduledPublication':
+        'Publications planned',
+      'calendar.metric.daysValue': '{count} days',
+      'calendar.dayAria':
+        '{date}. Events: {count}',
+      'calendar.moreEvents': '+ {count} more',
+      'calendar.noEvents':
+        'Nothing is planned or recorded for this day.',
+      'calendar.overdue': 'Overdue',
+      'calendar.inWorkspace': 'In workspace',
+      'calendar.openResult': 'Open result',
+      'calendar.openCompleted': 'Open Completed',
 
       'toggle.autoJump.label': 'Jump to results',
       'toggle.autoJump.title':
@@ -461,6 +580,9 @@
       'result.dateMissing': 'Date required',
       'result.dateSet': 'Date set',
       'result.links': 'Links: {count}',
+      'result.moreActions': 'More actions',
+      'result.markCompleted': 'Mark as completed',
+      'result.archive': 'Archive',
 
       'dialog.deleteItem.title': 'Delete item?',
       'dialog.deleteItem.used':
@@ -501,6 +623,34 @@
         'An identical result already exists. Create another copy?',
       'dialog.duplicate.button': 'Create another copy',
 
+      'workflow.relatedItems':
+        'Also update linked items',
+      'workflow.completeTitle':
+        'Mark this result as completed?',
+      'workflow.completeText':
+        'The result will move to the Completed tab. You can also mark its linked idea, concept, and music as completed.',
+      'workflow.archiveTitle':
+        'Archive this result?',
+      'workflow.archiveText':
+        'The result will move to the Archive tab. You can also archive its linked idea, concept, and music.',
+      'workflow.alsoIdea': 'Idea: {name}',
+      'workflow.alsoConcept': 'Concept: {name}',
+      'workflow.alsoMusic': 'Music: {name}',
+
+      'status.completedTitle': 'Completed',
+      'status.completedDescription':
+        'Completed results and linked items that were marked separately appear here.',
+      'status.archiveTitle': 'Archive',
+      'status.archiveDescription':
+        'Archived results, ideas, concepts, and music appear here.',
+      'status.result': 'Result',
+      'status.results': 'Results',
+      'status.ideas': 'Ideas',
+      'status.concepts': 'Concepts',
+      'status.music': 'Music',
+      'status.restore': 'Restore to workspace',
+      'status.groupEmpty': 'Nothing here yet.',
+
       'toast.resultSaved': 'Result saved.',
       'toast.itemDeleted': 'Item deleted.',
       'toast.categoryDeleted': 'Category deleted.',
@@ -538,6 +688,12 @@
         'Random is unavailable: add items to these columns — {columns}.',
       'toast.timelineDateSet': 'Stage date saved.',
       'toast.timelineDateCleared': 'Stage date cleared.',
+      'toast.resultCompleted':
+        'Result moved to Completed.',
+      'toast.resultArchived':
+        'Result moved to Archive.',
+      'toast.restoredToWork':
+        'Item restored to the workspace.',
       'toast.corruptedData':
         'Saved data was corrupted. The starter set has been loaded.',
       'toast.autosaveFailed':
@@ -602,6 +758,10 @@
         'The scheduled result date has an invalid format.',
       'Дата этапа результата имеет неверный формат.':
         'The result stage date has an invalid format.',
+      'Эта коллекция не поддерживает статусы.':
+        'This collection does not support statuses.',
+      'Неизвестный статус элемента.':
+        'Unknown item status.',
       'Неизвестный этап результата.':
         'Unknown result stage.',
       'Корневой объект данных имеет неверный формат.':

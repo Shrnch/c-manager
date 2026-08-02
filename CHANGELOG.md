@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.7.0] — 2026-08-02
+
+### Added
+
+- separate Calendar tab alongside Workspace, Completed, and Archive;
+- six-week monthly calendar grid with Monday-first weeks;
+- color-coded events for:
+  - planned execution;
+  - completed work;
+  - planned publication;
+  - published content;
+- compact result previews directly inside day cells;
+- day detail panel with event time, result name, source combination, and workflow state;
+- overdue indication for planned execution/publication dates that have not been resolved;
+- previous month, next month, and Today navigation;
+- planning overview metrics:
+  - how many days ahead the current plan reaches;
+  - events in the next seven days;
+  - results ready to publish;
+  - publications currently scheduled;
+- quick navigation from a calendar event back to its active result or to the Completed tab;
+- Russian and English calendar interface.
+
+### Behavior
+
+- Calendar data is derived from the existing four result date fields; no duplicate scheduling data is created.
+- Active and completed results appear in the calendar.
+- Archived results are excluded from the calendar.
+- The existing detailed Results list remains unchanged and continues to be the main editing interface.
+
+
+## [0.6.0] — 2026-07-22
+
+### Added
+
+- three-dot actions menu on result cards;
+- “Mark as completed” and “Archive” actions;
+- confirmation dialog before either action;
+- optional checkboxes for applying the same status to the linked idea, concept, and music;
+- separate Workspace, Completed, and Archive tabs;
+- completed and archived lists for results, ideas, concepts, and music;
+- individual restore-to-workspace action for every result and source item;
+- count badges on Completed and Archive tabs;
+- backward-compatible status migration for existing browser data and JSON backups;
+- Russian and English interface text.
+
+### Behavior
+
+- completed and archived results disappear from the main Results list;
+- completed and archived source items disappear from the three working columns;
+- source items are only moved when their checkbox is selected;
+- restoring a result does not automatically restore its linked source items, and vice versa.
+
+
 ## [0.5.0] — 2026-07-22
 
 ### Added
