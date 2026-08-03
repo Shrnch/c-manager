@@ -37,6 +37,19 @@ const itemModalEyebrow = document.querySelector('#item-modal-eyebrow');
 const itemSubmitButton = document.querySelector('#item-submit-button');
 const itemFormError = document.querySelector('#item-form-error');
 
+const resultNameModal = document.querySelector(
+  '#result-name-modal'
+);
+const resultNameForm = document.querySelector(
+  '#result-name-form'
+);
+const resultNameInput = document.querySelector(
+  '#result-name-input'
+);
+const resultNameError = document.querySelector(
+  '#result-name-error'
+);
+
 const categoriesModal = document.querySelector('#categories-modal');
 const categoriesList = document.querySelector('#categories-list');
 const newCategoryInput = document.querySelector('#new-category-name');
@@ -155,6 +168,7 @@ let itemModalMode = 'create';
 let activeItemType = null;
 let activeItemId = null;
 let pendingConfirmAction = null;
+let pendingResultNameId = null;
 let toastTimer = null;
 let currentAppView = 'workspace';
 let calendarCursor = new Date(
@@ -1436,6 +1450,34 @@ function saveMusic() {
   }
 }
 
+function openResultNameModal(resultId) {
+  const result = stateApi.getItemById(
+    'results',
+    resultId
+  );
+
+  if (!result || !resultNameModal) {
+    return;
+  }
+
+  pendingResultNameId = resultId;
+
+  if (resultNameInput) {
+    resultNameInput.value = result.title ?? '';
+  }
+
+  if (resultNameError) {
+    resultNameError.textContent = '';
+  }
+
+  resultNameModal.showModal();
+
+  window.requestAnimationFrame(() => {
+    resultNameInput?.focus();
+    resultNameInput?.select();
+  });
+}
+
 function createSelectedResult() {
   const selectedItems = getSelectedItems();
 
@@ -1443,7 +1485,7 @@ function createSelectedResult() {
     return;
   }
 
-  stateApi.addResult({
+  const createdResult = stateApi.addResult({
     ideaId: selectedItems.idea.id,
     conceptId: selectedItems.concept.id,
     musicId: selectedItems.music.id,
@@ -1452,6 +1494,10 @@ function createSelectedResult() {
   clearSelection();
   renderEverything();
   showToast(t('toast.resultSaved'));
+
+  window.setTimeout(() => {
+    openResultNameModal(createdResult.id);
+  }, 0);
 
   if (uiPreferences.autoJumpToResults) {
     document.querySelector('.results-section')?.scrollIntoView({
@@ -1743,6 +1789,57 @@ document.querySelector('#add-concept-button')?.addEventListener('click', () => {
 document.querySelector('#add-music-button')?.addEventListener('click', () => {
   openItemModal('music');
 });
+
+resultNameForm?.addEventListener(
+  'submit',
+  (event) => {
+    event.preventDefault();
+
+    if (!pendingResultNameId) {
+      closeDialog(resultNameModal);
+      return;
+    }
+
+    try {
+      const newTitle =
+        resultNameInput?.value ?? '';
+
+      stateApi.updateResultTitle(
+        pendingResultNameId,
+        newTitle
+      );
+
+      closeDialog(resultNameModal);
+      renderResultsView();
+
+      showToast(
+        newTitle.trim()
+          ? t('toast.resultRenamed')
+          : t('toast.resultDefaultName')
+      );
+    } catch (error) {
+      if (resultNameError) {
+        resultNameError.textContent =
+          translateError(error);
+      }
+    }
+  }
+);
+
+resultNameModal?.addEventListener(
+  'close',
+  () => {
+    pendingResultNameId = null;
+
+    if (resultNameInput) {
+      resultNameInput.value = '';
+    }
+
+    if (resultNameError) {
+      resultNameError.textContent = '';
+    }
+  }
+);
 
 document.querySelector('#manage-categories-button')?.addEventListener('click', () => {
   categoryFormError.textContent = '';
@@ -3206,6 +3303,7 @@ resultsList?.addEventListener('change', (event) => {
 
 [
   itemModal,
+  resultNameModal,
   categoriesModal,
   musicCategoriesModal,
   confirmModal
@@ -3287,4 +3385,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.2.1: повторный частичный Random исправлен.');
+console.log('v1.3.0: именование результата после создания подключено.');

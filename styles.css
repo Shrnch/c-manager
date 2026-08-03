@@ -3474,3 +3474,24 @@ input:focus-visible {
     font-size: 9px;
   }
 }
+
+
+/* =========================================================
+   v1.3.0 — immediate result naming
+   ========================================================= */
+
+.result-name-help {
+  margin: -2px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+#result-name-modal .modal-card {
+  width: min(440px, calc(100vw - 28px));
+}
+
+#result-name-modal .modal-body {
+  display: grid;
+  gap: 9px;
+}

@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0] — 2026-08-03
+
+### Added
+
+- c-manager now offers to name a Result immediately after it is created;
+- compact naming dialog with an automatically focused text field;
+- “Save name” and “Skip” actions;
+- skipping keeps the standard generated Result name;
+- the existing pencil rename action remains available later.
+
+
 ## [1.2.1] — 2026-08-02
 
 ### Fixed

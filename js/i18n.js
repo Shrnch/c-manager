@@ -142,6 +142,16 @@
       'results.filtered.description':
         'Измени фильтры или сортировку, чтобы снова увидеть сохранённые результаты.',
 
+      'resultName.eyebrow': 'NEW RESULT',
+      'resultName.title': 'Дать имя результату',
+      'resultName.label': 'Название результата',
+      'resultName.placeholder':
+        'Например: Динозавры под Sinatra',
+      'resultName.help':
+        'Необязательно — можно оставить стандартное название.',
+      'resultName.skip': 'Пропустить',
+      'resultName.save': 'Сохранить имя',
+
       'item.newEyebrow': 'NEW ITEM',
       'item.defaultTitle': 'Добавить элемент',
       'item.addIdea': 'Добавить идею',
@@ -513,6 +523,16 @@
       'results.filtered.title': 'No results match these filters',
       'results.filtered.description':
         'Change the filters or sorting to see saved results again.',
+
+      'resultName.eyebrow': 'NEW RESULT',
+      'resultName.title': 'Name this result',
+      'resultName.label': 'Result name',
+      'resultName.placeholder':
+        'For example: Dinosaurs with Sinatra',
+      'resultName.help':
+        'Optional — you can keep the default result name.',
+      'resultName.skip': 'Skip',
+      'resultName.save': 'Save name',
 
       'item.newEyebrow': 'NEW ITEM',
       'item.defaultTitle': 'Add item',

@@ -1,6 +1,6 @@
 # c-manager
 
-**Current version:** `v1.2.1`
+**Current version:** `v1.3.0`
 
 c-manager is a local browser app for building content plans by combining three reusable components:
 
@@ -24,6 +24,7 @@ Each saved result keeps the selected combination together with scheduling and pr
 - reuse the same source item in multiple results;
 - compact results panel designed for desktop use;
 - custom names for saved results;
+- optional naming prompt immediately after a Result is created;
 - completed and archived result workflows with separate tabs;
 - monthly content calendar with day cells, stage colors, day details, and planning metrics;
 - four-stage execution and publication timeline:

@@ -1,20 +1,20 @@
 # PROJECT STATE
 
 ## Current stage
-Repeated partial Random fix
+Immediate Result naming
 
 ## Status
 Completed
 
 ## Version
-v1.2.1
+v1.3.0
 
-## Fixed
-- Manual selections and Random selections are tracked separately.
-- Only manual selections are locked.
-- Repeated Random rerolls all unlocked slots.
-- Random tries to avoid the immediately previous item when alternatives exist.
-- Deselecting a manual cell removes its lock.
+## Added
+- Naming dialog immediately after Result creation.
+- Optional custom Result name.
+- Save name and Skip actions.
+- Skipping preserves the generated default name.
+- Existing rename action remains available.
 
 ## Last updated
-2026-08-02
+2026-08-03

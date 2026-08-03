@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.2.1</title>
+  <title>c-manager — v1.3.0</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -556,7 +556,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.2.1</span>
+      <span>v1.3.0</span>
     </footer>
   </main>
 
@@ -591,6 +591,63 @@
         </button>
         <button class="button button-primary" type="submit" id="item-submit-button" data-i18n="common.save">
           Сохранить
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog class="modal" id="result-name-modal">
+    <form class="modal-card" id="result-name-form">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow" data-i18n="resultName.eyebrow">NEW RESULT</p>
+          <h2 data-i18n="resultName.title">Дать имя результату</h2>
+        </div>
+        <button
+          class="modal-close"
+          type="button"
+          data-close-dialog="result-name-modal"
+          aria-label="Закрыть"
+          data-i18n-aria="common.close"
+        >×</button>
+      </div>
+
+      <div class="modal-body">
+        <label class="field">
+          <span data-i18n="resultName.label">Название результата</span>
+          <input
+            type="text"
+            id="result-name-input"
+            maxlength="80"
+            autocomplete="off"
+            placeholder="Например: Динозавры под Sinatra"
+            data-i18n-placeholder="resultName.placeholder"
+          >
+        </label>
+
+        <p class="result-name-help" data-i18n="resultName.help">
+          Необязательно — можно оставить стандартное название.
+        </p>
+
+        <p class="form-error" id="result-name-error" role="alert"></p>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          class="button button-secondary"
+          type="button"
+          data-close-dialog="result-name-modal"
+          data-i18n="resultName.skip"
+        >
+          Пропустить
+        </button>
+        <button
+          class="button button-primary"
+          type="submit"
+          data-i18n="resultName.save"
+        >
+          Сохранить имя
         </button>
       </div>
     </form>
