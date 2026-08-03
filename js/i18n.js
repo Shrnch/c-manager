@@ -50,6 +50,10 @@
       'calendar.stage.completed': 'Сделано',
       'calendar.stage.plannedPublication':
         'Запланирована публикация',
+      'calendar.stage.plannedPublicationPending':
+        'Публикация запланирована — ещё в работе',
+      'calendar.stage.readyPublication':
+        'Готово к публикации',
       'calendar.stage.published': 'Выложено',
       'calendar.metric.plannedAhead': 'План вперёд',
       'calendar.metric.nextSeven':
@@ -66,6 +70,10 @@
         'На этот день ничего не запланировано и не отмечено.',
       'calendar.overdue': 'Просрочено',
       'calendar.inWorkspace': 'В работе',
+      'calendar.readyToPublish':
+        'Готово к публикации',
+      'calendar.notCompletedYet':
+        'Результат ещё не выполнен',
       'calendar.openResult': 'Открыть результат',
       'calendar.openCompleted':
         'Открыть «Выполнено»',
@@ -434,6 +442,10 @@
       'calendar.stage.completed': 'Completed',
       'calendar.stage.plannedPublication':
         'Publication planned',
+      'calendar.stage.plannedPublicationPending':
+        'Publication planned — still in progress',
+      'calendar.stage.readyPublication':
+        'Ready to publish',
       'calendar.stage.published': 'Published',
       'calendar.metric.plannedAhead': 'Planned ahead',
       'calendar.metric.nextSeven':
@@ -450,6 +462,10 @@
         'Nothing is planned or recorded for this day.',
       'calendar.overdue': 'Overdue',
       'calendar.inWorkspace': 'In workspace',
+      'calendar.readyToPublish':
+        'Ready to publish',
+      'calendar.notCompletedYet':
+        'Result not completed yet',
       'calendar.openResult': 'Open result',
       'calendar.openCompleted': 'Open Completed',
 

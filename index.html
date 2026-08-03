@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.3.0</title>
+  <title>c-manager — v1.3.1</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -475,9 +475,16 @@
             </span>
 
             <span class="calendar-legend-item">
-              <i class="calendar-stage-dot calendar-stage-planned-publication"></i>
-              <span data-i18n="calendar.stage.plannedPublication">
-                Запланирована публикация
+              <i class="calendar-stage-dot calendar-stage-planned-publication-pending"></i>
+              <span data-i18n="calendar.stage.plannedPublicationPending">
+                Публикация запланирована — ещё в работе
+              </span>
+            </span>
+
+            <span class="calendar-legend-item">
+              <i class="calendar-stage-dot calendar-stage-planned-publication-ready"></i>
+              <span data-i18n="calendar.stage.readyPublication">
+                Готово к публикации
               </span>
             </span>
 
@@ -556,7 +563,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.3.0</span>
+      <span>v1.3.1</span>
     </footer>
   </main>
 

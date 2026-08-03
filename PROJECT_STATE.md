@@ -1,20 +1,19 @@
 # PROJECT STATE
 
 ## Current stage
-Immediate Result naming
+Calendar publication readiness distinction
 
 ## Status
 Completed
 
 ## Version
-v1.3.0
+v1.3.1
 
-## Added
-- Naming dialog immediately after Result creation.
-- Optional custom Result name.
-- Save name and Skip actions.
-- Skipping preserves the generated default name.
-- Existing rename action remains available.
+## Fixed
+- Planned publication while Result is unfinished is visually distinct.
+- Planned publication after Result completion is shown as Ready to publish.
+- Calendar day detail badges expose both states.
+- Ready-to-publish metric recognises timeline completion and Completed workflow status.
 
 ## Last updated
 2026-08-03

@@ -841,6 +841,41 @@
           return;
         }
 
+        const workflowStatus =
+          getWorkflowStatus(result);
+
+        const isPublicationPlan =
+          stage.key ===
+          'planned-publication';
+
+        const resultIsCompleted =
+          Boolean(result.completedAt) ||
+          workflowStatus === 'completed';
+
+        const publicationIsReady =
+          isPublicationPlan &&
+          resultIsCompleted &&
+          !result.publishedAt;
+
+        const publicationNeedsWork =
+          isPublicationPlan &&
+          !resultIsCompleted &&
+          !result.publishedAt;
+
+        const calendarStageKey =
+          publicationIsReady
+            ? 'planned-publication-ready'
+            : publicationNeedsWork
+              ? 'planned-publication-pending'
+              : stage.key;
+
+        const calendarStageTranslationKey =
+          publicationIsReady
+            ? 'calendar.stage.readyPublication'
+            : publicationNeedsWork
+              ? 'calendar.stage.plannedPublicationPending'
+              : stage.translationKey;
+
         events.push({
           id: `${result.id}:${stage.key}`,
           resultId: result.id,
@@ -848,12 +883,12 @@
             result,
             resultIndex
           ),
-          workflowStatus:
-            getWorkflowStatus(result),
-          stageKey: stage.key,
+          workflowStatus,
+          stageKey: calendarStageKey,
+          baseStageKey: stage.key,
           stageField: stage.field,
           stageTranslationKey:
-            stage.translationKey,
+            calendarStageTranslationKey,
           stagePriority: stage.priority,
           isPlanned: stage.planned,
           isResolved:
@@ -861,6 +896,8 @@
             Boolean(
               result[stage.resolutionField]
             ),
+          publicationIsReady,
+          publicationNeedsWork,
           value: rawValue,
           date,
           dateKey: getDateKey(date),
@@ -963,7 +1000,11 @@
     const readyToPublish =
       visibleResults.filter(
         (result) =>
-          Boolean(result.completedAt) &&
+          (
+            Boolean(result.completedAt) ||
+            getWorkflowStatus(result) ===
+              'completed'
+          ) &&
           !result.publishedAt
       ).length;
 
@@ -1101,6 +1142,18 @@
       );
       stateBadge.textContent =
         t('calendar.overdue');
+    } else if (event.publicationIsReady) {
+      stateBadge.classList.add(
+        'calendar-detail-state-ready'
+      );
+      stateBadge.textContent =
+        t('calendar.readyToPublish');
+    } else if (event.publicationNeedsWork) {
+      stateBadge.classList.add(
+        'calendar-detail-state-pending-work'
+      );
+      stateBadge.textContent =
+        t('calendar.notCompletedYet');
     } else if (
       event.workflowStatus === 'completed'
     ) {

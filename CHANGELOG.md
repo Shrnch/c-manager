@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.1] — 2026-08-03
+
+### Fixed
+
+- planned publication events in Calendar now distinguish content that is still in progress from content that is already ready to publish;
+- a planned publication for an unfinished Result uses a lighter, hollow/dashed publication state;
+- a planned publication for a completed Result uses a stronger “Ready to publish” state;
+- Calendar day details explicitly show “Result not completed yet” or “Ready to publish”;
+- the Ready to publish metric now also respects Results moved to the Completed workflow.
+
+
 ## [1.3.0] — 2026-08-03
 
 ### Added
