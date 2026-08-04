@@ -249,6 +249,8 @@
       'result.moreActions': 'Другие действия',
       'result.markCompleted':
         'Отметить как выполненное',
+      'result.markPublished':
+        'Отметить как опубликованное',
       'result.archive': 'Архивировать',
 
       'dialog.deleteItem.title': 'Удалить элемент?',
@@ -295,7 +297,7 @@
       'workflow.completeTitle':
         'Точно отметить результат как выполненный?',
       'workflow.completeText':
-        'Результат переместится во вкладку «Выполнено». Ниже можно дополнительно отметить связанные идею, концепт и музыку.',
+        'Текущие дата и время автоматически сохранятся как момент выполнения, а результат переместится во вкладку «Выполнено». Ниже можно дополнительно отметить связанные идею, концепт и музыку.',
       'workflow.archiveTitle':
         'Точно архивировать результат?',
       'workflow.archiveText':
@@ -316,6 +318,12 @@
       'status.concepts': 'Концепты',
       'status.music': 'Музыка',
       'status.restore': 'Вернуть в работу',
+      'status.readyToPublish':
+        'Готово к публикации',
+      'status.completedAt':
+        'Выполнено: {date}',
+      'status.publishedAt':
+        'Опубликовано: {date}',
       'status.groupEmpty': 'В этом разделе пока ничего нет.',
 
       'toast.resultSaved': 'Результат сохранён.',
@@ -360,7 +368,9 @@
       'toast.timelineDateSet': 'Дата этапа сохранена.',
       'toast.timelineDateCleared': 'Дата этапа очищена.',
       'toast.resultCompleted':
-        'Результат перемещён во «Выполнено».',
+        'Результат выполнен. Дата и время сохранены автоматически.',
+      'toast.resultPublished':
+        'Результат отмечен как опубликованный. Дата и время сохранены автоматически.',
       'toast.resultArchived':
         'Результат перемещён в архив.',
       'toast.restoredToWork':
@@ -638,6 +648,7 @@
       'result.links': 'Links: {count}',
       'result.moreActions': 'More actions',
       'result.markCompleted': 'Mark as completed',
+      'result.markPublished': 'Mark as published',
       'result.archive': 'Archive',
 
       'dialog.deleteItem.title': 'Delete item?',
@@ -684,7 +695,7 @@
       'workflow.completeTitle':
         'Mark this result as completed?',
       'workflow.completeText':
-        'The result will move to the Completed tab. You can also mark its linked idea, concept, and music as completed.',
+        'The current date and time will be saved automatically as the completion time, and the result will move to the Completed tab. You can also mark its linked idea, concept, and music as completed.',
       'workflow.archiveTitle':
         'Archive this result?',
       'workflow.archiveText':
@@ -705,6 +716,9 @@
       'status.concepts': 'Concepts',
       'status.music': 'Music',
       'status.restore': 'Restore to workspace',
+      'status.readyToPublish': 'Ready to publish',
+      'status.completedAt': 'Completed: {date}',
+      'status.publishedAt': 'Published: {date}',
       'status.groupEmpty': 'Nothing here yet.',
 
       'toast.resultSaved': 'Result saved.',
@@ -749,7 +763,9 @@
       'toast.timelineDateSet': 'Stage date saved.',
       'toast.timelineDateCleared': 'Stage date cleared.',
       'toast.resultCompleted':
-        'Result moved to Completed.',
+        'Result completed. Date and time saved automatically.',
+      'toast.resultPublished':
+        'Result marked as published. Date and time saved automatically.',
       'toast.resultArchived':
         'Result moved to Archive.',
       'toast.restoredToWork':

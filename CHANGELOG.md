@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0] — 2026-08-04
+
+### Changed
+
+- Workspace now contains only Execution planned and Publication planned;
+- Completed and Published timestamps can no longer be entered manually;
+- Mark as completed automatically records the current completion date/time and moves the Result to Completed;
+- Completed Results waiting for publication are labeled Ready to publish;
+- Completed Results can be marked as published directly from the Completed view;
+- Mark as published automatically records the current publication date/time;
+- Calendar Completed / Ready to publish / Published events are driven by these workflow actions.
+
+
 ## [1.3.1] — 2026-08-03
 
 ### Fixed

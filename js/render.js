@@ -520,7 +520,8 @@
   function createStatusResultCard(
     state,
     result,
-    index
+    index,
+    status
   ) {
     const idea = state.ideas.find(
       (item) => item.id === result.ideaId
@@ -570,12 +571,78 @@
       combination
     );
 
-    card.append(
-      content,
+    if (result.completedAt) {
+      const completedMeta =
+        document.createElement('small');
+      completedMeta.className =
+        'status-result-timeline-meta';
+      completedMeta.textContent = t(
+        'status.completedAt',
+        {
+          date: formatCreatedAt(
+            result.completedAt
+          ),
+        }
+      );
+      content.append(completedMeta);
+    }
+
+    if (result.publishedAt) {
+      const publishedMeta =
+        document.createElement('small');
+      publishedMeta.className =
+        'status-result-timeline-meta status-result-published-meta';
+      publishedMeta.textContent = t(
+        'status.publishedAt',
+        {
+          date: formatCreatedAt(
+            result.publishedAt
+          ),
+        }
+      );
+      content.append(publishedMeta);
+    } else if (status === 'completed') {
+      const readyBadge =
+        document.createElement('span');
+      readyBadge.className =
+        'status-result-ready-badge';
+      readyBadge.textContent =
+        t('status.readyToPublish');
+      content.append(readyBadge);
+    }
+
+    const actions = document.createElement('div');
+    actions.className =
+      'status-result-actions';
+
+    if (
+      status === 'completed' &&
+      !result.publishedAt
+    ) {
+      const publishButton =
+        document.createElement('button');
+      publishButton.type = 'button';
+      publishButton.className =
+        'button button-primary button-compact status-publish-button';
+      publishButton.dataset.statusAction =
+        'mark-published';
+      publishButton.dataset.itemId =
+        result.id;
+      publishButton.textContent =
+        t('result.markPublished');
+      actions.append(publishButton);
+    }
+
+    actions.append(
       createRestoreButton(
         'results',
         result.id
       )
+    );
+
+    card.append(
+      content,
+      actions
     );
 
     return card;
@@ -650,7 +717,8 @@
           createStatusResultCard(
             state,
             result,
-            index
+            index,
+            status
           )
       ),
       createStatusGroup(
@@ -1973,19 +2041,9 @@
           value: result.plannedExecutionAt,
         }),
         createTimelineField({
-          fieldName: 'completedAt',
-          label: t('result.completed'),
-          value: result.completedAt,
-        }),
-        createTimelineField({
           fieldName: 'plannedPublicationAt',
           label: t('result.plannedPublication'),
           value: result.plannedPublicationAt,
-        }),
-        createTimelineField({
-          fieldName: 'publishedAt',
-          label: t('result.published'),
-          value: result.publishedAt,
         })
       );
 

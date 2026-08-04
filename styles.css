@@ -3583,3 +3583,60 @@ input:focus-visible {
   display: grid;
   gap: 9px;
 }
+
+
+/* =========================================================
+   v1.4.0 — action-driven actual dates
+   ========================================================= */
+
+.status-result-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+}
+
+.status-result-timeline-meta {
+  display: block;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.status-result-published-meta {
+  color: var(--calendar-published);
+}
+
+.status-result-ready-badge {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 20px;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  color: var(--calendar-publication-ready);
+  background: color-mix(
+    in srgb,
+    var(--calendar-publication-ready) 10%,
+    var(--surface)
+  );
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.status-publish-button {
+  white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .status-result-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .status-result-actions .button {
+    width: 100%;
+  }
+}

@@ -1,19 +1,21 @@
 # PROJECT STATE
 
 ## Current stage
-Calendar publication readiness distinction
+Action-driven content workflow
 
 ## Status
 Completed
 
 ## Version
-v1.3.1
+v1.4.0
 
-## Fixed
-- Planned publication while Result is unfinished is visually distinct.
-- Planned publication after Result completion is shown as Ready to publish.
-- Calendar day detail badges expose both states.
-- Ready-to-publish metric recognises timeline completion and Completed workflow status.
+## Workflow
+- Workspace exposes only Planned execution and Planned publication.
+- Mark as completed records completedAt automatically using the current local date/time.
+- Completed Results move to the Completed view.
+- Unpublished completed Results are marked Ready to publish.
+- Mark as published records publishedAt automatically using the current local date/time.
+- Calendar actual events are derived from those workflow actions.
 
 ## Last updated
-2026-08-03
+2026-08-04

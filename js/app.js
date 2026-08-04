@@ -1678,11 +1678,17 @@ function requestResultWorkflowChange(
       },
     ],
     action: (selectedOptions) => {
-      stateApi.setWorkflowStatus(
-        'results',
-        resultId,
-        targetStatus
-      );
+      if (isArchive) {
+        stateApi.setWorkflowStatus(
+          'results',
+          resultId,
+          targetStatus
+        );
+      } else {
+        stateApi.markResultCompleted(
+          resultId
+        );
+      }
 
       const sourceMap = {
         idea: {
@@ -3085,6 +3091,34 @@ document
 statusViewContent?.addEventListener(
   'click',
   (event) => {
+    const publishButton =
+      event.target.closest(
+        '[data-status-action="mark-published"]'
+      );
+
+    if (publishButton) {
+      const resultId =
+        publishButton.dataset.itemId;
+
+      if (!resultId) {
+        return;
+      }
+
+      try {
+        stateApi.markResultPublished(
+          resultId
+        );
+        renderEverything();
+        showToast(
+          t('toast.resultPublished')
+        );
+      } catch (error) {
+        showToast(translateError(error));
+      }
+
+      return;
+    }
+
     const button = event.target.closest(
       '[data-status-action="restore"]'
     );
@@ -3385,4 +3419,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.3.0: именование результата после создания подключено.');
+console.log('v1.4.0: фактические даты управляются workflow-действиями.');

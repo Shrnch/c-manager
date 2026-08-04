@@ -42,6 +42,32 @@
     return new Date().toISOString();
   }
 
+  function createLocalDateTimeValue(date = new Date()) {
+    const safeDate =
+      date instanceof Date
+        ? date
+        : new Date(date);
+
+    if (Number.isNaN(safeDate.getTime())) {
+      throw new TypeError('Некорректная дата.');
+    }
+
+    const pad = (value) =>
+      String(value).padStart(2, '0');
+
+    return [
+      safeDate.getFullYear(),
+      '-',
+      pad(safeDate.getMonth() + 1),
+      '-',
+      pad(safeDate.getDate()),
+      'T',
+      pad(safeDate.getHours()),
+      ':',
+      pad(safeDate.getMinutes()),
+    ].join('');
+  }
+
   function calculateScore(importance, desire) {
     const safeImportance = Number(importance);
     const safeDesire = Number(desire);
@@ -508,9 +534,7 @@
 
   const RESULT_TIMELINE_FIELDS = new Set([
     'plannedExecutionAt',
-    'completedAt',
     'plannedPublicationAt',
-    'publishedAt',
   ]);
 
   function updateResultTimelineDate(
@@ -524,6 +548,53 @@
 
     return updateItem('results', resultId, {
       [fieldName]: value || null,
+    });
+  }
+
+  function markResultCompleted(
+    resultId,
+    date = new Date()
+  ) {
+    const result =
+      getItemById('results', resultId);
+
+    if (!result) {
+      return null;
+    }
+
+    return updateItem('results', resultId, {
+      completedAt:
+        createLocalDateTimeValue(date),
+      workflowStatus: 'completed',
+      statusChangedAt: createTimestamp(),
+    });
+  }
+
+  function markResultPublished(
+    resultId,
+    date = new Date()
+  ) {
+    const result =
+      getItemById('results', resultId);
+
+    if (!result) {
+      return null;
+    }
+
+    if (
+      !result.completedAt &&
+      normalizeWorkflowStatus(
+        result.workflowStatus
+      ) !== 'completed'
+    ) {
+      throw new Error(
+        'Сначала отметь результат как выполненный.'
+      );
+    }
+
+    return updateItem('results', resultId, {
+      publishedAt:
+        createLocalDateTimeValue(date),
     });
   }
 
@@ -651,6 +722,8 @@
     updateResultTitle,
     findDuplicateResult,
     updateResultTimelineDate,
+    markResultCompleted,
+    markResultPublished,
     updateResultSchedule,
     updateResultScore,
     deleteResultsByReference,
