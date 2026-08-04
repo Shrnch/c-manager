@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.2] — 2026-08-04
+
+### Changed
+
+- Calendar “Planned ahead” now means the number of distinct calendar days from today onward that contain at least one planned content event;
+- Execution planned, Publication planned — still in progress, and Ready to publish all count equally;
+- multiple planned Results on the same date count as one planned day;
+- today is included when it contains at least one plan;
+- gaps between planned dates do not create extra days.
+
+
 ## [1.4.1] — 2026-08-04
 
 ### Fixed

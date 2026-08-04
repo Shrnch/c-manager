@@ -1,19 +1,22 @@
 # PROJECT STATE
 
 ## Current stage
-Forward-looking Calendar metrics
+Planned-ahead coverage metric
 
 ## Status
 Completed
 
 ## Version
-v1.4.1
+v1.4.2
 
-## Fixed
-- Ready to publish counts only completed, unpublished Results with publication planned for today or later.
-- Publications planned counts only unpublished Results with publication planned for today or later.
-- Past planned publication dates no longer inflate these metrics.
-- Today's publication plans remain included.
+## Planned ahead
+- Counts distinct planned calendar dates from today onward.
+- Includes Execution planned.
+- Includes Publication planned — still in progress.
+- Includes Ready to publish.
+- Multiple plans on one date count as one day.
+- Today counts as one day when it has a plan.
+- Empty dates between plans are not counted.
 
 ## Last updated
 2026-08-04

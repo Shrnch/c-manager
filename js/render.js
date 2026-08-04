@@ -1025,34 +1025,12 @@
           event.dateKey >= todayKey
       );
 
-    const furthestFutureDate =
-      futurePlannedEvents.length
-        ? futurePlannedEvents.reduce(
-            (latest, event) =>
-              event.date > latest
-                ? event.date
-                : latest,
-            futurePlannedEvents[0].date
-          )
-        : null;
-
     const plannedAheadDays =
-      furthestFutureDate
-        ? Math.max(
-            0,
-            Math.round(
-              (
-                new Date(
-                  furthestFutureDate.getFullYear(),
-                  furthestFutureDate.getMonth(),
-                  furthestFutureDate.getDate()
-                ).getTime() -
-                today.getTime()
-              ) /
-                86400000
-            )
-          )
-        : null;
+      new Set(
+        futurePlannedEvents.map(
+          (event) => event.dateKey
+        )
+      ).size;
 
     const nextSevenEvents = events.filter(
       (event) =>
