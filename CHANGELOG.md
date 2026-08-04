@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.6] — 2026-08-04
+
+### Changed
+
+- completed, unpublished Results can now edit Publication planned directly from the Completed view;
+- changing the publication plan no longer requires restoring the Result to Workspace;
+- completedAt and the Completed workflow status remain unchanged when the publication date is edited;
+- Calendar updates immediately after the publication plan changes;
+- the publication plan can also be cleared directly from Completed.
+
+
 ## [1.4.5] — 2026-08-04
 
 ### Changed

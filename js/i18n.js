@@ -330,6 +330,8 @@
       'status.restore': 'Вернуть в работу',
       'status.readyToPublish':
         'Готово к публикации',
+      'status.editPublicationPlan':
+        'Изменить запланированную дату публикации',
       'status.completedAt':
         'Выполнено: {date}',
       'status.publishedAt':
@@ -381,6 +383,10 @@
         'Результат выполнен. Дата и время сохранены автоматически.',
       'toast.resultPublished':
         'Результат отмечен как опубликованный. Дата и время сохранены автоматически.',
+      'toast.publicationPlanUpdated':
+        'Дата публикации обновлена.',
+      'toast.publicationPlanCleared':
+        'Запланированная дата публикации очищена.',
       'toast.resultArchived':
         'Результат перемещён в архив.',
       'toast.restoredToWork':
@@ -737,6 +743,8 @@
       'status.music': 'Music',
       'status.restore': 'Restore to workspace',
       'status.readyToPublish': 'Ready to publish',
+      'status.editPublicationPlan':
+        'Change planned publication date',
       'status.completedAt': 'Completed: {date}',
       'status.publishedAt': 'Published: {date}',
       'status.groupEmpty': 'Nothing here yet.',
@@ -786,6 +794,10 @@
         'Result completed. Date and time saved automatically.',
       'toast.resultPublished':
         'Result marked as published. Date and time saved automatically.',
+      'toast.publicationPlanUpdated':
+        'Publication date updated.',
+      'toast.publicationPlanCleared':
+        'Planned publication date cleared.',
       'toast.resultArchived':
         'Result moved to Archive.',
       'toast.restoredToWork':

@@ -3112,6 +3112,39 @@ document
   });
 
 statusViewContent?.addEventListener(
+  'change',
+  (event) => {
+    const input = event.target.closest(
+      '[data-status-action="publication-date"]'
+    );
+
+    if (!input) {
+      return;
+    }
+
+    const resultId =
+      input.dataset.itemId;
+
+    if (!resultId) {
+      return;
+    }
+
+    stateApi.updateResultTimelineDate(
+      resultId,
+      'plannedPublicationAt',
+      input.value
+    );
+
+    renderEverything();
+    showToast(
+      input.value
+        ? t('toast.publicationPlanUpdated')
+        : t('toast.publicationPlanCleared')
+    );
+  }
+);
+
+statusViewContent?.addEventListener(
   'click',
   (event) => {
     const publishButton =
@@ -3443,4 +3476,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.4.5: цвета типов событий в Day Overview подключены.');
+console.log('v1.4.6: дата публикации редактируется прямо из Completed.');

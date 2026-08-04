@@ -609,6 +609,39 @@
       readyBadge.textContent =
         t('status.readyToPublish');
       content.append(readyBadge);
+
+      const publicationEditor =
+        document.createElement('label');
+      publicationEditor.className =
+        'status-result-publication-editor';
+
+      const publicationLabel =
+        document.createElement('span');
+      publicationLabel.textContent =
+        t('result.plannedPublication');
+
+      const publicationInput =
+        document.createElement('input');
+      publicationInput.type =
+        'datetime-local';
+      publicationInput.value =
+        result.plannedPublicationAt ?? '';
+      publicationInput.dataset.statusAction =
+        'publication-date';
+      publicationInput.dataset.itemId =
+        result.id;
+      publicationInput.setAttribute(
+        'aria-label',
+        t('status.editPublicationPlan')
+      );
+      publicationInput.title =
+        t('status.editPublicationPlan');
+
+      publicationEditor.append(
+        publicationLabel,
+        publicationInput
+      );
+      content.append(publicationEditor);
     }
 
     const actions = document.createElement('div');

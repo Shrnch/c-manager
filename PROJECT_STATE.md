@@ -1,18 +1,20 @@
 # PROJECT STATE
 
 ## Current stage
-Colored Day Overview filter
+Completed-result publication rescheduling
 
 ## Status
 Completed
 
 ## Version
-v1.4.5
+v1.4.6
 
-## Day Overview
-- Event-type option labels use Calendar event colors.
-- The active filter value uses the same event color.
-- All types keeps the normal text color.
+## Completed workflow
+- Completed, unpublished Results expose an editable Publication planned field.
+- Rescheduling does not change completedAt.
+- Rescheduling does not move the Result back to Workspace.
+- Calendar and publication readiness update immediately.
+- Published Results keep their actual publication timestamp and do not show this editor.
 
 ## Last updated
 2026-08-04
