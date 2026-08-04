@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.3] — 2026-08-04
+
+### Changed
+
+- a future Execution planned event is retained after a Result is completed, preserving the original plan;
+- resolved execution plans are now visually marked with a checked, muted orange state instead of looking like outstanding work;
+- Calendar day details label the old plan as completed against plan;
+- the real Completed event still appears on the actual completion date;
+- resolved execution plans no longer count toward Planned ahead.
+
+
 ## [1.4.2] — 2026-08-04
 
 ### Changed

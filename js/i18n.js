@@ -47,6 +47,8 @@
       'calendar.dayEyebrow': 'DAY OVERVIEW',
       'calendar.stage.plannedExecution':
         'Запланировано выполнение',
+      'calendar.stage.plannedExecutionResolved':
+        'План выполнения закрыт',
       'calendar.stage.completed': 'Сделано',
       'calendar.stage.plannedPublication':
         'Запланирована публикация',
@@ -69,6 +71,8 @@
       'calendar.noEvents':
         'На этот день ничего не запланировано и не отмечено.',
       'calendar.overdue': 'Просрочено',
+      'calendar.planCompleted':
+        'Выполнено раньше/по плану',
       'calendar.inWorkspace': 'В работе',
       'calendar.readyToPublish':
         'Готово к публикации',
@@ -449,6 +453,8 @@
       'calendar.dayEyebrow': 'DAY OVERVIEW',
       'calendar.stage.plannedExecution':
         'Execution planned',
+      'calendar.stage.plannedExecutionResolved':
+        'Execution plan completed',
       'calendar.stage.completed': 'Completed',
       'calendar.stage.plannedPublication':
         'Publication planned',
@@ -471,6 +477,8 @@
       'calendar.noEvents':
         'Nothing is planned or recorded for this day.',
       'calendar.overdue': 'Overdue',
+      'calendar.planCompleted':
+        'Completed against plan',
       'calendar.inWorkspace': 'In workspace',
       'calendar.readyToPublish':
         'Ready to publish',

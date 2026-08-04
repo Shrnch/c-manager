@@ -2973,6 +2973,11 @@ input:focus-visible {
     var(--calendar-execution);
 }
 
+.calendar-stage-planned-execution-resolved {
+  --calendar-stage-color:
+    var(--calendar-execution);
+}
+
 .calendar-stage-completed {
   --calendar-stage-color:
     var(--calendar-completed);
@@ -2999,12 +3004,33 @@ input:focus-visible {
 }
 
 .calendar-stage-dot.calendar-stage-planned-execution,
+.calendar-stage-dot.calendar-stage-planned-execution-resolved,
 .calendar-stage-dot.calendar-stage-completed,
 .calendar-stage-dot.calendar-stage-planned-publication,
 .calendar-stage-dot.calendar-stage-planned-publication-pending,
 .calendar-stage-dot.calendar-stage-planned-publication-ready,
 .calendar-stage-dot.calendar-stage-published {
   background: var(--calendar-stage-color);
+}
+
+.calendar-stage-dot.calendar-stage-planned-execution-resolved {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border: 1px solid
+    var(--calendar-execution);
+  background: var(--surface);
+}
+
+.calendar-stage-dot.calendar-stage-planned-execution-resolved::after {
+  position: absolute;
+  inset: -5px -3px auto auto;
+  color: var(--calendar-execution);
+  content: '✓';
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 1000;
+  line-height: 1;
 }
 
 .calendar-stage-dot.calendar-stage-planned-publication-pending {
@@ -3094,6 +3120,15 @@ input:focus-visible {
 .calendar-day-dominant-planned-execution {
   --calendar-day-accent:
     var(--calendar-execution);
+}
+
+.calendar-day-dominant-planned-execution-resolved {
+  --calendar-day-accent:
+    color-mix(
+      in srgb,
+      var(--calendar-execution) 45%,
+      var(--surface)
+    );
 }
 
 .calendar-day-dominant-completed {
@@ -3200,6 +3235,23 @@ input:focus-visible {
 .calendar-event-planned-execution {
   --calendar-stage-color:
     var(--calendar-execution);
+}
+
+.calendar-event-planned-execution-resolved {
+  --calendar-stage-color:
+    var(--calendar-execution);
+  opacity: 0.68;
+  border: 1px dashed
+    color-mix(
+      in srgb,
+      var(--calendar-execution) 42%,
+      transparent
+    );
+  background: color-mix(
+    in srgb,
+    var(--calendar-execution) 5%,
+    var(--surface)
+  );
 }
 
 .calendar-event-completed {
@@ -3327,6 +3379,17 @@ input:focus-visible {
     var(--calendar-execution);
 }
 
+.calendar-detail-planned-execution-resolved {
+  --calendar-stage-color:
+    var(--calendar-execution);
+  border-left-style: dashed;
+  background: color-mix(
+    in srgb,
+    var(--calendar-execution) 4%,
+    var(--surface)
+  );
+}
+
 .calendar-detail-completed {
   --calendar-stage-color:
     var(--calendar-completed);
@@ -3425,6 +3488,20 @@ input:focus-visible {
   );
 }
 
+
+
+.calendar-detail-state-resolved-plan {
+  color: color-mix(
+    in srgb,
+    var(--calendar-execution) 80%,
+    var(--text)
+  );
+  background: color-mix(
+    in srgb,
+    var(--calendar-execution) 9%,
+    var(--surface)
+  );
+}
 
 .calendar-detail-state-ready {
   color: var(--calendar-publication-ready);

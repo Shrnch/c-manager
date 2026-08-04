@@ -930,19 +930,27 @@
           !resultIsCompleted &&
           !result.publishedAt;
 
+        const executionPlanResolved =
+          stage.key === 'planned-execution' &&
+          resultIsCompleted;
+
         const calendarStageKey =
-          publicationIsReady
-            ? 'planned-publication-ready'
-            : publicationNeedsWork
-              ? 'planned-publication-pending'
-              : stage.key;
+          executionPlanResolved
+            ? 'planned-execution-resolved'
+            : publicationIsReady
+              ? 'planned-publication-ready'
+              : publicationNeedsWork
+                ? 'planned-publication-pending'
+                : stage.key;
 
         const calendarStageTranslationKey =
-          publicationIsReady
-            ? 'calendar.stage.readyPublication'
-            : publicationNeedsWork
-              ? 'calendar.stage.plannedPublicationPending'
-              : stage.translationKey;
+          executionPlanResolved
+            ? 'calendar.stage.plannedExecutionResolved'
+            : publicationIsReady
+              ? 'calendar.stage.readyPublication'
+              : publicationNeedsWork
+                ? 'calendar.stage.plannedPublicationPending'
+                : stage.translationKey;
 
         events.push({
           id: `${result.id}:${stage.key}`,
@@ -966,6 +974,7 @@
             ),
           publicationIsReady,
           publicationNeedsWork,
+          executionPlanResolved,
           value: rawValue,
           date,
           dateKey: getDateKey(date),
@@ -1016,7 +1025,9 @@
       getDateKey(nextSevenEnd);
 
     const plannedEvents = events.filter(
-      (event) => event.isPlanned
+      (event) =>
+        event.isPlanned &&
+        !event.isResolved
     );
 
     const futurePlannedEvents =
@@ -1213,6 +1224,12 @@
       );
       stateBadge.textContent =
         t('calendar.overdue');
+    } else if (event.executionPlanResolved) {
+      stateBadge.classList.add(
+        'calendar-detail-state-resolved-plan'
+      );
+      stateBadge.textContent =
+        t('calendar.planCompleted');
     } else if (event.publicationIsReady) {
       stateBadge.classList.add(
         'calendar-detail-state-ready'

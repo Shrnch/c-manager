@@ -1,22 +1,20 @@
 # PROJECT STATE
 
 ## Current stage
-Planned-ahead coverage metric
+Resolved execution-plan visualization
 
 ## Status
 Completed
 
 ## Version
-v1.4.2
+v1.4.3
 
-## Planned ahead
-- Counts distinct planned calendar dates from today onward.
-- Includes Execution planned.
-- Includes Publication planned — still in progress.
-- Includes Ready to publish.
-- Multiple plans on one date count as one day.
-- Today counts as one day when it has a plan.
-- Empty dates between plans are not counted.
+## Calendar behavior
+- Original Execution planned events remain visible after completion.
+- Once the Result is completed, the original execution plan becomes a resolved plan.
+- Resolved plans use a muted orange checked marker and dashed styling.
+- The actual Completed event remains on the real completion date.
+- Resolved plans do not count toward Planned ahead.
 
 ## Last updated
 2026-08-04
