@@ -1,20 +1,18 @@
 # PROJECT STATE
 
 ## Current stage
-Day Overview event filtering
+Colored Day Overview filter
 
 ## Status
 Completed
 
 ## Version
-v1.4.4
+v1.4.5
 
-## Calendar Day Overview
-- Filter by event type.
-- All types available by default.
-- Exact event types can be isolated.
-- Calendar grid itself remains unchanged.
-- The selected filter stays active when another day is opened.
+## Day Overview
+- Event-type option labels use Calendar event colors.
+- The active filter value uses the same event color.
+- All types keeps the normal text color.
 
 ## Last updated
 2026-08-04

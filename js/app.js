@@ -527,6 +527,18 @@ function updateViewCounts() {
   }
 }
 
+function updateCalendarDayTypeFilterColor() {
+  if (!calendarDayTypeFilter) {
+    return;
+  }
+
+  const safeType =
+    calendarDayTypeFilter.value || 'all';
+
+  calendarDayTypeFilter.dataset.activeType =
+    safeType;
+}
+
 function renderCalendarView() {
   renderer.renderCalendarView(
     stateApi.state,
@@ -3062,6 +3074,7 @@ calendarGrid?.addEventListener(
 calendarDayTypeFilter?.addEventListener(
   'change',
   () => {
+    updateCalendarDayTypeFilterColor();
     renderCalendarView();
   }
 );
@@ -3369,6 +3382,7 @@ document.fonts?.ready.then(equalizeBoardRowHeights);
 
 if (stateApi && renderer && connections && storage) {
   loadUiPreferences();
+  updateCalendarDayTypeFilterColor();
 
   const loadResult = storage.load(stateApi.state);
   const storageAvailable = !loadResult.unavailable;
@@ -3429,4 +3443,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.4.4: фильтр типов событий Day Overview подключён.');
+console.log('v1.4.5: цвета типов событий в Day Overview подключены.');

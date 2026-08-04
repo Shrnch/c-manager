@@ -3758,3 +3758,70 @@ input:focus-visible {
     transparent
   );
 }
+
+
+/* =========================================================
+   v1.4.5 — colored Day Overview event types
+   ========================================================= */
+
+.calendar-day-filter-option {
+  font-weight: 800;
+}
+
+.calendar-day-filter-option-all {
+  color: var(--text);
+}
+
+.calendar-day-filter-option-planned-execution,
+.calendar-day-filter-option-planned-execution-resolved {
+  color: var(--calendar-execution);
+}
+
+.calendar-day-filter-option-completed {
+  color: var(--calendar-completed);
+}
+
+.calendar-day-filter-option-planned-publication {
+  color: var(--calendar-publication-plan);
+}
+
+.calendar-day-filter-option-planned-publication-pending {
+  color: var(--calendar-publication-pending);
+}
+
+.calendar-day-filter-option-planned-publication-ready {
+  color: var(--calendar-publication-ready);
+}
+
+.calendar-day-filter-option-published {
+  color: var(--calendar-published);
+}
+
+#calendar-day-type-filter[data-active-type="all"] {
+  color: var(--text);
+}
+
+#calendar-day-type-filter[data-active-type="planned-execution"],
+#calendar-day-type-filter[data-active-type="planned-execution-resolved"] {
+  color: var(--calendar-execution);
+}
+
+#calendar-day-type-filter[data-active-type="completed"] {
+  color: var(--calendar-completed);
+}
+
+#calendar-day-type-filter[data-active-type="planned-publication"] {
+  color: var(--calendar-publication-plan);
+}
+
+#calendar-day-type-filter[data-active-type="planned-publication-pending"] {
+  color: var(--calendar-publication-pending);
+}
+
+#calendar-day-type-filter[data-active-type="planned-publication-ready"] {
+  color: var(--calendar-publication-ready);
+}
+
+#calendar-day-type-filter[data-active-type="published"] {
+  color: var(--calendar-published);
+}

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.5] — 2026-08-04
+
+### Changed
+
+- Day Overview event-type filter options now use the same colors as their Calendar legend/event types;
+- Execution planned uses the execution orange;
+- Completed uses the completed green;
+- publication-plan states use their respective purple shades;
+- Published uses the published teal;
+- the closed filter control also adopts the color of the currently selected event type.
+
+
 ## [1.4.4] — 2026-08-04
 
 ### Added
