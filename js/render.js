@@ -1306,6 +1306,10 @@
     const details = document.querySelector(
       '#calendar-day-details'
     );
+    const dayTypeFilter =
+      document.querySelector(
+        '#calendar-day-type-filter'
+      );
 
     if (
       !grid ||
@@ -1631,7 +1635,19 @@
         getDateKey(selectedDate)
       ) ?? [];
 
-    if (!selectedEvents.length) {
+    const selectedType =
+      dayTypeFilter?.value ?? 'all';
+
+    const visibleSelectedEvents =
+      selectedType === 'all'
+        ? selectedEvents
+        : selectedEvents.filter(
+            (event) =>
+              event.stageKey ===
+              selectedType
+          );
+
+    if (!visibleSelectedEvents.length) {
       const empty =
         document.createElement('div');
       empty.className =
@@ -1639,19 +1655,22 @@
 
       const icon =
         document.createElement('span');
-      icon.textContent = '○';
+      icon.textContent = selectedEvents.length
+        ? '⌕'
+        : '○';
 
       const text =
         document.createElement('p');
-      text.textContent =
-        t('calendar.noEvents');
+      text.textContent = selectedEvents.length
+        ? t('calendar.noEventsForType')
+        : t('calendar.noEvents');
 
       empty.append(icon, text);
       details.append(empty);
       return;
     }
 
-    selectedEvents.forEach((event) => {
+    visibleSelectedEvents.forEach((event) => {
       details.append(
         createCalendarDayDetail(
           event,

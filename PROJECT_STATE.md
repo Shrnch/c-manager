@@ -1,20 +1,20 @@
 # PROJECT STATE
 
 ## Current stage
-Resolved execution-plan visualization
+Day Overview event filtering
 
 ## Status
 Completed
 
 ## Version
-v1.4.3
+v1.4.4
 
-## Calendar behavior
-- Original Execution planned events remain visible after completion.
-- Once the Result is completed, the original execution plan becomes a resolved plan.
-- Resolved plans use a muted orange checked marker and dashed styling.
-- The actual Completed event remains on the real completion date.
-- Resolved plans do not count toward Planned ahead.
+## Calendar Day Overview
+- Filter by event type.
+- All types available by default.
+- Exact event types can be isolated.
+- Calendar grid itself remains unchanged.
+- The selected filter stays active when another day is opened.
 
 ## Last updated
 2026-08-04

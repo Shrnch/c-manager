@@ -3717,3 +3717,44 @@ input:focus-visible {
     width: 100%;
   }
 }
+
+
+/* =========================================================
+   v1.4.4 — Day Overview event-type filter
+   ========================================================= */
+
+.calendar-day-type-filter {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.calendar-day-type-filter > span {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.calendar-day-type-filter select {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 32px 0 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.calendar-day-type-filter select:focus-visible {
+  border-color: var(--accent);
+  outline: 3px solid color-mix(
+    in srgb,
+    var(--accent) 18%,
+    transparent
+  );
+}

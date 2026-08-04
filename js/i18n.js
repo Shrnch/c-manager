@@ -45,6 +45,10 @@
       'calendar.legendAria': 'Легенда календаря',
       'calendar.gridAria': 'Календарь контент-плана',
       'calendar.dayEyebrow': 'DAY OVERVIEW',
+      'calendar.dayFilter.label': 'Тип события',
+      'calendar.dayFilter.aria':
+        'Фильтр событий по типу',
+      'calendar.dayFilter.all': 'Все типы',
       'calendar.stage.plannedExecution':
         'Запланировано выполнение',
       'calendar.stage.plannedExecutionResolved':
@@ -70,6 +74,8 @@
       'calendar.moreEvents': '+ ещё {count}',
       'calendar.noEvents':
         'На этот день ничего не запланировано и не отмечено.',
+      'calendar.noEventsForType':
+        'На этот день нет событий выбранного типа.',
       'calendar.overdue': 'Просрочено',
       'calendar.planCompleted':
         'Выполнено раньше/по плану',
@@ -451,6 +457,10 @@
       'calendar.legendAria': 'Calendar legend',
       'calendar.gridAria': 'Content planning calendar',
       'calendar.dayEyebrow': 'DAY OVERVIEW',
+      'calendar.dayFilter.label': 'Event type',
+      'calendar.dayFilter.aria':
+        'Filter events by type',
+      'calendar.dayFilter.all': 'All types',
       'calendar.stage.plannedExecution':
         'Execution planned',
       'calendar.stage.plannedExecutionResolved':
@@ -476,6 +486,8 @@
       'calendar.moreEvents': '+ {count} more',
       'calendar.noEvents':
         'Nothing is planned or recorded for this day.',
+      'calendar.noEventsForType':
+        'No events of the selected type on this day.',
       'calendar.overdue': 'Overdue',
       'calendar.planCompleted':
         'Completed against plan',

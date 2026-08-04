@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.4.3</title>
+  <title>c-manager — v1.4.4</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -529,6 +529,74 @@
               DAY OVERVIEW
             </p>
             <h3 id="calendar-selected-date-title"></h3>
+
+            <label class="calendar-day-type-filter">
+              <span data-i18n="calendar.dayFilter.label">
+                Тип события
+              </span>
+
+              <select
+                id="calendar-day-type-filter"
+                aria-label="Фильтр событий по типу"
+                data-i18n-aria="calendar.dayFilter.aria"
+              >
+                <option
+                  value="all"
+                  data-i18n="calendar.dayFilter.all"
+                >
+                  Все типы
+                </option>
+
+                <option
+                  value="planned-execution"
+                  data-i18n="calendar.stage.plannedExecution"
+                >
+                  Запланировано выполнение
+                </option>
+
+                <option
+                  value="planned-execution-resolved"
+                  data-i18n="calendar.stage.plannedExecutionResolved"
+                >
+                  План выполнения закрыт
+                </option>
+
+                <option
+                  value="completed"
+                  data-i18n="calendar.stage.completed"
+                >
+                  Сделано
+                </option>
+
+                <option
+                  value="planned-publication-pending"
+                  data-i18n="calendar.stage.plannedPublicationPending"
+                >
+                  Публикация запланирована — ещё в работе
+                </option>
+
+                <option
+                  value="planned-publication-ready"
+                  data-i18n="calendar.stage.readyPublication"
+                >
+                  Готово к публикации
+                </option>
+
+                <option
+                  value="planned-publication"
+                  data-i18n="calendar.stage.plannedPublication"
+                >
+                  Запланирована публикация
+                </option>
+
+                <option
+                  value="published"
+                  data-i18n="calendar.stage.published"
+                >
+                  Выложено
+                </option>
+              </select>
+            </label>
           </div>
 
           <div
@@ -570,7 +638,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.4.3</span>
+      <span>v1.4.4</span>
     </footer>
   </main>
 

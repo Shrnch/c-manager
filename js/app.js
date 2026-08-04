@@ -99,6 +99,9 @@ const calendarGrid = document.querySelector(
 const calendarDayDetails = document.querySelector(
   '#calendar-day-details'
 );
+const calendarDayTypeFilter = document.querySelector(
+  '#calendar-day-type-filter'
+);
 const calendarPrevMonth = document.querySelector(
   '#calendar-prev-month'
 );
@@ -3056,6 +3059,13 @@ calendarGrid?.addEventListener(
   }
 );
 
+calendarDayTypeFilter?.addEventListener(
+  'change',
+  () => {
+    renderCalendarView();
+  }
+);
+
 calendarDayDetails?.addEventListener(
   'click',
   (event) => {
@@ -3419,4 +3429,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.4.0: фактические даты управляются workflow-действиями.');
+console.log('v1.4.4: фильтр типов событий Day Overview подключён.');

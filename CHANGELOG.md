@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.4] — 2026-08-04
+
+### Added
+
+- Day Overview now has an event-type filter;
+- users can show only Execution planned, resolved execution plans, Completed, Publication planned — still in progress, Ready to publish, historical Publication planned, or Published events;
+- “All types” restores the full selected-day list;
+- filtering affects only Day Overview and does not hide events from the calendar grid;
+- the selected filter remains active while moving between calendar days.
+
+
 ## [1.4.3] — 2026-08-04
 
 ### Changed
