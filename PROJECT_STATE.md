@@ -1,21 +1,19 @@
 # PROJECT STATE
 
 ## Current stage
-Action-driven content workflow
+Forward-looking Calendar metrics
 
 ## Status
 Completed
 
 ## Version
-v1.4.0
+v1.4.1
 
-## Workflow
-- Workspace exposes only Planned execution and Planned publication.
-- Mark as completed records completedAt automatically using the current local date/time.
-- Completed Results move to the Completed view.
-- Unpublished completed Results are marked Ready to publish.
-- Mark as published records publishedAt automatically using the current local date/time.
-- Calendar actual events are derived from those workflow actions.
+## Fixed
+- Ready to publish counts only completed, unpublished Results with publication planned for today or later.
+- Publications planned counts only unpublished Results with publication planned for today or later.
+- Past planned publication dates no longer inflate these metrics.
+- Today's publication plans remain included.
 
 ## Last updated
 2026-08-04

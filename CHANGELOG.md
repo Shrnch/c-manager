@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.4.1] — 2026-08-04
+
+### Fixed
+
+- Calendar “Ready to publish” no longer counts unpublished Results whose planned publication date is already before today;
+- Calendar “Publications planned” now counts only unpublished publication plans scheduled for today or a future date;
+- historical / overdue publication plans no longer inflate forward-looking calendar metrics;
+- dates scheduled for today are still included in both metrics.
+
+
 ## [1.4.0] — 2026-08-04
 
 ### Changed

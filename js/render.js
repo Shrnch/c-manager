@@ -1065,6 +1065,26 @@
         getWorkflowStatus(result) !== 'archived'
     );
 
+    const hasCurrentOrFuturePublicationPlan =
+      (result) => {
+        const publicationDate =
+          parseCalendarDateTime(
+            result.plannedPublicationAt
+          );
+
+        if (!publicationDate) {
+          return false;
+        }
+
+        const publicationDateKey =
+          getDateKey(publicationDate);
+
+        return (
+          publicationDateKey !== null &&
+          publicationDateKey >= todayKey
+        );
+      };
+
     const readyToPublish =
       visibleResults.filter(
         (result) =>
@@ -1073,14 +1093,19 @@
             getWorkflowStatus(result) ===
               'completed'
           ) &&
-          !result.publishedAt
+          !result.publishedAt &&
+          hasCurrentOrFuturePublicationPlan(
+            result
+          )
       ).length;
 
     const scheduledPublications =
       visibleResults.filter(
         (result) =>
-          Boolean(result.plannedPublicationAt) &&
-          !result.publishedAt
+          !result.publishedAt &&
+          hasCurrentOrFuturePublicationPlan(
+            result
+          )
       ).length;
 
     return {
