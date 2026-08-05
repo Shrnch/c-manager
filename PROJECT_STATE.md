@@ -1,24 +1,21 @@
 # PROJECT STATE
 
 ## Current stage
-Statistics activity chart improvements
+Workspace source-item completion
 
 ## Status
 Completed
 
 ## Version
-v1.5.1
+v1.5.2
 
-## Activity chart
-- Numeric Y axis.
-- Explicit zero baseline.
-- 7d / 14d / 30d / 3mo / 6mo / 1y / All time ranges.
-- Daily aggregation for short periods.
-- Weekly aggregation for medium periods.
-- Monthly aggregation for one year.
-- All time auto-selects daily / weekly / monthly / yearly grouping.
-- Adaptive X-axis labels.
-- Exact date-range tooltips.
+## Workspace source items
+- Ideas, Concepts and Music have a ✓ Mark as completed action.
+- Completed items are removed from Workspace without being deleted.
+- Existing Results keep their references.
+- Completed items appear in the existing Completed tab.
+- Restore to workspace remains available.
+- Current selection is cleared if the completed source item was selected.
 
 ## Last updated
 2026-08-05

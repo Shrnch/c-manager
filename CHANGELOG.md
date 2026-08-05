@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.2] — 2026-08-05
+
+### Added
+
+- Ideas, Concepts and Music in Workspace can now be marked as Completed directly;
+- each source cell now has a small ✓ action alongside Edit and Delete;
+- completed source items leave Workspace and appear in the existing Completed tab;
+- completing a source item does not delete it and does not break Results that already reference it;
+- completed source items can still be restored through Completed → Restore to workspace;
+- if the source item was part of the current selection, that selection slot is cleared automatically.
+
+
 ## [1.5.1] — 2026-08-05
 
 ### Improved — Statistics activity chart

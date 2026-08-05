@@ -2348,6 +2348,31 @@ document.querySelector('.board')?.addEventListener('click', (event) => {
 
     if (!type || !itemId) return;
 
+    if (actionButton.dataset.action === 'complete') {
+      const config = typeConfig[type];
+
+      if (!config) {
+        return;
+      }
+
+      stateApi.setWorkflowStatus(
+        config.collection,
+        itemId,
+        'completed'
+      );
+
+      clearSelectionForItem(
+        type,
+        itemId
+      );
+      clearCellRelationInspection();
+      renderEverything();
+      showToast(
+        t('toast.itemCompleted')
+      );
+      return;
+    }
+
     if (actionButton.dataset.action === 'edit') {
       openItemModal(type, 'edit', itemId);
     }
@@ -3718,4 +3743,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.5.0: Statistics dashboard подключён.');
+console.log('v1.5.2: Workspace source items can be marked as completed.');

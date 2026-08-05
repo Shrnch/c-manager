@@ -112,6 +112,11 @@
     }
 
     actions.append(
+      createActionButton(
+        'complete',
+        t('workspace.markItemCompleted'),
+        '✓'
+      ),
       createActionButton('edit', t('common.edit'), '✎'),
       createActionButton('delete', t('common.delete'), '×')
     );

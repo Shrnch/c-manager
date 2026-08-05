@@ -4879,3 +4879,18 @@ input:focus-visible {
     font-size: 6px;
   }
 }
+
+
+/* =========================================================
+   v1.5.2 — complete source items from Workspace
+   ========================================================= */
+
+.cell-action-button[data-action="complete"] {
+  color: var(--calendar-completed);
+  font-weight: 900;
+}
+
+.cell-action-button[data-action="complete"]:hover {
+  color: var(--white);
+  background: var(--calendar-completed);
+}

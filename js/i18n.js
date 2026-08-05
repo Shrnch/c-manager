@@ -238,6 +238,8 @@
       'selection.musicMissing': 'Музыка не выбрана',
 
       'workspace.aria': 'Рабочая доска',
+      'workspace.markItemCompleted':
+        'Отметить как выполненное',
       'columns.ideas': 'Идеи',
       'columns.concepts': 'Концепты',
       'columns.music': 'Музыка',
@@ -488,6 +490,8 @@
       'toast.resultDefaultName': 'Стандартное название восстановлено.',
       'toast.resultDeleted': 'Результат удалён.',
       'toast.itemSaved': 'Изменения сохранены.',
+      'toast.itemCompleted':
+        'Элемент отмечен как выполненный.',
       'toast.itemAdded': 'Новый элемент добавлен.',
       'toast.categoryAdded': 'Категория добавлена.',
       'toast.categoryRenamed': 'Категория переименована.',
@@ -800,6 +804,8 @@
       'selection.musicMissing': 'No music selected',
 
       'workspace.aria': 'Workspace board',
+      'workspace.markItemCompleted':
+        'Mark as completed',
       'columns.ideas': 'Ideas',
       'columns.concepts': 'Concepts',
       'columns.music': 'Music',
@@ -1044,6 +1050,8 @@
       'toast.resultDefaultName': 'Default result name restored.',
       'toast.resultDeleted': 'Result deleted.',
       'toast.itemSaved': 'Changes saved.',
+      'toast.itemCompleted':
+        'Item marked as completed.',
       'toast.itemAdded': 'New item added.',
       'toast.categoryAdded': 'Category added.',
       'toast.categoryRenamed': 'Category renamed.',
