@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.4.7</title>
+  <title>c-manager — v1.4.8</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -661,7 +661,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.4.7</span>
+      <span>v1.4.8</span>
     </footer>
   </main>
 
@@ -927,6 +927,88 @@
       </div>
     </section>
   </dialog>
+
+
+<dialog class="modal" id="actual-dates-modal">
+  <form class="modal-card modal-card-compact" id="actual-dates-form">
+    <div class="modal-header">
+      <div>
+        <p
+          class="eyebrow"
+          data-i18n="actualDates.eyebrow"
+        >
+          HISTORY CORRECTION
+        </p>
+        <h2 data-i18n="actualDates.title">
+          Скорректировать фактические даты
+        </h2>
+      </div>
+
+      <button
+        class="modal-close"
+        type="button"
+        data-close-dialog="actual-dates-modal"
+        aria-label="Закрыть"
+        data-i18n-aria="common.close"
+      >×</button>
+    </div>
+
+    <div class="modal-body actual-dates-body">
+      <p
+        class="actual-dates-help"
+        data-i18n="actualDates.help"
+      >
+        Используй это только для исправления истории, если отметил выполнение или публикацию позже фактической даты.
+      </p>
+
+      <label class="field">
+        <span data-i18n="actualDates.completedAt">
+          Выполнено фактически
+        </span>
+        <input
+          type="datetime-local"
+          id="actual-completed-at-input"
+          required
+        >
+      </label>
+
+      <label class="field">
+        <span data-i18n="actualDates.publishedAt">
+          Опубликовано фактически
+        </span>
+        <input
+          type="datetime-local"
+          id="actual-published-at-input"
+        >
+      </label>
+
+      <p
+        class="form-error"
+        id="actual-dates-error"
+        role="alert"
+      ></p>
+    </div>
+
+    <div class="modal-actions">
+      <button
+        class="button button-secondary"
+        type="button"
+        data-close-dialog="actual-dates-modal"
+        data-i18n="common.cancel"
+      >
+        Отмена
+      </button>
+
+      <button
+        class="button button-primary"
+        type="submit"
+        data-i18n="actualDates.save"
+      >
+        Сохранить корректировку
+      </button>
+    </div>
+  </form>
+</dialog>
 
   <dialog class="modal" id="confirm-modal">
     <section class="modal-card modal-card-compact">

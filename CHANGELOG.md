@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.8] — 2026-08-05
+
+### Added
+
+- Completed Results now have a discreet overflow (⋯) action for correcting actual dates;
+- “Adjust actual dates” opens a compact correction modal instead of adding more permanent controls to the crowded interface;
+- the actual Completed date/time can be corrected after the fact;
+- the actual Published date/time can be corrected, added later if the user forgot to mark publication, or cleared if it was recorded by mistake;
+- changing actual dates immediately moves the corresponding Completed / Published Calendar events to the corrected dates;
+- planned execution and planned publication dates remain untouched;
+- publication cannot be set earlier than completion.
+
+
 ## [1.4.7] — 2026-08-05
 
 ### Added

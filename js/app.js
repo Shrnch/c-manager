@@ -76,6 +76,24 @@ const musicCategoryFormError = document.querySelector(
   '#music-category-form-error'
 );
 
+const actualDatesModal = document.querySelector(
+  '#actual-dates-modal'
+);
+const actualDatesForm = document.querySelector(
+  '#actual-dates-form'
+);
+const actualCompletedAtInput =
+  document.querySelector(
+    '#actual-completed-at-input'
+  );
+const actualPublishedAtInput =
+  document.querySelector(
+    '#actual-published-at-input'
+  );
+const actualDatesError = document.querySelector(
+  '#actual-dates-error'
+);
+
 const confirmModal = document.querySelector('#confirm-modal');
 const confirmTitle = document.querySelector('#confirm-title');
 const confirmText = document.querySelector('#confirm-text');
@@ -176,6 +194,7 @@ let activeItemType = null;
 let activeItemId = null;
 let pendingConfirmAction = null;
 let pendingResultNameId = null;
+let pendingActualDatesResultId = null;
 let toastTimer = null;
 let currentAppView = 'workspace';
 let calendarCursor = new Date(
@@ -659,6 +678,40 @@ function resetResultFiltersForCalendarOpen() {
 
   populateCategoryFilter();
   populateMusicCategoryFilter();
+}
+
+function openActualDatesModal(resultId) {
+  const result = stateApi.getItemById(
+    'results',
+    resultId
+  );
+
+  if (!result || !actualDatesModal) {
+    return;
+  }
+
+  pendingActualDatesResultId =
+    resultId;
+
+  if (actualCompletedAtInput) {
+    actualCompletedAtInput.value =
+      result.completedAt ?? '';
+  }
+
+  if (actualPublishedAtInput) {
+    actualPublishedAtInput.value =
+      result.publishedAt ?? '';
+  }
+
+  if (actualDatesError) {
+    actualDatesError.textContent = '';
+  }
+
+  actualDatesModal.showModal();
+
+  window.requestAnimationFrame(() => {
+    actualCompletedAtInput?.focus();
+  });
 }
 
 function openCalendarResult(
@@ -1965,6 +2018,83 @@ document
     musicCategoriesModal.showModal();
   });
 
+actualDatesForm?.addEventListener(
+  'submit',
+  (event) => {
+    event.preventDefault();
+
+    if (
+      !pendingActualDatesResultId ||
+      !actualCompletedAtInput
+    ) {
+      closeDialog(actualDatesModal);
+      return;
+    }
+
+    const completedAt =
+      actualCompletedAtInput.value;
+    const publishedAt =
+      actualPublishedAtInput?.value ?? '';
+
+    if (!completedAt) {
+      if (actualDatesError) {
+        actualDatesError.textContent =
+          t('actualDates.completedRequired');
+      }
+      actualCompletedAtInput.focus();
+      return;
+    }
+
+    if (
+      publishedAt &&
+      new Date(publishedAt).getTime() <
+        new Date(completedAt).getTime()
+    ) {
+      if (actualDatesError) {
+        actualDatesError.textContent =
+          t('actualDates.publicationBeforeCompletion');
+      }
+      actualPublishedAtInput?.focus();
+      return;
+    }
+
+    stateApi.updateItem(
+      'results',
+      pendingActualDatesResultId,
+      {
+        completedAt,
+        publishedAt:
+          publishedAt || null,
+      }
+    );
+
+    closeDialog(actualDatesModal);
+    renderEverything();
+    showToast(
+      t('toast.actualDatesUpdated')
+    );
+  }
+);
+
+actualDatesModal?.addEventListener(
+  'close',
+  () => {
+    pendingActualDatesResultId = null;
+
+    if (actualCompletedAtInput) {
+      actualCompletedAtInput.value = '';
+    }
+
+    if (actualPublishedAtInput) {
+      actualPublishedAtInput.value = '';
+    }
+
+    if (actualDatesError) {
+      actualDatesError.textContent = '';
+    }
+  }
+);
+
 document.querySelectorAll('[data-close-dialog]').forEach((button) => {
   button.addEventListener('click', () => {
     closeDialog(document.querySelector(`#${button.dataset.closeDialog}`));
@@ -3223,6 +3353,26 @@ statusViewContent?.addEventListener(
 statusViewContent?.addEventListener(
   'click',
   (event) => {
+    const adjustDatesButton =
+      event.target.closest(
+        '[data-status-action="adjust-actual-dates"]'
+      );
+
+    if (adjustDatesButton) {
+      const resultId =
+        adjustDatesButton.dataset.itemId;
+
+      adjustDatesButton
+        .closest('details')
+        ?.removeAttribute('open');
+
+      if (resultId) {
+        openActualDatesModal(resultId);
+      }
+
+      return;
+    }
+
     const publishButton =
       event.target.closest(
         '[data-status-action="mark-published"]'
@@ -3552,4 +3702,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.4.7: режим Show progress для календаря подключён.');
+console.log('v1.4.8: скрытая корректировка фактических дат подключена.');

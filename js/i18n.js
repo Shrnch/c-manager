@@ -332,6 +332,9 @@
       'status.concepts': 'Концепты',
       'status.music': 'Музыка',
       'status.restore': 'Вернуть в работу',
+      'status.moreActions': 'Дополнительные действия',
+      'status.adjustActualDates':
+        'Скорректировать фактические даты',
       'status.readyToPublish':
         'Готово к публикации',
       'status.editPublicationPlan':
@@ -341,6 +344,23 @@
       'status.publishedAt':
         'Опубликовано: {date}',
       'status.groupEmpty': 'В этом разделе пока ничего нет.',
+
+      'actualDates.eyebrow':
+        'HISTORY CORRECTION',
+      'actualDates.title':
+        'Скорректировать фактические даты',
+      'actualDates.help':
+        'Используй это только для исправления истории, если отметил выполнение или публикацию позже фактической даты. Плановые даты не изменяются.',
+      'actualDates.completedAt':
+        'Выполнено фактически',
+      'actualDates.publishedAt':
+        'Опубликовано фактически',
+      'actualDates.save':
+        'Сохранить корректировку',
+      'actualDates.completedRequired':
+        'Укажи фактическую дату выполнения.',
+      'actualDates.publicationBeforeCompletion':
+        'Дата публикации не может быть раньше даты выполнения.',
 
       'toast.resultSaved': 'Результат сохранён.',
       'toast.itemDeleted': 'Элемент удалён.',
@@ -391,6 +411,8 @@
         'Дата публикации обновлена.',
       'toast.publicationPlanCleared':
         'Запланированная дата публикации очищена.',
+      'toast.actualDatesUpdated':
+        'Фактические даты обновлены.',
       'toast.resultArchived':
         'Результат перемещён в архив.',
       'toast.restoredToWork':
@@ -750,12 +772,32 @@
       'status.concepts': 'Concepts',
       'status.music': 'Music',
       'status.restore': 'Restore to workspace',
+      'status.moreActions': 'More actions',
+      'status.adjustActualDates':
+        'Adjust actual dates',
       'status.readyToPublish': 'Ready to publish',
       'status.editPublicationPlan':
         'Change planned publication date',
       'status.completedAt': 'Completed: {date}',
       'status.publishedAt': 'Published: {date}',
       'status.groupEmpty': 'Nothing here yet.',
+
+      'actualDates.eyebrow':
+        'HISTORY CORRECTION',
+      'actualDates.title':
+        'Adjust actual dates',
+      'actualDates.help':
+        'Use this only to correct history when completion or publication was recorded later than it actually happened. Planned dates are not changed.',
+      'actualDates.completedAt':
+        'Actually completed at',
+      'actualDates.publishedAt':
+        'Actually published at',
+      'actualDates.save':
+        'Save correction',
+      'actualDates.completedRequired':
+        'Enter the actual completion date.',
+      'actualDates.publicationBeforeCompletion':
+        'Publication cannot be earlier than completion.',
 
       'toast.resultSaved': 'Result saved.',
       'toast.itemDeleted': 'Item deleted.',
@@ -806,6 +848,8 @@
         'Publication date updated.',
       'toast.publicationPlanCleared':
         'Planned publication date cleared.',
+      'toast.actualDatesUpdated':
+        'Actual dates updated.',
       'toast.resultArchived':
         'Result moved to Archive.',
       'toast.restoredToWork':

@@ -673,6 +673,51 @@
       )
     );
 
+    if (status === 'completed') {
+      const moreMenu =
+        document.createElement('details');
+      moreMenu.className =
+        'status-result-more-menu';
+
+      const moreSummary =
+        document.createElement('summary');
+      moreSummary.className =
+        'status-result-more-button';
+      moreSummary.setAttribute(
+        'aria-label',
+        t('status.moreActions')
+      );
+      moreSummary.title =
+        t('status.moreActions');
+      moreSummary.textContent = '⋯';
+
+      const morePopover =
+        document.createElement('div');
+      morePopover.className =
+        'status-result-more-popover';
+
+      const adjustDatesButton =
+        document.createElement('button');
+      adjustDatesButton.type = 'button';
+      adjustDatesButton.className =
+        'status-result-more-action';
+      adjustDatesButton.dataset.statusAction =
+        'adjust-actual-dates';
+      adjustDatesButton.dataset.itemId =
+        result.id;
+      adjustDatesButton.textContent =
+        t('status.adjustActualDates');
+
+      morePopover.append(
+        adjustDatesButton
+      );
+      moreMenu.append(
+        moreSummary,
+        morePopover
+      );
+      actions.append(moreMenu);
+    }
+
     card.append(
       content,
       actions
