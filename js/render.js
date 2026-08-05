@@ -844,6 +844,1539 @@
     );
   }
 
+
+  function getStatisticsResultTitle(
+    result,
+    index
+  ) {
+    return (
+      result.title ||
+      t('result.defaultName', {
+        number: String(index + 1).padStart(
+          2,
+          '0'
+        ),
+      })
+    );
+  }
+
+  function parseStatisticsDate(value) {
+    if (!value) {
+      return null;
+    }
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime())
+      ? null
+      : date;
+  }
+
+  function getStatisticsDateKey(value) {
+    const date =
+      value instanceof Date
+        ? value
+        : parseStatisticsDate(value);
+
+    if (!date) {
+      return null;
+    }
+
+    const year = date.getFullYear();
+    const month = String(
+      date.getMonth() + 1
+    ).padStart(2, '0');
+    const day = String(
+      date.getDate()
+    ).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  function getStatisticsDayStart(value) {
+    const date =
+      value instanceof Date
+        ? new Date(value)
+        : parseStatisticsDate(value);
+
+    if (!date) {
+      return null;
+    }
+
+    return new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+  }
+
+  function formatStatisticsCompactDate(
+    date
+  ) {
+    return new Intl.DateTimeFormat(
+      i18n?.getLocale?.() ?? 'ru-RU',
+      {
+        day: 'numeric',
+        month: 'short',
+      }
+    ).format(date);
+  }
+
+  function formatStatisticsLongDate(
+    date
+  ) {
+    return new Intl.DateTimeFormat(
+      i18n?.getLocale?.() ?? 'ru-RU',
+      {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }
+    ).format(date);
+  }
+
+  function createStatisticsMetric({
+    label,
+    value,
+    note = null,
+    tone = 'neutral',
+  }) {
+    const card =
+      document.createElement('article');
+    card.className =
+      `statistics-metric statistics-tone-${tone}`;
+
+    const labelElement =
+      document.createElement('span');
+    labelElement.className =
+      'statistics-metric-label';
+    labelElement.textContent = label;
+
+    const valueElement =
+      document.createElement('strong');
+    valueElement.className =
+      'statistics-metric-value';
+    valueElement.textContent =
+      String(value);
+
+    card.append(
+      labelElement,
+      valueElement
+    );
+
+    if (note) {
+      const noteElement =
+        document.createElement('small');
+      noteElement.className =
+        'statistics-metric-note';
+      noteElement.textContent = note;
+      card.append(noteElement);
+    }
+
+    return card;
+  }
+
+  function createStatisticsPanel({
+    title,
+    subtitle = null,
+    className = '',
+  }) {
+    const panel =
+      document.createElement('section');
+    panel.className =
+      `statistics-panel ${className}`.trim();
+
+    const header =
+      document.createElement('header');
+    header.className =
+      'statistics-panel-header';
+
+    const heading =
+      document.createElement('h3');
+    heading.textContent = title;
+    header.append(heading);
+
+    if (subtitle) {
+      const description =
+        document.createElement('p');
+      description.textContent = subtitle;
+      header.append(description);
+    }
+
+    panel.append(header);
+
+    return panel;
+  }
+
+  function createStatisticsEmpty(
+    text
+  ) {
+    const empty =
+      document.createElement('div');
+    empty.className =
+      'statistics-empty';
+    empty.textContent = text;
+
+    return empty;
+  }
+
+  function getStatisticsFrequency(
+    results,
+    referenceKey,
+    items,
+    labelBuilder
+  ) {
+    const counts = new Map();
+
+    results.forEach((result) => {
+      const itemId =
+        result[referenceKey];
+
+      if (!itemId) {
+        return;
+      }
+
+      counts.set(
+        itemId,
+        (counts.get(itemId) ?? 0) + 1
+      );
+    });
+
+    return Array.from(
+      counts.entries()
+    )
+      .map(([itemId, count]) => {
+        const item = items.find(
+          (candidate) =>
+            candidate.id === itemId
+        );
+
+        if (!item) {
+          return null;
+        }
+
+        return {
+          id: itemId,
+          count,
+          label: labelBuilder(item),
+        };
+      })
+      .filter(Boolean)
+      .sort(
+        (first, second) =>
+          second.count - first.count ||
+          first.label.localeCompare(
+            second.label,
+            i18n?.getLocale?.() ??
+              'ru-RU'
+          )
+      );
+  }
+
+  function createStatisticsRankList(
+    entries,
+    {
+      limit = 5,
+      emptyText,
+    }
+  ) {
+    const list =
+      document.createElement('ol');
+    list.className =
+      'statistics-rank-list';
+
+    const visibleEntries =
+      entries.slice(0, limit);
+
+    if (!visibleEntries.length) {
+      return createStatisticsEmpty(
+        emptyText
+      );
+    }
+
+    visibleEntries.forEach(
+      (entry, index) => {
+        const item =
+          document.createElement('li');
+
+        const rank =
+          document.createElement('span');
+        rank.className =
+          'statistics-rank-number';
+        rank.textContent =
+          String(index + 1).padStart(
+            2,
+            '0'
+          );
+
+        const label =
+          document.createElement('span');
+        label.className =
+          'statistics-rank-label';
+        label.textContent =
+          entry.label;
+
+        const count =
+          document.createElement('strong');
+        count.className =
+          'statistics-rank-count';
+        count.textContent = t(
+          'statistics.uses',
+          {
+            count: entry.count,
+          }
+        );
+
+        item.append(
+          rank,
+          label,
+          count
+        );
+        list.append(item);
+      }
+    );
+
+    return list;
+  }
+
+  function createStatisticsDistribution(
+    entries,
+    {
+      emptyText,
+    }
+  ) {
+    const wrapper =
+      document.createElement('div');
+    wrapper.className =
+      'statistics-distribution';
+
+    if (!entries.length) {
+      return createStatisticsEmpty(
+        emptyText
+      );
+    }
+
+    const maximum = Math.max(
+      ...entries.map(
+        (entry) => entry.count
+      ),
+      1
+    );
+
+    entries
+      .slice(0, 7)
+      .forEach((entry) => {
+        const row =
+          document.createElement('div');
+        row.className =
+          'statistics-distribution-row';
+
+        const header =
+          document.createElement('div');
+        header.className =
+          'statistics-distribution-row-header';
+
+        const label =
+          document.createElement('span');
+        label.textContent = entry.label;
+
+        const count =
+          document.createElement('strong');
+        count.textContent =
+          String(entry.count);
+
+        header.append(label, count);
+
+        const track =
+          document.createElement('div');
+        track.className =
+          'statistics-distribution-track';
+
+        const fill =
+          document.createElement('div');
+        fill.className =
+          'statistics-distribution-fill';
+        fill.style.width =
+          `${Math.max(
+            4,
+            (entry.count / maximum) * 100
+          )}%`;
+
+        if (entry.color) {
+          fill.style.setProperty(
+            '--statistics-bar-color',
+            entry.color
+          );
+        }
+
+        track.append(fill);
+        row.append(header, track);
+        wrapper.append(row);
+      });
+
+    return wrapper;
+  }
+
+  function createStatisticsActivityChart(
+    results,
+    now
+  ) {
+    const chart =
+      document.createElement('div');
+    chart.className =
+      'statistics-activity-chart';
+
+    const days = [];
+    const today = getStatisticsDayStart(
+      now
+    );
+
+    for (
+      let offset = 13;
+      offset >= 0;
+      offset -= 1
+    ) {
+      const date =
+        new Date(today);
+      date.setDate(
+        date.getDate() - offset
+      );
+
+      const dateKey =
+        getStatisticsDateKey(date);
+
+      let completed = 0;
+      let published = 0;
+
+      results.forEach((result) => {
+        if (
+          getStatisticsDateKey(
+            result.completedAt
+          ) === dateKey
+        ) {
+          completed += 1;
+        }
+
+        if (
+          getStatisticsDateKey(
+            result.publishedAt
+          ) === dateKey
+        ) {
+          published += 1;
+        }
+      });
+
+      days.push({
+        date,
+        completed,
+        published,
+      });
+    }
+
+    const maximum = Math.max(
+      1,
+      ...days.flatMap((day) => [
+        day.completed,
+        day.published,
+      ])
+    );
+
+    const plot =
+      document.createElement('div');
+    plot.className =
+      'statistics-activity-plot';
+
+    days.forEach((day, index) => {
+      const column =
+        document.createElement('div');
+      column.className =
+        'statistics-activity-column';
+      column.title = t(
+        'statistics.activityTooltip',
+        {
+          date:
+            formatStatisticsLongDate(
+              day.date
+            ),
+          completed:
+            day.completed,
+          published:
+            day.published,
+        }
+      );
+
+      const bars =
+        document.createElement('div');
+      bars.className =
+        'statistics-activity-bars';
+
+      const completedBar =
+        document.createElement('i');
+      completedBar.className =
+        'statistics-activity-bar statistics-activity-bar-completed';
+      completedBar.style.height =
+        `${(day.completed / maximum) * 100}%`;
+
+      const publishedBar =
+        document.createElement('i');
+      publishedBar.className =
+        'statistics-activity-bar statistics-activity-bar-published';
+      publishedBar.style.height =
+        `${(day.published / maximum) * 100}%`;
+
+      bars.append(
+        completedBar,
+        publishedBar
+      );
+
+      const label =
+        document.createElement('span');
+      label.className =
+        'statistics-activity-label';
+      label.textContent =
+        index % 2 === 0 ||
+        index === days.length - 1
+          ? formatStatisticsCompactDate(
+              day.date
+            )
+          : '';
+
+      column.append(bars, label);
+      plot.append(column);
+    });
+
+    const legend =
+      document.createElement('div');
+    legend.className =
+      'statistics-chart-legend';
+
+    [
+      [
+        'completed',
+        t('statistics.completed'),
+      ],
+      [
+        'published',
+        t('statistics.published'),
+      ],
+    ].forEach(([type, label]) => {
+      const item =
+        document.createElement('span');
+      const dot =
+        document.createElement('i');
+      dot.className =
+        `statistics-legend-dot statistics-legend-${type}`;
+      item.append(
+        dot,
+        document.createTextNode(label)
+      );
+      legend.append(item);
+    });
+
+    chart.append(plot, legend);
+    return chart;
+  }
+
+  function createStatisticsPipelineChart(
+    {
+      inProgress,
+      ready,
+      published,
+    }
+  ) {
+    const total =
+      inProgress + ready + published;
+
+    const wrapper =
+      document.createElement('div');
+    wrapper.className =
+      'statistics-pipeline';
+
+    if (!total) {
+      return createStatisticsEmpty(
+        t('statistics.noData')
+      );
+    }
+
+    const inProgressShare =
+      (inProgress / total) * 100;
+    const readyShare =
+      (ready / total) * 100;
+    const publishedShare =
+      (published / total) * 100;
+
+    const donut =
+      document.createElement('div');
+    donut.className =
+      'statistics-donut';
+    donut.style.background =
+      `conic-gradient(
+        var(--calendar-execution) 0 ${inProgressShare}%,
+        var(--calendar-publication-ready) ${inProgressShare}% ${inProgressShare + readyShare}%,
+        var(--calendar-published) ${inProgressShare + readyShare}% 100%
+      )`;
+
+    const donutCenter =
+      document.createElement('div');
+    donutCenter.className =
+      'statistics-donut-center';
+
+    const totalValue =
+      document.createElement('strong');
+    totalValue.textContent =
+      String(total);
+
+    const totalLabel =
+      document.createElement('span');
+    totalLabel.textContent =
+      t('statistics.results');
+
+    donutCenter.append(
+      totalValue,
+      totalLabel
+    );
+    donut.append(donutCenter);
+
+    const legend =
+      document.createElement('div');
+    legend.className =
+      'statistics-pipeline-legend';
+
+    [
+      {
+        type: 'in-progress',
+        label:
+          t('statistics.inProgress'),
+        value: inProgress,
+      },
+      {
+        type: 'ready',
+        label:
+          t('statistics.readyToPublish'),
+        value: ready,
+      },
+      {
+        type: 'published',
+        label:
+          t('statistics.published'),
+        value: published,
+      },
+    ].forEach((entry) => {
+      const row =
+        document.createElement('div');
+      row.className =
+        'statistics-pipeline-row';
+
+      const label =
+        document.createElement('span');
+      const dot =
+        document.createElement('i');
+      dot.className =
+        `statistics-legend-dot statistics-legend-${entry.type}`;
+      label.append(
+        dot,
+        document.createTextNode(
+          entry.label
+        )
+      );
+
+      const value =
+        document.createElement('strong');
+      value.textContent =
+        String(entry.value);
+
+      row.append(label, value);
+      legend.append(row);
+    });
+
+    wrapper.append(donut, legend);
+    return wrapper;
+  }
+
+  function getStatisticsCategoryDistribution(
+    results,
+    {
+      sourceItems,
+      categories,
+      referenceKey,
+    }
+  ) {
+    const sourceById = new Map(
+      sourceItems.map(
+        (item) => [item.id, item]
+      )
+    );
+    const categoryById = new Map(
+      categories.map(
+        (category) => [
+          category.id,
+          category,
+        ]
+      )
+    );
+    const counts = new Map();
+
+    results.forEach((result) => {
+      const source =
+        sourceById.get(
+          result[referenceKey]
+        );
+
+      const categoryId =
+        source?.categoryId ?? null;
+      const key =
+        categoryId ||
+        '__uncategorized__';
+
+      counts.set(
+        key,
+        (counts.get(key) ?? 0) + 1
+      );
+    });
+
+    return Array.from(
+      counts.entries()
+    )
+      .map(([categoryId, count]) => {
+        if (
+          categoryId ===
+          '__uncategorized__'
+        ) {
+          return {
+            id: categoryId,
+            label:
+              t('common.uncategorized'),
+            count,
+            color:
+              'var(--text-muted)',
+          };
+        }
+
+        const category =
+          categoryById.get(categoryId);
+
+        if (!category) {
+          return null;
+        }
+
+        return {
+          id: category.id,
+          label: category.name,
+          count,
+          color: category.color,
+        };
+      })
+      .filter(Boolean)
+      .sort(
+        (first, second) =>
+          second.count - first.count ||
+          first.label.localeCompare(
+            second.label,
+            i18n?.getLocale?.() ??
+              'ru-RU'
+          )
+      );
+  }
+
+  function calculateStatisticsPerformance(
+    results,
+    plannedField,
+    actualField
+  ) {
+    const comparable =
+      results.filter(
+        (result) =>
+          result[plannedField] &&
+          result[actualField]
+      );
+
+    if (!comparable.length) {
+      return {
+        count: 0,
+        onTime: 0,
+        rate: null,
+        averageVarianceDays: null,
+      };
+    }
+
+    let onTime = 0;
+    let varianceTotal = 0;
+
+    comparable.forEach((result) => {
+      const planned =
+        getStatisticsDayStart(
+          result[plannedField]
+        );
+      const actual =
+        getStatisticsDayStart(
+          result[actualField]
+        );
+
+      if (!planned || !actual) {
+        return;
+      }
+
+      const difference =
+        (
+          actual.getTime() -
+          planned.getTime()
+        ) / 86400000;
+
+      varianceTotal += difference;
+
+      if (difference <= 0) {
+        onTime += 1;
+      }
+    });
+
+    return {
+      count: comparable.length,
+      onTime,
+      rate: Math.round(
+        (onTime / comparable.length) *
+          100
+      ),
+      averageVarianceDays:
+        varianceTotal /
+        comparable.length,
+    };
+  }
+
+  function createStatisticsPerformanceRow(
+    label,
+    performance
+  ) {
+    const row =
+      document.createElement('div');
+    row.className =
+      'statistics-performance-row';
+
+    const top =
+      document.createElement('div');
+    top.className =
+      'statistics-performance-top';
+
+    const labelElement =
+      document.createElement('span');
+    labelElement.textContent = label;
+
+    const value =
+      document.createElement('strong');
+    value.textContent =
+      performance.rate === null
+        ? '—'
+        : `${performance.rate}%`;
+
+    top.append(labelElement, value);
+
+    const track =
+      document.createElement('div');
+    track.className =
+      'statistics-performance-track';
+
+    const fill =
+      document.createElement('div');
+    fill.className =
+      'statistics-performance-fill';
+    fill.style.width =
+      `${performance.rate ?? 0}%`;
+    track.append(fill);
+
+    const note =
+      document.createElement('small');
+
+    if (
+      performance.averageVarianceDays ===
+      null
+    ) {
+      note.textContent =
+        t('statistics.noComparableData');
+    } else {
+      const variance =
+        performance.averageVarianceDays;
+      const rounded =
+        Math.round(
+          Math.abs(variance) * 10
+        ) / 10;
+
+      note.textContent =
+        Math.abs(variance) < 0.05
+          ? t(
+              'statistics.onPlanAverage'
+            )
+          : variance < 0
+            ? t(
+                'statistics.earlyAverage',
+                { days: rounded }
+              )
+            : t(
+                'statistics.lateAverage',
+                { days: rounded }
+              );
+    }
+
+    row.append(top, track, note);
+    return row;
+  }
+
+  function renderStatisticsView(
+    state,
+    now = new Date()
+  ) {
+    const container =
+      document.querySelector(
+        '#statistics-dashboard'
+      );
+
+    if (!container) {
+      return;
+    }
+
+    const allResults =
+      Array.isArray(state.results)
+        ? state.results
+        : [];
+
+    const trackedResults =
+      allResults.filter(
+        (result) =>
+          getWorkflowStatus(result) !==
+          'archived'
+      );
+
+    const completedHistory =
+      allResults.filter(
+        (result) =>
+          Boolean(result.completedAt)
+      );
+
+    const publishedHistory =
+      allResults.filter(
+        (result) =>
+          Boolean(result.publishedAt)
+      );
+
+    const completedTracked =
+      trackedResults.filter(
+        (result) =>
+          Boolean(result.completedAt)
+      );
+
+    const publishedTracked =
+      trackedResults.filter(
+        (result) =>
+          Boolean(result.publishedAt)
+      );
+
+    const readyToPublish =
+      trackedResults.filter(
+        (result) =>
+          Boolean(result.completedAt) &&
+          !result.publishedAt
+      );
+
+    const inProgress =
+      trackedResults.filter(
+        (result) =>
+          !result.completedAt
+      );
+
+    const completionRate =
+      trackedResults.length
+        ? Math.round(
+            (
+              completedTracked.length /
+              trackedResults.length
+            ) * 100
+          )
+        : 0;
+
+    const publicationRate =
+      completedTracked.length
+        ? Math.round(
+            (
+              publishedTracked.length /
+              completedTracked.length
+            ) * 100
+          )
+        : 0;
+
+    const averageScore =
+      trackedResults.length
+        ? (
+            trackedResults.reduce(
+              (sum, result) =>
+                sum +
+                Number(
+                  result.score ?? 0
+                ),
+              0
+            ) /
+            trackedResults.length
+          ).toFixed(1)
+        : '0.0';
+
+    const metrics =
+      document.createElement('div');
+    metrics.className =
+      'statistics-metrics';
+
+    metrics.append(
+      createStatisticsMetric({
+        label:
+          t('statistics.resultsTracked'),
+        value: trackedResults.length,
+        note:
+          t('statistics.excludesArchive'),
+      }),
+      createStatisticsMetric({
+        label:
+          t('statistics.completed'),
+        value:
+          completedHistory.length,
+        note:
+          t('statistics.completionRate', {
+            rate: completionRate,
+          }),
+        tone: 'completed',
+      }),
+      createStatisticsMetric({
+        label:
+          t('statistics.published'),
+        value:
+          publishedHistory.length,
+        note:
+          t('statistics.publicationRate', {
+            rate: publicationRate,
+          }),
+        tone: 'published',
+      }),
+      createStatisticsMetric({
+        label:
+          t(
+            'statistics.readyToPublish'
+          ),
+        value:
+          readyToPublish.length,
+        note:
+          t('statistics.completedNotPublished'),
+        tone: 'ready',
+      }),
+      createStatisticsMetric({
+        label:
+          t('statistics.inProgress'),
+        value: inProgress.length,
+        note:
+          t('statistics.activePipeline'),
+        tone: 'execution',
+      }),
+      createStatisticsMetric({
+        label:
+          t('statistics.averageScore'),
+        value: averageScore,
+        note:
+          t('statistics.scoreScale'),
+      })
+    );
+
+    const visualGrid =
+      document.createElement('div');
+    visualGrid.className =
+      'statistics-visual-grid';
+
+    const activityPanel =
+      createStatisticsPanel({
+        title:
+          t('statistics.activityTitle'),
+        subtitle:
+          t('statistics.activitySubtitle'),
+        className:
+          'statistics-panel-wide',
+      });
+    activityPanel.append(
+      createStatisticsActivityChart(
+        allResults,
+        now
+      )
+    );
+
+    const pipelinePanel =
+      createStatisticsPanel({
+        title:
+          t('statistics.pipelineTitle'),
+        subtitle:
+          t('statistics.pipelineSubtitle'),
+      });
+    pipelinePanel.append(
+      createStatisticsPipelineChart({
+        inProgress:
+          inProgress.length,
+        ready:
+          readyToPublish.length,
+        published:
+          publishedTracked.length,
+      })
+    );
+
+    visualGrid.append(
+      activityPanel,
+      pipelinePanel
+    );
+
+    const distributionGrid =
+      document.createElement('div');
+    distributionGrid.className =
+      'statistics-distribution-grid';
+
+    const conceptDistribution =
+      getStatisticsCategoryDistribution(
+        trackedResults,
+        {
+          sourceItems:
+            state.concepts,
+          categories:
+            state.conceptCategories,
+          referenceKey:
+            'conceptId',
+        }
+      );
+
+    const musicDistribution =
+      getStatisticsCategoryDistribution(
+        trackedResults,
+        {
+          sourceItems:
+            state.music,
+          categories:
+            state.musicCategories,
+          referenceKey:
+            'musicId',
+        }
+      );
+
+    const conceptPanel =
+      createStatisticsPanel({
+        title:
+          t(
+            'statistics.conceptCategories'
+          ),
+        subtitle:
+          t(
+            'statistics.categorySubtitle'
+          ),
+      });
+    conceptPanel.append(
+      createStatisticsDistribution(
+        conceptDistribution,
+        {
+          emptyText:
+            t('statistics.noData'),
+        }
+      )
+    );
+
+    const musicPanel =
+      createStatisticsPanel({
+        title:
+          t(
+            'statistics.musicCategories'
+          ),
+        subtitle:
+          t(
+            'statistics.categorySubtitle'
+          ),
+      });
+    musicPanel.append(
+      createStatisticsDistribution(
+        musicDistribution,
+        {
+          emptyText:
+            t('statistics.noData'),
+        }
+      )
+    );
+
+    distributionGrid.append(
+      conceptPanel,
+      musicPanel
+    );
+
+    const frequencyGrid =
+      document.createElement('div');
+    frequencyGrid.className =
+      'statistics-frequency-grid';
+
+    const topIdeas =
+      getStatisticsFrequency(
+        trackedResults,
+        'ideaId',
+        state.ideas,
+        (idea) => idea.text
+      );
+
+    const topConcepts =
+      getStatisticsFrequency(
+        trackedResults,
+        'conceptId',
+        state.concepts,
+        (concept) => concept.text
+      );
+
+    const topMusic =
+      getStatisticsFrequency(
+        trackedResults,
+        'musicId',
+        state.music,
+        (musicItem) =>
+          `${musicItem.artist} — ${musicItem.title}`
+      );
+
+    [
+      {
+        title:
+          t('statistics.topIdeas'),
+        entries: topIdeas,
+      },
+      {
+        title:
+          t('statistics.topConcepts'),
+        entries: topConcepts,
+      },
+      {
+        title:
+          t('statistics.topMusic'),
+        entries: topMusic,
+      },
+    ].forEach((group) => {
+      const panel =
+        createStatisticsPanel({
+          title: group.title,
+          subtitle:
+            t(
+              'statistics.frequencySubtitle'
+            ),
+        });
+
+      panel.append(
+        createStatisticsRankList(
+          group.entries,
+          {
+            emptyText:
+              t('statistics.noData'),
+          }
+        )
+      );
+      frequencyGrid.append(panel);
+    });
+
+    const insightGrid =
+      document.createElement('div');
+    insightGrid.className =
+      'statistics-insight-grid';
+
+    const performancePanel =
+      createStatisticsPanel({
+        title:
+          t(
+            'statistics.planningPerformance'
+          ),
+        subtitle:
+          t(
+            'statistics.planningPerformanceSubtitle'
+          ),
+      });
+
+    const executionPerformance =
+      calculateStatisticsPerformance(
+        allResults,
+        'plannedExecutionAt',
+        'completedAt'
+      );
+
+    const publicationPerformance =
+      calculateStatisticsPerformance(
+        allResults,
+        'plannedPublicationAt',
+        'publishedAt'
+      );
+
+    const performanceBody =
+      document.createElement('div');
+    performanceBody.className =
+      'statistics-performance';
+
+    performanceBody.append(
+      createStatisticsPerformanceRow(
+        t('statistics.executionOnTime'),
+        executionPerformance
+      ),
+      createStatisticsPerformanceRow(
+        t('statistics.publicationOnTime'),
+        publicationPerformance
+      )
+    );
+
+    performancePanel.append(
+      performanceBody
+    );
+
+    const productiveDays = new Map();
+
+    completedHistory.forEach(
+      (result) => {
+        const key =
+          getStatisticsDateKey(
+            result.completedAt
+          );
+
+        if (!key) {
+          return;
+        }
+
+        productiveDays.set(
+          key,
+          (productiveDays.get(key) ?? 0) +
+            1
+        );
+      }
+    );
+
+    const mostProductive =
+      Array.from(
+        productiveDays.entries()
+      ).sort(
+        (first, second) =>
+          second[1] - first[1] ||
+          second[0].localeCompare(
+            first[0]
+          )
+      )[0] ?? null;
+
+    const highlightPanel =
+      createStatisticsPanel({
+        title:
+          t('statistics.highlights'),
+        subtitle:
+          t('statistics.highlightsSubtitle'),
+      });
+
+    const highlights =
+      document.createElement('div');
+    highlights.className =
+      'statistics-highlights';
+
+    const bestCategory =
+      conceptDistribution[0] ?? null;
+    const bestMusicCategory =
+      musicDistribution[0] ?? null;
+
+    const highlightData = [
+      {
+        label:
+          t(
+            'statistics.mostProductiveDay'
+          ),
+        value:
+          mostProductive
+            ? formatStatisticsLongDate(
+                new Date(
+                  `${mostProductive[0]}T12:00`
+                )
+              )
+            : '—',
+        note:
+          mostProductive
+            ? t(
+                'statistics.completedCount',
+                {
+                  count:
+                    mostProductive[1],
+                }
+              )
+            : t('statistics.noData'),
+      },
+      {
+        label:
+          t(
+            'statistics.favoriteConceptCategory'
+          ),
+        value:
+          bestCategory?.label ?? '—',
+        note:
+          bestCategory
+            ? t(
+                'statistics.uses',
+                {
+                  count:
+                    bestCategory.count,
+                }
+              )
+            : t('statistics.noData'),
+      },
+      {
+        label:
+          t(
+            'statistics.favoriteMusicCategory'
+          ),
+        value:
+          bestMusicCategory?.label ??
+          '—',
+        note:
+          bestMusicCategory
+            ? t(
+                'statistics.uses',
+                {
+                  count:
+                    bestMusicCategory.count,
+                }
+              )
+            : t('statistics.noData'),
+      },
+    ];
+
+    highlightData.forEach(
+      (entry) => {
+        const item =
+          document.createElement('div');
+        item.className =
+          'statistics-highlight';
+
+        const label =
+          document.createElement('span');
+        label.textContent =
+          entry.label;
+
+        const value =
+          document.createElement('strong');
+        value.textContent =
+          entry.value;
+
+        const note =
+          document.createElement('small');
+        note.textContent =
+          entry.note;
+
+        item.append(
+          label,
+          value,
+          note
+        );
+        highlights.append(item);
+      }
+    );
+
+    highlightPanel.append(highlights);
+    insightGrid.append(
+      performancePanel,
+      highlightPanel
+    );
+
+    const topResultsPanel =
+      createStatisticsPanel({
+        title:
+          t('statistics.topResults'),
+        subtitle:
+          t('statistics.topResultsSubtitle'),
+        className:
+          'statistics-panel-wide',
+      });
+
+    const resultRanking =
+      trackedResults
+        .map((result, index) => ({
+          result,
+          index,
+        }))
+        .sort(
+          (first, second) =>
+            Number(
+              second.result.score ?? 0
+            ) -
+              Number(
+                first.result.score ?? 0
+              ) ||
+            String(
+              first.result.title ?? ''
+            ).localeCompare(
+              String(
+                second.result.title ?? ''
+              ),
+              i18n?.getLocale?.() ??
+                'ru-RU'
+            )
+        )
+        .slice(0, 5);
+
+    const topResultsList =
+      document.createElement('div');
+    topResultsList.className =
+      'statistics-top-results';
+
+    if (!resultRanking.length) {
+      topResultsList.append(
+        createStatisticsEmpty(
+          t('statistics.noData')
+        )
+      );
+    } else {
+      resultRanking.forEach(
+        ({ result, index }, rankIndex) => {
+          const row =
+            document.createElement('div');
+          row.className =
+            'statistics-top-result';
+
+          const rank =
+            document.createElement('span');
+          rank.className =
+            'statistics-top-result-rank';
+          rank.textContent =
+            `#${rankIndex + 1}`;
+
+          const title =
+            document.createElement('strong');
+          title.textContent =
+            getStatisticsResultTitle(
+              result,
+              index
+            );
+
+          const score =
+            document.createElement('span');
+          score.className =
+            'statistics-top-result-score';
+          score.textContent =
+            t('statistics.scoreValue', {
+              score:
+                Number(
+                  result.score ?? 0
+                ),
+            });
+
+          row.append(
+            rank,
+            title,
+            score
+          );
+          topResultsList.append(row);
+        }
+      );
+    }
+
+    topResultsPanel.append(
+      topResultsList
+    );
+
+    container.replaceChildren(
+      metrics,
+      visualGrid,
+      distributionGrid,
+      frequencyGrid,
+      insightGrid,
+      topResultsPanel
+    );
+  }
+
   const CALENDAR_STAGES = [
     {
       key: 'planned-execution',
@@ -2245,6 +3778,7 @@
     getCalendarMetrics,
     getDateKey,
     renderStatusView,
+    renderStatisticsView,
     renderAll,
   };
 })(window);

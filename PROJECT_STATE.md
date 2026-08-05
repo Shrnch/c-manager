@@ -1,23 +1,27 @@
 # PROJECT STATE
 
 ## Current stage
-Actual workflow date correction
+Statistics / analytics dashboard
 
 ## Status
 Completed
 
 ## Version
-v1.4.8
+v1.5.0
 
-## Actual date correction
-- Available only through a discreet ⋯ menu on Result cards in Completed.
-- Opens an “Adjust actual dates” modal.
-- Completed at is required and editable.
-- Published at is optional and editable.
-- Correcting actual dates does not alter planned dates.
-- Calendar actual Completed / Published events move to the corrected dates.
-- Setting Published at manually records a missed publication.
-- Clearing Published at removes the actual publication record and makes Mark as published available again.
+## Statistics
+- Dedicated Statistics top-level view.
+- KPI cards: tracked Results, Completed, Published, Ready to publish, In progress, average score.
+- 14-day Completed / Published activity chart.
+- Pipeline donut.
+- Concept-category and Music-category usage distributions.
+- Most-used Ideas, Concepts and Music.
+- Execution and publication on-time performance.
+- Average early / late variance against planned dates.
+- Most productive day and category highlights.
+- Top Results by score.
+- Uses actual corrected dates when available.
+- No external chart dependencies.
 
 ## Last updated
 2026-08-05

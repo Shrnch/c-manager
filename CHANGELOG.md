@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.5.0] — 2026-08-05
+
+### Added
+
+- a new top-level **Statistics** tab alongside Workspace, Calendar, Completed and Archive;
+- KPI dashboard for tracked Results, Completed, Published, Ready to publish, In progress and average score;
+- completion and publication rates;
+- 14-day activity chart for actual Completed and Published events;
+- pipeline donut chart showing In progress / Ready to publish / Published;
+- Concept category usage distribution with category colours;
+- Music category usage distribution with category colours;
+- ranked lists for most-used Ideas, Concepts and Music;
+- planning-performance analytics comparing planned and actual execution/publication dates;
+- average early/late variance from the plan;
+- Highlights section with the most productive day and most-used Concept/Music categories;
+- Top Results ranking by score;
+- Statistics automatically use corrected actual dates from the v1.4.8 history-correction workflow;
+- the dashboard is fully responsive and requires no external chart libraries.
+
+### Notes
+
+- active-base metrics and usage rankings exclude archived Results;
+- historical Completed / Published totals and activity retain actual recorded history;
+- all charts are rendered locally and remain compatible with the local-first architecture.
+
+
 ## [1.4.8] — 2026-08-05
 
 ### Added

@@ -32,8 +32,99 @@
       'views.aria': 'Разделы приложения',
       'views.workspace': 'Рабочая область',
       'views.calendar': 'Календарь',
+      'views.statistics': 'Статистика',
       'views.completed': 'Выполнено',
       'views.archive': 'Архив',
+
+      'statistics.eyebrow':
+        'CONTENT ANALYTICS',
+      'statistics.title': 'Статистика',
+      'statistics.description':
+        'Прогресс, публикации, самые используемые элементы и структура контент-плана.',
+      'statistics.results': 'результатов',
+      'statistics.resultsTracked':
+        'Результатов в работе',
+      'statistics.excludesArchive':
+        'Архив не входит в активную базу',
+      'statistics.completed': 'Выполнено',
+      'statistics.published': 'Опубликовано',
+      'statistics.readyToPublish':
+        'Готово к публикации',
+      'statistics.inProgress': 'В процессе',
+      'statistics.averageScore':
+        'Средний score',
+      'statistics.scoreScale':
+        'Importance × 2 + Desire',
+      'statistics.completionRate':
+        '{rate}% активной базы завершено',
+      'statistics.publicationRate':
+        '{rate}% выполненных опубликовано',
+      'statistics.completedNotPublished':
+        'Выполнено, но ещё не опубликовано',
+      'statistics.activePipeline':
+        'Ещё не отмечено как выполненное',
+      'statistics.activityTitle':
+        'Активность за 14 дней',
+      'statistics.activitySubtitle':
+        'Фактические Completed и Published по дням. Используются скорректированные даты истории.',
+      'statistics.activityTooltip':
+        '{date}: выполнено {completed}, опубликовано {published}',
+      'statistics.pipelineTitle':
+        'Состояние pipeline',
+      'statistics.pipelineSubtitle':
+        'Текущее распределение результатов вне архива.',
+      'statistics.conceptCategories':
+        'Категории концептов',
+      'statistics.musicCategories':
+        'Категории музыки',
+      'statistics.categorySubtitle':
+        'Сколько результатов использует каждую категорию.',
+      'statistics.topIdeas':
+        'Самые частые Ideas',
+      'statistics.topConcepts':
+        'Самые частые Concepts',
+      'statistics.topMusic':
+        'Самая частая Music',
+      'statistics.frequencySubtitle':
+        'Частота использования в результатах.',
+      'statistics.uses':
+        '{count} использ.',
+      'statistics.noData':
+        'Пока недостаточно данных.',
+      'statistics.planningPerformance':
+        'Точность планирования',
+      'statistics.planningPerformanceSubtitle':
+        'Сравнение плановой даты с фактической.',
+      'statistics.executionOnTime':
+        'Execution вовремя',
+      'statistics.publicationOnTime':
+        'Publication вовремя',
+      'statistics.noComparableData':
+        'Нет результатов с обеими датами.',
+      'statistics.onPlanAverage':
+        'В среднем точно по плану.',
+      'statistics.earlyAverage':
+        'В среднем на {days} дн. раньше.',
+      'statistics.lateAverage':
+        'В среднем на {days} дн. позже.',
+      'statistics.highlights':
+        'Highlights',
+      'statistics.highlightsSubtitle':
+        'Несколько быстрых выводов из текущих данных.',
+      'statistics.mostProductiveDay':
+        'Самый продуктивный день',
+      'statistics.favoriteConceptCategory':
+        'Топ Concept category',
+      'statistics.favoriteMusicCategory':
+        'Топ Music category',
+      'statistics.completedCount':
+        '{count} выполнено',
+      'statistics.topResults':
+        'Топ Results по score',
+      'statistics.topResultsSubtitle':
+        'Самые высоко оценённые комбинации в активной базе.',
+      'statistics.scoreValue':
+        'Score {score}',
 
       'calendar.eyebrow': 'CONTENT PIPELINE',
       'calendar.title': 'Календарь контента',
@@ -476,8 +567,99 @@
       'views.aria': 'Application sections',
       'views.workspace': 'Workspace',
       'views.calendar': 'Calendar',
+      'views.statistics': 'Statistics',
       'views.completed': 'Completed',
       'views.archive': 'Archive',
+
+      'statistics.eyebrow':
+        'CONTENT ANALYTICS',
+      'statistics.title': 'Statistics',
+      'statistics.description':
+        'Progress, publishing activity, most-used sources and the overall structure of the content pipeline.',
+      'statistics.results': 'results',
+      'statistics.resultsTracked':
+        'Tracked results',
+      'statistics.excludesArchive':
+        'Archive excluded from the active base',
+      'statistics.completed': 'Completed',
+      'statistics.published': 'Published',
+      'statistics.readyToPublish':
+        'Ready to publish',
+      'statistics.inProgress': 'In progress',
+      'statistics.averageScore':
+        'Average score',
+      'statistics.scoreScale':
+        'Importance × 2 + Desire',
+      'statistics.completionRate':
+        '{rate}% of the active base completed',
+      'statistics.publicationRate':
+        '{rate}% of completed work published',
+      'statistics.completedNotPublished':
+        'Completed but not published yet',
+      'statistics.activePipeline':
+        'Not marked as completed yet',
+      'statistics.activityTitle':
+        '14-day activity',
+      'statistics.activitySubtitle':
+        'Actual Completed and Published events by day, using corrected history dates.',
+      'statistics.activityTooltip':
+        '{date}: completed {completed}, published {published}',
+      'statistics.pipelineTitle':
+        'Pipeline status',
+      'statistics.pipelineSubtitle':
+        'Current distribution of non-archived Results.',
+      'statistics.conceptCategories':
+        'Concept categories',
+      'statistics.musicCategories':
+        'Music categories',
+      'statistics.categorySubtitle':
+        'How many Results use each category.',
+      'statistics.topIdeas':
+        'Most-used Ideas',
+      'statistics.topConcepts':
+        'Most-used Concepts',
+      'statistics.topMusic':
+        'Most-used Music',
+      'statistics.frequencySubtitle':
+        'Usage frequency across Results.',
+      'statistics.uses':
+        '{count} uses',
+      'statistics.noData':
+        'Not enough data yet.',
+      'statistics.planningPerformance':
+        'Planning performance',
+      'statistics.planningPerformanceSubtitle':
+        'Planned dates compared with actual dates.',
+      'statistics.executionOnTime':
+        'Execution on time',
+      'statistics.publicationOnTime':
+        'Publication on time',
+      'statistics.noComparableData':
+        'No Results contain both dates.',
+      'statistics.onPlanAverage':
+        'Exactly on plan on average.',
+      'statistics.earlyAverage':
+        '{days} days early on average.',
+      'statistics.lateAverage':
+        '{days} days late on average.',
+      'statistics.highlights':
+        'Highlights',
+      'statistics.highlightsSubtitle':
+        'A few quick takeaways from the current data.',
+      'statistics.mostProductiveDay':
+        'Most productive day',
+      'statistics.favoriteConceptCategory':
+        'Top Concept category',
+      'statistics.favoriteMusicCategory':
+        'Top Music category',
+      'statistics.completedCount':
+        '{count} completed',
+      'statistics.topResults':
+        'Top Results by score',
+      'statistics.topResultsSubtitle':
+        'Highest-rated combinations in the active base.',
+      'statistics.scoreValue':
+        'Score {score}',
 
       'calendar.eyebrow': 'CONTENT PIPELINE',
       'calendar.title': 'Content calendar',

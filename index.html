@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.4.8</title>
+  <title>c-manager — v1.5.0</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -137,6 +137,16 @@
       >
         <span data-i18n="views.calendar">
           Календарь
+        </span>
+      </button>
+
+      <button
+        class="view-tab"
+        type="button"
+        data-app-view="statistics"
+      >
+        <span data-i18n="views.statistics">
+          Статистика
         </span>
       </button>
 
@@ -631,6 +641,40 @@
       </div>
     </section>
 
+
+<section
+  class="app-view statistics-view"
+  id="statistics-view"
+  hidden
+>
+  <header class="statistics-view-header">
+    <div>
+      <p
+        class="eyebrow"
+        data-i18n="statistics.eyebrow"
+      >
+        CONTENT ANALYTICS
+      </p>
+      <h2 data-i18n="statistics.title">
+        Статистика
+      </h2>
+      <p
+        class="statistics-view-description"
+        data-i18n="statistics.description"
+      >
+        Прогресс, публикации, самые используемые элементы и структура контент-плана.
+      </p>
+    </div>
+  </header>
+
+  <div
+    class="statistics-dashboard"
+    id="statistics-dashboard"
+    aria-live="polite"
+  ></div>
+</section>
+
+
     <section
       class="app-view status-view"
       id="status-view"
@@ -661,7 +705,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.4.8</span>
+      <span>v1.5.0</span>
     </footer>
   </main>
 

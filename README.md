@@ -1,6 +1,6 @@
 # c-manager
 
-**Current version:** `v1.4.8`
+**Current version:** `v1.5.0`
 
 c-manager is a local browser app for building content plans by combining three reusable components:
 

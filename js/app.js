@@ -111,6 +111,9 @@ const workspaceView = document.querySelector(
 const calendarView = document.querySelector(
   '#calendar-view'
 );
+const statisticsView = document.querySelector(
+  '#statistics-view'
+);
 const calendarGrid = document.querySelector(
   '#calendar-grid'
 );
@@ -756,6 +759,7 @@ function setAppView(viewName) {
   const safeView = [
     'workspace',
     'calendar',
+    'statistics',
     'completed',
     'archived',
   ].includes(viewName)
@@ -774,10 +778,15 @@ function setAppView(viewName) {
       safeView !== 'calendar';
   }
 
+  if (statisticsView) {
+    statisticsView.hidden =
+      safeView !== 'statistics';
+  }
+
   if (statusView) {
     statusView.hidden =
-      safeView === 'workspace' ||
-      safeView === 'calendar';
+      safeView !== 'completed' &&
+      safeView !== 'archived';
   }
 
   if (workspaceActions) {
@@ -810,6 +819,13 @@ function setAppView(viewName) {
 
   if (safeView === 'calendar') {
     renderCalendarView();
+    return;
+  }
+
+  if (safeView === 'statistics') {
+    renderer.renderStatisticsView(
+      stateApi.state
+    );
     return;
   }
 
@@ -3702,4 +3718,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.4.8: скрытая корректировка фактических дат подключена.');
+console.log('v1.5.0: Statistics dashboard подключён.');
