@@ -42,6 +42,10 @@
       'calendar.previousMonth': 'Предыдущий месяц',
       'calendar.nextMonth': 'Следующий месяц',
       'calendar.today': 'Сегодня',
+      'calendar.showProgress.label':
+        'Показывать прогресс',
+      'calendar.showProgress.title':
+        'Показывать выполненные, опубликованные и закрытые этапы',
       'calendar.legendAria': 'Легенда календаря',
       'calendar.gridAria': 'Календарь контент-плана',
       'calendar.dayEyebrow': 'DAY OVERVIEW',
@@ -460,6 +464,10 @@
       'calendar.previousMonth': 'Previous month',
       'calendar.nextMonth': 'Next month',
       'calendar.today': 'Today',
+      'calendar.showProgress.label':
+        'Show progress',
+      'calendar.showProgress.title':
+        'Show completed, published and resolved stages',
       'calendar.legendAria': 'Calendar legend',
       'calendar.gridAria': 'Content planning calendar',
       'calendar.dayEyebrow': 'DAY OVERVIEW',

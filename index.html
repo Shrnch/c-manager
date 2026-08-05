@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.4.6</title>
+  <title>c-manager — v1.4.7</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -387,6 +387,21 @@
             Общая картина выполнения и публикаций по дням.
           </p>
         </div>
+
+        <label
+          class="calendar-progress-toggle"
+          title="Показывать выполненные и опубликованные этапы"
+          data-i18n-title="calendar.showProgress.title"
+        >
+          <input
+            type="checkbox"
+            id="calendar-show-progress-toggle"
+            checked
+          >
+          <span data-i18n="calendar.showProgress.label">
+            Показывать прогресс
+          </span>
+        </label>
       </header>
 
       <div class="calendar-metrics" aria-live="polite">
@@ -468,14 +483,14 @@
               </span>
             </span>
 
-            <span class="calendar-legend-item">
+            <span class="calendar-legend-item" data-calendar-progress-only>
               <i class="calendar-stage-dot calendar-stage-planned-execution-resolved"></i>
               <span data-i18n="calendar.stage.plannedExecutionResolved">
                 План выполнения закрыт
               </span>
             </span>
 
-            <span class="calendar-legend-item">
+            <span class="calendar-legend-item" data-calendar-progress-only>
               <i class="calendar-stage-dot calendar-stage-completed"></i>
               <span data-i18n="calendar.stage.completed">
                 Сделано
@@ -496,7 +511,7 @@
               </span>
             </span>
 
-            <span class="calendar-legend-item">
+            <span class="calendar-legend-item" data-calendar-progress-only>
               <i class="calendar-stage-dot calendar-stage-published"></i>
               <span data-i18n="calendar.stage.published">
                 Выложено
@@ -646,7 +661,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.4.6</span>
+      <span>v1.4.7</span>
     </footer>
   </main>
 

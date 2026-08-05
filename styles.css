@@ -3874,3 +3874,52 @@ input:focus-visible {
     transparent
   );
 }
+
+
+/* =========================================================
+   v1.4.7 — Calendar Show progress toggle
+   ========================================================= */
+
+.calendar-view-header {
+  gap: 18px;
+}
+
+.calendar-progress-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+}
+
+.calendar-progress-toggle input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.calendar-progress-toggle:has(input:focus-visible) {
+  border-color: var(--accent);
+  outline: 3px solid color-mix(
+    in srgb,
+    var(--accent) 16%,
+    transparent
+  );
+}
+
+@media (max-width: 720px) {
+  .calendar-view-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

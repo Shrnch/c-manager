@@ -111,6 +111,10 @@ const calendarNextMonth = document.querySelector(
 const calendarTodayButton = document.querySelector(
   '#calendar-today-button'
 );
+const calendarShowProgressToggle =
+  document.querySelector(
+    '#calendar-show-progress-toggle'
+  );
 const statusView = document.querySelector(
   '#status-view'
 );
@@ -200,6 +204,7 @@ const UI_PREFERENCES_KEY =
 const uiPreferences = {
   autoJumpToResults: false,
   relationModeEnabled: false,
+  calendarShowProgress: true,
   language: 'ru',
 };
 
@@ -213,6 +218,8 @@ function loadUiPreferences() {
       savedPreferences.autoJumpToResults === true;
     uiPreferences.relationModeEnabled =
       savedPreferences.relationModeEnabled === true;
+    uiPreferences.calendarShowProgress =
+      savedPreferences.calendarShowProgress !== false;
     uiPreferences.language =
       savedPreferences.language === 'en' ? 'en' : 'ru';
   } catch (error) {
@@ -234,6 +241,13 @@ function loadUiPreferences() {
     relationModeToggle.checked =
       uiPreferences.relationModeEnabled;
   }
+
+  if (calendarShowProgressToggle) {
+    calendarShowProgressToggle.checked =
+      uiPreferences.calendarShowProgress;
+  }
+
+  updateCalendarProgressModeInterface();
 }
 
 function saveUiPreferences() {
@@ -539,6 +553,54 @@ function updateCalendarDayTypeFilterColor() {
     safeType;
 }
 
+function updateCalendarProgressModeInterface() {
+  const showProgress =
+    uiPreferences.calendarShowProgress;
+
+  document
+    .querySelectorAll(
+      '[data-calendar-progress-only]'
+    )
+    .forEach((item) => {
+      item.hidden = !showProgress;
+    });
+
+  if (!calendarDayTypeFilter) {
+    return;
+  }
+
+  const planningOnlyTypes = new Set([
+    'all',
+    'planned-execution',
+    'planned-publication-pending',
+    'planned-publication-ready',
+  ]);
+
+  Array.from(
+    calendarDayTypeFilter.options
+  ).forEach((option) => {
+    const shouldHide =
+      !showProgress &&
+      !planningOnlyTypes.has(
+        option.value
+      );
+
+    option.hidden = shouldHide;
+    option.disabled = shouldHide;
+  });
+
+  if (
+    !showProgress &&
+    !planningOnlyTypes.has(
+      calendarDayTypeFilter.value
+    )
+  ) {
+    calendarDayTypeFilter.value = 'all';
+  }
+
+  updateCalendarDayTypeFilterColor();
+}
+
 function renderCalendarView() {
   renderer.renderCalendarView(
     stateApi.state,
@@ -546,6 +608,8 @@ function renderCalendarView() {
       cursorDate: calendarCursor,
       selectedDateKey:
         calendarSelectedDateKey,
+      showProgress:
+        uiPreferences.calendarShowProgress,
     }
   );
 }
@@ -3071,6 +3135,18 @@ calendarGrid?.addEventListener(
   }
 );
 
+calendarShowProgressToggle?.addEventListener(
+  'change',
+  () => {
+    uiPreferences.calendarShowProgress =
+      calendarShowProgressToggle.checked;
+
+    saveUiPreferences();
+    updateCalendarProgressModeInterface();
+    renderCalendarView();
+  }
+);
+
 calendarDayTypeFilter?.addEventListener(
   'change',
   () => {
@@ -3476,4 +3552,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.4.6: дата публикации редактируется прямо из Completed.');
+console.log('v1.4.7: режим Show progress для календаря подключён.');

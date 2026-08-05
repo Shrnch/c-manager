@@ -1040,9 +1040,25 @@
 
   function getCalendarMetrics(
     state,
-    now = new Date()
+    now = new Date(),
+    {
+      showProgress = true,
+    } = {}
   ) {
-    const events = buildCalendarEvents(state);
+    const allEvents = buildCalendarEvents(state);
+    const visibleStageKeys = new Set([
+      'planned-execution',
+      'planned-publication-pending',
+      'planned-publication-ready',
+    ]);
+    const events = showProgress
+      ? allEvents
+      : allEvents.filter(
+          (event) =>
+            visibleStageKeys.has(
+              event.stageKey
+            )
+        );
     const today = new Date(
       now.getFullYear(),
       now.getMonth(),
@@ -1321,6 +1337,7 @@
     {
       cursorDate = new Date(),
       selectedDateKey = null,
+      showProgress = true,
     } = {}
   ) {
     const grid = document.querySelector(
@@ -1365,7 +1382,22 @@
     const effectiveSelectedDateKey =
       selectedDateKey || todayKey;
 
-    const events = buildCalendarEvents(state);
+    const allEvents =
+      buildCalendarEvents(state);
+    const visibleStageKeys = new Set([
+      'planned-execution',
+      'planned-publication-pending',
+      'planned-publication-ready',
+    ]);
+    const events = showProgress
+      ? allEvents
+      : allEvents.filter(
+          (event) =>
+            visibleStageKeys.has(
+              event.stageKey
+            )
+        );
+
     const eventsByDate = new Map();
 
     events.forEach((event) => {
@@ -1383,7 +1415,10 @@
 
     const metrics = getCalendarMetrics(
       state,
-      today
+      today,
+      {
+        showProgress,
+      }
     );
 
     const plannedAheadElement =

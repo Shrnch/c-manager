@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.4.7] — 2026-08-05
+
+### Added
+
+- Calendar now has a “Show progress” checkbox;
+- with Show progress enabled, Calendar behaves exactly as before and shows all event stages;
+- with Show progress disabled, Calendar shows only outstanding planning states:
+  - Execution planned;
+  - Publication planned — still in progress;
+  - Ready to publish;
+- Completed, Published, resolved Execution plans and historical resolved publication-plan events are hidden in planning-only mode;
+- Day Overview and its event-type filter follow the same visibility mode;
+- progress/history legend items are hidden while planning-only mode is active;
+- “Events in 7 days” follows the currently visible Calendar mode;
+- the preference is saved locally and restored on reload.
+
+
 ## [1.4.6] — 2026-08-04
 
 ### Changed
