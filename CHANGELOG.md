@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.5.1] — 2026-08-05
+
+### Improved — Statistics activity chart
+
+- added a visible Y axis with numeric values so bar height can be read directly;
+- bars now start on a real zero baseline instead of appearing to float above the bottom line;
+- replaced the fixed 14-day-only chart with a selectable activity period;
+- added periods:
+  - 7 days;
+  - 14 days;
+  - 30 days;
+  - 3 months;
+  - 6 months;
+  - 1 year;
+  - All time;
+- longer periods automatically aggregate activity into weekly, monthly or yearly buckets so the graph stays readable;
+- All time automatically chooses daily / weekly / monthly / yearly aggregation based on the actual history span;
+- X-axis labels automatically thin out when there are many buckets;
+- the current aggregation mode is shown below the chart;
+- tooltips show the exact day or date range plus Completed and Published counts.
+
+
 ## [1.5.0] — 2026-08-05
 
 ### Added

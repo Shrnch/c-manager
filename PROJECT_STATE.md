@@ -1,27 +1,24 @@
 # PROJECT STATE
 
 ## Current stage
-Statistics / analytics dashboard
+Statistics activity chart improvements
 
 ## Status
 Completed
 
 ## Version
-v1.5.0
+v1.5.1
 
-## Statistics
-- Dedicated Statistics top-level view.
-- KPI cards: tracked Results, Completed, Published, Ready to publish, In progress, average score.
-- 14-day Completed / Published activity chart.
-- Pipeline donut.
-- Concept-category and Music-category usage distributions.
-- Most-used Ideas, Concepts and Music.
-- Execution and publication on-time performance.
-- Average early / late variance against planned dates.
-- Most productive day and category highlights.
-- Top Results by score.
-- Uses actual corrected dates when available.
-- No external chart dependencies.
+## Activity chart
+- Numeric Y axis.
+- Explicit zero baseline.
+- 7d / 14d / 30d / 3mo / 6mo / 1y / All time ranges.
+- Daily aggregation for short periods.
+- Weekly aggregation for medium periods.
+- Monthly aggregation for one year.
+- All time auto-selects daily / weekly / monthly / yearly grouping.
+- Adaptive X-axis labels.
+- Exact date-range tooltips.
 
 ## Last updated
 2026-08-05

@@ -1217,76 +1217,719 @@
     return wrapper;
   }
 
+
+  const STATISTICS_ACTIVITY_RANGES = {
+    '7d': {
+      days: 7,
+      grouping: 'day',
+      translationKey:
+        'statistics.range.7d',
+    },
+    '14d': {
+      days: 14,
+      grouping: 'day',
+      translationKey:
+        'statistics.range.14d',
+    },
+    '30d': {
+      days: 30,
+      grouping: 'day',
+      translationKey:
+        'statistics.range.30d',
+    },
+    '90d': {
+      days: 90,
+      grouping: 'week',
+      translationKey:
+        'statistics.range.90d',
+    },
+    '180d': {
+      days: 180,
+      grouping: 'week',
+      translationKey:
+        'statistics.range.180d',
+    },
+    '365d': {
+      days: 365,
+      grouping: 'month',
+      translationKey:
+        'statistics.range.365d',
+    },
+    all: {
+      days: null,
+      grouping: 'auto',
+      translationKey:
+        'statistics.range.all',
+    },
+  };
+
+  let statisticsActivityRange =
+    '14d';
+
+  function getStatisticsRangeStart(
+    results,
+    today,
+    rangeKey
+  ) {
+    const config =
+      STATISTICS_ACTIVITY_RANGES[
+        rangeKey
+      ] ??
+      STATISTICS_ACTIVITY_RANGES[
+        '14d'
+      ];
+
+    if (config.days !== null) {
+      const start =
+        new Date(today);
+      start.setDate(
+        start.getDate() -
+          (config.days - 1)
+      );
+      return start;
+    }
+
+    const dates = results
+      .flatMap((result) => [
+        parseStatisticsDate(
+          result.completedAt
+        ),
+        parseStatisticsDate(
+          result.publishedAt
+        ),
+      ])
+      .filter(
+        (date) =>
+          date &&
+          date.getTime() <=
+            today.getTime()
+      )
+      .map(
+        (date) =>
+          getStatisticsDayStart(date)
+      )
+      .filter(Boolean);
+
+    if (!dates.length) {
+      const fallback =
+        new Date(today);
+      fallback.setDate(
+        fallback.getDate() - 13
+      );
+      return fallback;
+    }
+
+    return new Date(
+      Math.min(
+        ...dates.map(
+          (date) => date.getTime()
+        )
+      )
+    );
+  }
+
+  function getStatisticsActivityGrouping(
+    start,
+    end,
+    rangeKey
+  ) {
+    const configured =
+      STATISTICS_ACTIVITY_RANGES[
+        rangeKey
+      ]?.grouping ?? 'day';
+
+    if (configured !== 'auto') {
+      return configured;
+    }
+
+    const spanDays =
+      Math.max(
+        1,
+        Math.round(
+          (
+            end.getTime() -
+            start.getTime()
+          ) / 86400000
+        ) + 1
+      );
+
+    if (spanDays <= 45) {
+      return 'day';
+    }
+
+    if (spanDays <= 210) {
+      return 'week';
+    }
+
+    if (spanDays <= 900) {
+      return 'month';
+    }
+
+    return 'year';
+  }
+
+  function addStatisticsPeriod(
+    date,
+    grouping,
+    amount = 1
+  ) {
+    const next =
+      new Date(date);
+
+    if (grouping === 'day') {
+      next.setDate(
+        next.getDate() + amount
+      );
+      return next;
+    }
+
+    if (grouping === 'week') {
+      next.setDate(
+        next.getDate() +
+          (amount * 7)
+      );
+      return next;
+    }
+
+    if (grouping === 'month') {
+      next.setMonth(
+        next.getMonth() + amount,
+        1
+      );
+      return next;
+    }
+
+    next.setFullYear(
+      next.getFullYear() + amount,
+      0,
+      1
+    );
+    return next;
+  }
+
+  function getStatisticsBucketStart(
+    date,
+    grouping,
+    rangeStart
+  ) {
+    const day =
+      getStatisticsDayStart(date);
+
+    if (!day) {
+      return null;
+    }
+
+    if (grouping === 'day') {
+      return day;
+    }
+
+    if (grouping === 'week') {
+      const differenceDays =
+        Math.floor(
+          (
+            day.getTime() -
+            rangeStart.getTime()
+          ) / 86400000
+        );
+
+      const bucketOffset =
+        Math.max(
+          0,
+          Math.floor(
+            differenceDays / 7
+          ) * 7
+        );
+
+      const bucket =
+        new Date(rangeStart);
+      bucket.setDate(
+        bucket.getDate() +
+          bucketOffset
+      );
+      return bucket;
+    }
+
+    if (grouping === 'month') {
+      return new Date(
+        day.getFullYear(),
+        day.getMonth(),
+        1
+      );
+    }
+
+    return new Date(
+      day.getFullYear(),
+      0,
+      1
+    );
+  }
+
+  function getStatisticsBucketEnd(
+    start,
+    grouping,
+    overallEnd
+  ) {
+    const next =
+      addStatisticsPeriod(
+        start,
+        grouping,
+        1
+      );
+
+    next.setMilliseconds(
+      next.getMilliseconds() - 1
+    );
+
+    return next.getTime() >
+      overallEnd.getTime()
+      ? overallEnd
+      : next;
+  }
+
+  function formatStatisticsBucketLabel(
+    bucket,
+    grouping,
+    {
+      includeYear = false,
+    } = {}
+  ) {
+    const locale =
+      i18n?.getLocale?.() ??
+      'ru-RU';
+
+    if (grouping === 'day') {
+      return new Intl.DateTimeFormat(
+        locale,
+        {
+          day: 'numeric',
+          month: 'short',
+        }
+      ).format(bucket.start);
+    }
+
+    if (grouping === 'week') {
+      return new Intl.DateTimeFormat(
+        locale,
+        {
+          day: 'numeric',
+          month: 'short',
+        }
+      ).format(bucket.start);
+    }
+
+    if (grouping === 'month') {
+      return new Intl.DateTimeFormat(
+        locale,
+        includeYear
+          ? {
+              month: 'short',
+              year: '2-digit',
+            }
+          : {
+              month: 'short',
+            }
+      ).format(bucket.start);
+    }
+
+    return String(
+      bucket.start.getFullYear()
+    );
+  }
+
+  function formatStatisticsBucketTooltipDate(
+    bucket,
+    grouping
+  ) {
+    if (grouping === 'day') {
+      return formatStatisticsLongDate(
+        bucket.start
+      );
+    }
+
+    if (
+      getStatisticsDateKey(
+        bucket.start
+      ) ===
+      getStatisticsDateKey(
+        bucket.end
+      )
+    ) {
+      return formatStatisticsLongDate(
+        bucket.start
+      );
+    }
+
+    return t(
+      'statistics.activityDateRange',
+      {
+        start:
+          formatStatisticsLongDate(
+            bucket.start
+          ),
+        end:
+          formatStatisticsLongDate(
+            bucket.end
+          ),
+      }
+    );
+  }
+
+  function createStatisticsActivityBuckets(
+    results,
+    now,
+    rangeKey
+  ) {
+    const today =
+      getStatisticsDayStart(now) ??
+      new Date();
+
+    const start =
+      getStatisticsRangeStart(
+        results,
+        today,
+        rangeKey
+      );
+
+    const grouping =
+      getStatisticsActivityGrouping(
+        start,
+        today,
+        rangeKey
+      );
+
+    let alignedStart =
+      new Date(start);
+
+    if (grouping === 'month') {
+      alignedStart = new Date(
+        start.getFullYear(),
+        start.getMonth(),
+        1
+      );
+    } else if (grouping === 'year') {
+      alignedStart = new Date(
+        start.getFullYear(),
+        0,
+        1
+      );
+    }
+
+    const buckets = [];
+    let cursor =
+      new Date(alignedStart);
+
+    while (
+      cursor.getTime() <=
+      today.getTime()
+    ) {
+      const bucketStart =
+        new Date(cursor);
+      const bucketEnd =
+        getStatisticsBucketEnd(
+          bucketStart,
+          grouping,
+          today
+        );
+
+      buckets.push({
+        start: bucketStart,
+        end: bucketEnd,
+        completed: 0,
+        published: 0,
+      });
+
+      cursor =
+        addStatisticsPeriod(
+          cursor,
+          grouping,
+          1
+        );
+    }
+
+    const bucketMap =
+      new Map(
+        buckets.map(
+          (bucket) => [
+            getStatisticsDateKey(
+              bucket.start
+            ),
+            bucket,
+          ]
+        )
+      );
+
+    results.forEach((result) => {
+      [
+        [
+          'completedAt',
+          'completed',
+        ],
+        [
+          'publishedAt',
+          'published',
+        ],
+      ].forEach(
+        ([field, counter]) => {
+          const date =
+            parseStatisticsDate(
+              result[field]
+            );
+
+          if (
+            !date ||
+            date.getTime() <
+              alignedStart.getTime() ||
+            date.getTime() >
+              today.getTime()
+          ) {
+            return;
+          }
+
+          const bucketStart =
+            getStatisticsBucketStart(
+              date,
+              grouping,
+              alignedStart
+            );
+
+          const bucket =
+            bucketMap.get(
+              getStatisticsDateKey(
+                bucketStart
+              )
+            );
+
+          if (bucket) {
+            bucket[counter] += 1;
+          }
+        }
+      );
+    });
+
+    return {
+      buckets,
+      grouping,
+      start: alignedStart,
+      end: today,
+    };
+  }
+
+  function getStatisticsActivityScale(
+    buckets
+  ) {
+    const rawMaximum =
+      Math.max(
+        0,
+        ...buckets.flatMap(
+          (bucket) => [
+            bucket.completed,
+            bucket.published,
+          ]
+        )
+      );
+
+    if (rawMaximum <= 4) {
+      const maximum =
+        Math.max(
+          1,
+          rawMaximum
+        );
+
+      return {
+        maximum,
+        ticks:
+          Array.from(
+            {
+              length:
+                maximum + 1,
+            },
+            (_, index) => index
+          ),
+      };
+    }
+
+    const step =
+      Math.max(
+        1,
+        Math.ceil(
+          rawMaximum / 4
+        )
+      );
+
+    const maximum =
+      step * 4;
+
+    return {
+      maximum,
+      ticks: [
+        0,
+        step,
+        step * 2,
+        step * 3,
+        maximum,
+      ],
+    };
+  }
+
+  function getStatisticsActivityLabelStep(
+    bucketCount
+  ) {
+    if (bucketCount <= 14) {
+      return 1;
+    }
+
+    if (bucketCount <= 30) {
+      return 4;
+    }
+
+    return Math.ceil(
+      bucketCount / 10
+    );
+  }
+
+  function createStatisticsActivityRangeSelect() {
+    const wrapper =
+      document.createElement('label');
+    wrapper.className =
+      'statistics-activity-range-control';
+
+    const label =
+      document.createElement('span');
+    label.textContent =
+      t('statistics.range.label');
+
+    const select =
+      document.createElement('select');
+    select.setAttribute(
+      'aria-label',
+      t('statistics.range.aria')
+    );
+
+    Object.entries(
+      STATISTICS_ACTIVITY_RANGES
+    ).forEach(
+      ([value, config]) => {
+        const option =
+          document.createElement('option');
+        option.value = value;
+        option.textContent =
+          t(config.translationKey);
+        option.selected =
+          value ===
+          statisticsActivityRange;
+        select.append(option);
+      }
+    );
+
+    select.addEventListener(
+      'change',
+      () => {
+        if (
+          STATISTICS_ACTIVITY_RANGES[
+            select.value
+          ]
+        ) {
+          statisticsActivityRange =
+            select.value;
+        }
+      }
+    );
+
+    wrapper.append(label, select);
+
+    return {
+      wrapper,
+      select,
+    };
+  }
+
   function createStatisticsActivityChart(
     results,
-    now
+    now,
+    rangeKey =
+      statisticsActivityRange
   ) {
+    const {
+      buckets,
+      grouping,
+      start,
+      end,
+    } =
+      createStatisticsActivityBuckets(
+        results,
+        now,
+        rangeKey
+      );
+
+    const {
+      maximum,
+      ticks,
+    } =
+      getStatisticsActivityScale(
+        buckets
+      );
+
     const chart =
       document.createElement('div');
     chart.className =
       'statistics-activity-chart';
 
-    const days = [];
-    const today = getStatisticsDayStart(
-      now
-    );
+    const body =
+      document.createElement('div');
+    body.className =
+      'statistics-activity-body';
 
-    for (
-      let offset = 13;
-      offset >= 0;
-      offset -= 1
-    ) {
-      const date =
-        new Date(today);
-      date.setDate(
-        date.getDate() - offset
-      );
+    const yAxis =
+      document.createElement('div');
+    yAxis.className =
+      'statistics-activity-y-axis';
 
-      const dateKey =
-        getStatisticsDateKey(date);
+    ticks.forEach((tick) => {
+      const label =
+        document.createElement('span');
+      label.textContent =
+        String(tick);
+      label.style.bottom =
+        `${(tick / maximum) * 100}%`;
+      yAxis.append(label);
+    });
 
-      let completed = 0;
-      let published = 0;
+    const canvas =
+      document.createElement('div');
+    canvas.className =
+      'statistics-activity-canvas';
 
-      results.forEach((result) => {
-        if (
-          getStatisticsDateKey(
-            result.completedAt
-          ) === dateKey
-        ) {
-          completed += 1;
-        }
+    const gridlines =
+      document.createElement('div');
+    gridlines.className =
+      'statistics-activity-gridlines';
 
-        if (
-          getStatisticsDateKey(
-            result.publishedAt
-          ) === dateKey
-        ) {
-          published += 1;
-        }
-      });
+    ticks.forEach((tick) => {
+      const line =
+        document.createElement('i');
+      line.style.bottom =
+        `${(tick / maximum) * 100}%`;
 
-      days.push({
-        date,
-        completed,
-        published,
-      });
-    }
+      if (tick === 0) {
+        line.classList.add(
+          'statistics-activity-baseline'
+        );
+      }
 
-    const maximum = Math.max(
-      1,
-      ...days.flatMap((day) => [
-        day.completed,
-        day.published,
-      ])
-    );
+      gridlines.append(line);
+    });
 
     const plot =
       document.createElement('div');
     plot.className =
       'statistics-activity-plot';
+    plot.style.gridTemplateColumns =
+      `repeat(${Math.max(
+        buckets.length,
+        1
+      )}, minmax(3px, 1fr))`;
 
-    days.forEach((day, index) => {
+    buckets.forEach((bucket) => {
       const column =
         document.createElement('div');
       column.className =
@@ -1295,55 +1938,110 @@
         'statistics.activityTooltip',
         {
           date:
-            formatStatisticsLongDate(
-              day.date
+            formatStatisticsBucketTooltipDate(
+              bucket,
+              grouping
             ),
           completed:
-            day.completed,
+            bucket.completed,
           published:
-            day.published,
+            bucket.published,
         }
       );
-
-      const bars =
-        document.createElement('div');
-      bars.className =
-        'statistics-activity-bars';
 
       const completedBar =
         document.createElement('i');
       completedBar.className =
         'statistics-activity-bar statistics-activity-bar-completed';
       completedBar.style.height =
-        `${(day.completed / maximum) * 100}%`;
+        `${(bucket.completed / maximum) * 100}%`;
 
       const publishedBar =
         document.createElement('i');
       publishedBar.className =
         'statistics-activity-bar statistics-activity-bar-published';
       publishedBar.style.height =
-        `${(day.published / maximum) * 100}%`;
+        `${(bucket.published / maximum) * 100}%`;
 
-      bars.append(
+      column.append(
         completedBar,
         publishedBar
       );
-
-      const label =
-        document.createElement('span');
-      label.className =
-        'statistics-activity-label';
-      label.textContent =
-        index % 2 === 0 ||
-        index === days.length - 1
-          ? formatStatisticsCompactDate(
-              day.date
-            )
-          : '';
-
-      column.append(bars, label);
       plot.append(column);
     });
+
+    canvas.append(
+      gridlines,
+      plot
+    );
+
+    body.append(
+      yAxis,
+      canvas
+    );
+
+    const xAxis =
+      document.createElement('div');
+    xAxis.className =
+      'statistics-activity-x-axis';
+    xAxis.style.gridTemplateColumns =
+      `34px repeat(${Math.max(
+        buckets.length,
+        1
+      )}, minmax(3px, 1fr))`;
+
+    const spacer =
+      document.createElement('span');
+    spacer.className =
+      'statistics-activity-x-spacer';
+    xAxis.append(spacer);
+
+    const labelStep =
+      getStatisticsActivityLabelStep(
+        buckets.length
+      );
+
+    const includeYear =
+      start.getFullYear() !==
+      end.getFullYear();
+
+    buckets.forEach(
+      (bucket, index) => {
+        const label =
+          document.createElement('span');
+        label.className =
+          'statistics-activity-label';
+
+        const shouldShow =
+          index % labelStep === 0 ||
+          index ===
+            buckets.length - 1;
+
+        label.textContent =
+          shouldShow
+            ? formatStatisticsBucketLabel(
+                bucket,
+                grouping,
+                {
+                  includeYear,
+                }
+              )
+            : '';
+
+        label.title =
+          formatStatisticsBucketTooltipDate(
+            bucket,
+            grouping
+          );
+
+        xAxis.append(label);
+      }
+    );
+
+    const footer =
+      document.createElement('div');
+    footer.className =
+      'statistics-activity-footer';
 
     const legend =
       document.createElement('div');
@@ -1373,7 +2071,24 @@
       legend.append(item);
     });
 
-    chart.append(plot, legend);
+    const aggregation =
+      document.createElement('small');
+    aggregation.className =
+      'statistics-activity-aggregation';
+    aggregation.textContent = t(
+      `statistics.grouping.${grouping}`
+    );
+
+    footer.append(
+      legend,
+      aggregation
+    );
+
+    chart.append(
+      body,
+      xAxis,
+      footer
+    );
     return chart;
   }
 
@@ -1893,12 +2608,42 @@
         className:
           'statistics-panel-wide',
       });
+
+    const activityRangeControl =
+      createStatisticsActivityRangeSelect();
+
+    const activityHeader =
+      activityPanel.querySelector(
+        '.statistics-panel-header'
+      );
+
+    if (activityHeader) {
+      activityHeader.classList.add(
+        'statistics-activity-panel-header'
+      );
+      activityHeader.append(
+        activityRangeControl.wrapper
+      );
+    }
+
     activityPanel.append(
       createStatisticsActivityChart(
         allResults,
-        now
+        now,
+        statisticsActivityRange
       )
     );
+
+    activityRangeControl.select
+      .addEventListener(
+        'change',
+        () => {
+          renderStatisticsView(
+            state,
+            new Date()
+          );
+        }
+      );
 
     const pipelinePanel =
       createStatisticsPanel({

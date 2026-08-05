@@ -64,11 +64,39 @@
       'statistics.activePipeline':
         'Ещё не отмечено как выполненное',
       'statistics.activityTitle':
-        'Активность за 14 дней',
+        'Активность',
       'statistics.activitySubtitle':
-        'Фактические Completed и Published по дням. Используются скорректированные даты истории.',
+        'Фактические Completed и Published за выбранный период. Используются скорректированные даты истории.',
       'statistics.activityTooltip':
         '{date}: выполнено {completed}, опубликовано {published}',
+      'statistics.activityDateRange':
+        '{start} — {end}',
+      'statistics.range.label':
+        'Период',
+      'statistics.range.aria':
+        'Период статистики активности',
+      'statistics.range.7d':
+        '7 дней',
+      'statistics.range.14d':
+        '14 дней',
+      'statistics.range.30d':
+        '30 дней',
+      'statistics.range.90d':
+        '3 месяца',
+      'statistics.range.180d':
+        '6 месяцев',
+      'statistics.range.365d':
+        '1 год',
+      'statistics.range.all':
+        'За всё время',
+      'statistics.grouping.day':
+        'По дням',
+      'statistics.grouping.week':
+        'По неделям',
+      'statistics.grouping.month':
+        'По месяцам',
+      'statistics.grouping.year':
+        'По годам',
       'statistics.pipelineTitle':
         'Состояние pipeline',
       'statistics.pipelineSubtitle':
@@ -599,11 +627,39 @@
       'statistics.activePipeline':
         'Not marked as completed yet',
       'statistics.activityTitle':
-        '14-day activity',
+        'Activity',
       'statistics.activitySubtitle':
-        'Actual Completed and Published events by day, using corrected history dates.',
+        'Actual Completed and Published events for the selected period, using corrected history dates.',
       'statistics.activityTooltip':
         '{date}: completed {completed}, published {published}',
+      'statistics.activityDateRange':
+        '{start} — {end}',
+      'statistics.range.label':
+        'Period',
+      'statistics.range.aria':
+        'Activity statistics period',
+      'statistics.range.7d':
+        '7 days',
+      'statistics.range.14d':
+        '14 days',
+      'statistics.range.30d':
+        '30 days',
+      'statistics.range.90d':
+        '3 months',
+      'statistics.range.180d':
+        '6 months',
+      'statistics.range.365d':
+        '1 year',
+      'statistics.range.all':
+        'All time',
+      'statistics.grouping.day':
+        'Daily',
+      'statistics.grouping.week':
+        'Weekly',
+      'statistics.grouping.month':
+        'Monthly',
+      'statistics.grouping.year':
+        'Yearly',
       'statistics.pipelineTitle':
         'Pipeline status',
       'statistics.pipelineSubtitle':
