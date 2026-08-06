@@ -28,6 +28,8 @@
     'addResult',
     'updateResultTitle',
     'updateResultTimelineDate',
+    'markResultCompleted',
+    'markResultPublished',
     'updateResultSchedule',
     'updateResultScore',
     'deleteResultsByReference',

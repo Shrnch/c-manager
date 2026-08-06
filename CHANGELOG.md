@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.5.7] — 2026-08-06
+
+### Fixed
+
+- `Mark as completed` is now persisted to localStorage immediately;
+- `Mark as published` is now persisted to localStorage immediately;
+- completed/published state and their actual timestamps now survive page reloads;
+- fixed missing autosave wrappers for `markResultCompleted()` and `markResultPublished()`.
+
+### Data safety
+
+- no storage schema change;
+- no migration, reset or clearing of existing localStorage data;
+- existing Results, dates, links and statuses are preserved.
+
+
 ## [1.5.6] — 2026-08-06
 
 ### Added
