@@ -1,19 +1,21 @@
 # PROJECT STATE
 
 ## Current stage
-Music visual hierarchy
+Renderer recursion hotfix
 
 ## Status
 Completed
 
 ## Version
-v1.5.4
+v1.5.5
 
-## Music cells
-- Track title is the primary bold heading.
-- Artist is the smaller secondary line underneath.
-- Artist remains optional.
-- Music without Artist shows only the Track title.
+## Fix
+- Removed accidental recursion from getMusicDisplayLabel().
+- Results rendering restored.
+- Calendar rendering restored.
+- Statistics rendering restored.
+- No storage migration or state reset is performed by this fix.
+- Existing localStorage remains untouched.
 
 ## Last updated
 2026-08-06

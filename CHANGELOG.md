@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.5] — 2026-08-06
+
+### Fixed
+
+- fixed an infinite recursion in `getMusicDisplayLabel()` introduced in v1.5.3;
+- Results, Calendar and Statistics render correctly again;
+- Music without an Artist still displays as title-only;
+- Music with an Artist still displays as `Artist — Track title` anywhere a compact text label is needed;
+- this hotfix does not modify, migrate, reset or clear stored application data.
+
+
 ## [1.5.4] — 2026-08-06
 
 ### Changed

@@ -10,9 +10,18 @@
       return '';
     }
 
-    return music.artist
-      ? getMusicDisplayLabel(music)
-      : music.title;
+    const artist = String(
+      music.artist ?? ''
+    ).trim();
+    const title = String(
+      music.title ?? ''
+    ).trim();
+
+    if (artist && title) {
+      return `${artist} — ${title}`;
+    }
+
+    return title || artist;
   }
 
   function createEmptyState(message) {
