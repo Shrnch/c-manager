@@ -1,21 +1,22 @@
 # PROJECT STATE
 
 ## Current stage
-Workspace source-item completion
+Optional Music artist
 
 ## Status
 Completed
 
 ## Version
-v1.5.2
+v1.5.3
 
-## Workspace source items
-- Ideas, Concepts and Music have a ✓ Mark as completed action.
-- Completed items are removed from Workspace without being deleted.
-- Existing Results keep their references.
-- Completed items appear in the existing Completed tab.
-- Restore to workspace remains available.
-- Current selection is cleared if the completed source item was selected.
+## Music
+- Track title is required.
+- Artist is optional.
+- With Artist: Artist is shown as the main heading and Track title as the subheading.
+- Without Artist: only Track title is shown as the main heading.
+- No leading dash is used for title-only Music.
+- Clean title-only formatting propagates to Results, Calendar, Statistics, Completed/Archive and workflow dialogs.
+- JSON imports may omit Artist or provide it as an empty string.
 
 ## Last updated
-2026-08-05
+2026-08-06

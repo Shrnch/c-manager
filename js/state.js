@@ -449,8 +449,8 @@
     const safeArtist = String(artist).trim();
     const safeTitle = String(title).trim();
 
-    if (!safeArtist || !safeTitle) {
-      throw new Error('Исполнитель и название композиции обязательны.');
+    if (!safeTitle) {
+      throw new Error('Название композиции обязательно.');
     }
 
     if (

@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.3] — 2026-08-06
+
+### Changed
+
+- Artist is now optional when adding or editing Music;
+- Track title remains required;
+- Music with an Artist keeps the existing two-line Artist / Track title presentation;
+- Music without an Artist shows only the Track title as the main label;
+- no empty dash or “— Track title” formatting is shown anywhere;
+- Result cards, Completed/Archive views, Calendar, Statistics, selection preview and workflow dialogs all use the clean title-only label when Artist is missing;
+- JSON import now accepts Music entries with an empty or missing Artist field.
+
+
 ## [1.5.2] — 2026-08-05
 
 ### Added

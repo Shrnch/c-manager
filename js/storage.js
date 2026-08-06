@@ -410,10 +410,10 @@
           rawItem.id,
           `У композиции №${index + 1} отсутствует ID.`
         ),
-        artist: requireString(
-          rawItem.artist,
-          `У композиции №${index + 1} отсутствует исполнитель.`
-        ),
+        artist:
+          typeof rawItem.artist === 'string'
+            ? rawItem.artist.trim()
+            : '',
         title: requireString(
           rawItem.title,
           `У композиции №${index + 1} отсутствует название.`
@@ -635,7 +635,7 @@
 
   function createBackupPayload(state) {
     return {
-      app: 'Content Idea Organizer',
+      app: 'c-manager',
       version: 1,
       exportedAt: new Date().toISOString(),
       data: normalizeState(state),
@@ -656,7 +656,7 @@
     const link = document.createElement('a');
     link.href = url;
     link.download =
-      `content-idea-organizer-backup-${timestamp}.json`;
+      `c-manager-backup-${timestamp}.json`;
     document.body.append(link);
     link.click();
     link.remove();

@@ -440,7 +440,9 @@ function getItemLabel(type, item) {
     return item.text;
   }
 
-  return `${item.artist} — ${item.title}`;
+  return item.artist
+    ? `${item.artist} — ${item.title}`
+    : item.title;
 }
 
 function updateSelectionInterface() {
@@ -1469,6 +1471,7 @@ function buildItemFields(type, item = null) {
         label: t('item.artist'),
         value: item?.artist ?? '',
         placeholder: t('item.artistPlaceholder'),
+        required: false,
       }),
       createField({
         id: 'music-title',
@@ -1578,7 +1581,7 @@ function saveMusic() {
   );
 
   if (itemModalMode === 'edit') {
-    if (!artist.trim() || !title.trim()) {
+    if (!title.trim()) {
       throw new Error(t('errors.musicEmpty'));
     }
 
@@ -1820,7 +1823,11 @@ function requestResultWorkflowChange(
         value: 'music',
         label: t('workflow.alsoMusic', {
           name: music
-            ? `${music.artist} — ${music.title}`
+            ? (
+                music.artist
+                  ? `${music.artist} — ${music.title}`
+                  : music.title
+              )
             : t('result.deletedMusic'),
         }),
       },
@@ -3743,4 +3750,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.5.2: Workspace source items can be marked as completed.');
+console.log('v1.5.3: Music artist is optional.');

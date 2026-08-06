@@ -5,6 +5,16 @@
   const t = (key, params) =>
     i18n?.t(key, params) ?? key;
 
+  function getMusicDisplayLabel(music) {
+    if (!music) {
+      return '';
+    }
+
+    return music.artist
+      ? getMusicDisplayLabel(music)
+      : music.title;
+  }
+
   function createEmptyState(message) {
     const paragraph = document.createElement('p');
     paragraph.className = 'column-empty';
@@ -216,13 +226,34 @@
         row.classList.add('music-row-colored');
       }
 
-      const artist = document.createElement('strong');
-      artist.textContent = music.artist;
+      if (music.artist) {
+        const artist =
+          document.createElement('strong');
+        artist.textContent = music.artist;
 
-      const title = document.createElement('span');
-      title.textContent = music.title;
+        const title =
+          document.createElement('span');
+        title.textContent = music.title;
 
-      body.append(badge, artist, title);
+        body.append(
+          badge,
+          artist,
+          title
+        );
+      } else {
+        const titleOnly =
+          document.createElement('strong');
+        titleOnly.className =
+          'music-title-only';
+        titleOnly.textContent =
+          music.title;
+
+        body.append(
+          badge,
+          titleOnly
+        );
+      }
+
       container.append(row);
     });
   }
@@ -451,7 +482,7 @@
     }
 
     if (type === 'music') {
-      return `${item.artist} — ${item.title}`;
+      return getMusicDisplayLabel(item);
     }
 
     return item.title || item.id;
@@ -566,7 +597,7 @@
       idea?.text ?? t('result.deletedIdea'),
       concept?.text ?? t('result.deletedConcept'),
       music
-        ? `${music.artist} — ${music.title}`
+        ? getMusicDisplayLabel(music)
         : t('result.deletedMusic'),
     ].join(' • ');
 
@@ -2778,7 +2809,7 @@
         'musicId',
         state.music,
         (musicItem) =>
-          `${musicItem.artist} — ${musicItem.title}`
+          getMusicDisplayLabel(musicItem)
       );
 
     [
@@ -3346,7 +3377,7 @@
             concept?.text ??
             t('result.deletedConcept'),
           musicText: music
-            ? `${music.artist} — ${music.title}`
+            ? getMusicDisplayLabel(music)
             : t('result.deletedMusic'),
         });
       });
@@ -4410,7 +4441,7 @@
       const musicResultPart = createResultPart(
         t('result.music'),
         music
-          ? `${music.artist} — ${music.title}`
+          ? getMusicDisplayLabel(music)
           : t('result.deletedMusic'),
         musicBadge
       );

@@ -4894,3 +4894,13 @@ input:focus-visible {
   color: var(--white);
   background: var(--calendar-completed);
 }
+
+
+/* =========================================================
+   v1.5.3 — optional Music artist
+   ========================================================= */
+
+.music-title-only {
+  font-size: 14px;
+  line-height: 1.35;
+}

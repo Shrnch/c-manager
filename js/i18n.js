@@ -564,7 +564,7 @@
       'errors.ideaEmpty': 'Текст идеи не может быть пустым.',
       'errors.conceptEmpty': 'Текст концепта не может быть пустым.',
       'errors.musicEmpty':
-        'Исполнитель и название композиции обязательны.',
+        'Название композиции обязательно.',
       'errors.linkInvalid':
         'Укажи корректную ссылку, например https://example.com.'
     },
@@ -1124,7 +1124,7 @@
       'errors.ideaEmpty': 'Idea text cannot be empty.',
       'errors.conceptEmpty': 'Concept text cannot be empty.',
       'errors.musicEmpty':
-        'Artist and track title are required.',
+        'Track title is required.',
       'errors.linkInvalid':
         'Enter a valid link, for example https://example.com.'
     }
