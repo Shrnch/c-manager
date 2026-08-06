@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.4] — 2026-08-06
+
+### Changed
+
+- Music cells now use Track title as the primary heading;
+- Artist is displayed underneath as the smaller secondary label;
+- title-only Music continues to show only the Track title with no empty Artist line.
+
+
 ## [1.5.3] — 2026-08-06
 
 ### Changed

@@ -227,24 +227,28 @@
       }
 
       if (music.artist) {
-        const artist =
-          document.createElement('strong');
-        artist.textContent = music.artist;
-
         const title =
-          document.createElement('span');
+          document.createElement('strong');
+        title.className =
+          'music-track-title';
         title.textContent = music.title;
+
+        const artist =
+          document.createElement('span');
+        artist.className =
+          'music-artist-name';
+        artist.textContent = music.artist;
 
         body.append(
           badge,
-          artist,
-          title
+          title,
+          artist
         );
       } else {
         const titleOnly =
           document.createElement('strong');
         titleOnly.className =
-          'music-title-only';
+          'music-title-only music-track-title';
         titleOnly.textContent =
           music.title;
 
