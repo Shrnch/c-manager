@@ -1,21 +1,19 @@
 # PROJECT STATE
 
 ## Current stage
-Renderer recursion hotfix
+Cross-view Result links
 
 ## Status
 Completed
 
 ## Version
-v1.5.5
+v1.5.6
 
-## Fix
-- Removed accidental recursion from getMusicDisplayLabel().
-- Results rendering restored.
-- Calendar rendering restored.
-- Statistics rendering restored.
-- No storage migration or state reset is performed by this fix.
-- Existing localStorage remains untouched.
+## Update
+- Result-linked Idea / Concept / Music URLs are available in Workspace, Completed and Archive.
+- Calendar Day Overview now includes the same expandable Links panel.
+- Existing external-link behavior is reused.
+- No storage/state migration is required.
 
 ## Last updated
 2026-08-06

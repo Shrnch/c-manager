@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.5.6] — 2026-08-06
+
+### Added
+
+- linked Idea / Concept / Music URLs are now directly accessible from Result cards in Completed;
+- linked Idea / Concept / Music URLs are now directly accessible from Result cards in Archive;
+- Calendar Day Overview cards now expose the same Result link panel as Workspace;
+- links keep the existing Workspace behavior and open safely in a new tab.
+
+### Data safety
+
+- no storage schema changes;
+- no localStorage migration, reset or clearing;
+- existing Results and source links remain unchanged.
+
+
 ## [1.5.5] — 2026-08-06
 
 ### Fixed

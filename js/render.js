@@ -620,6 +620,28 @@
       combination
     );
 
+    const resultLinks = createResultLinks([
+      {
+        label: t('result.idea'),
+        url: idea?.url,
+      },
+      {
+        label: t('result.concept'),
+        url: concept?.url,
+      },
+      {
+        label: t('result.music'),
+        url: music?.url,
+      },
+    ]);
+
+    if (resultLinks) {
+      resultLinks.classList.add(
+        'result-links-status'
+      );
+      content.append(resultLinks);
+    }
+
     if (result.completedAt) {
       const completedMeta =
         document.createElement('small');
@@ -3392,6 +3414,9 @@
           musicText: music
             ? getMusicDisplayLabel(music)
             : t('result.deletedMusic'),
+          ideaUrl: idea?.url ?? null,
+          conceptUrl: concept?.url ?? null,
+          musicUrl: music?.url ?? null,
         });
       });
     });
@@ -3625,6 +3650,27 @@
       event.musicText,
     ].join(' • ');
 
+    const resultLinks = createResultLinks([
+      {
+        label: t('result.idea'),
+        url: event.ideaUrl,
+      },
+      {
+        label: t('result.concept'),
+        url: event.conceptUrl,
+      },
+      {
+        label: t('result.music'),
+        url: event.musicUrl,
+      },
+    ]);
+
+    if (resultLinks) {
+      resultLinks.classList.add(
+        'result-links-calendar'
+      );
+    }
+
     const footer = document.createElement('div');
     footer.className =
       'calendar-detail-footer';
@@ -3697,9 +3743,14 @@
     card.append(
       header,
       title,
-      combination,
-      footer
+      combination
     );
+
+    if (resultLinks) {
+      card.append(resultLinks);
+    }
+
+    card.append(footer);
 
     return card;
   }

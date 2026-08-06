@@ -4927,3 +4927,25 @@ input:focus-visible {
 .music-title-only {
   font-size: 14px;
 }
+
+
+/* =========================================================
+   v1.5.6 — linked sources outside Workspace
+   ========================================================= */
+
+.status-result-card .result-links,
+.calendar-detail-card .result-links {
+  margin-top: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.status-result-card .result-links {
+  width: 100%;
+}
+
+.calendar-detail-card .result-links {
+  margin-bottom: 1px;
+}
+
