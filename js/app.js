@@ -719,12 +719,40 @@ function openActualDatesModal(resultId) {
   });
 }
 
+function focusCalendarResultCard(card) {
+  if (!card) {
+    return;
+  }
+
+  card.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  });
+  card.classList.add(
+    'result-card-calendar-focus'
+  );
+
+  window.setTimeout(() => {
+    card.classList.remove(
+      'result-card-calendar-focus'
+    );
+  }, 1800);
+}
+
 function openCalendarResult(
   resultId,
   workflowStatus
 ) {
   if (workflowStatus === 'completed') {
     setAppView('completed');
+
+    window.requestAnimationFrame(() => {
+      const card = statusViewContent?.querySelector(
+        `.status-result-card[data-result-id="${resultId}"]`
+      );
+
+      focusCalendarResultCard(card);
+    });
     return;
   }
 
@@ -737,23 +765,7 @@ function openCalendarResult(
       `.result-card[data-result-id="${resultId}"]`
     );
 
-    if (!card) {
-      return;
-    }
-
-    card.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    });
-    card.classList.add(
-      'result-card-calendar-focus'
-    );
-
-    window.setTimeout(() => {
-      card.classList.remove(
-        'result-card-calendar-focus'
-      );
-    }, 1800);
+    focusCalendarResultCard(card);
   });
 }
 

@@ -1,19 +1,19 @@
 # PROJECT STATE
 
 ## Current stage
-Completion/publication persistence hotfix
+Calendar result navigation improvement
 
 ## Status
 Completed
 
 ## Version
-v1.5.7
+v1.5.8
 
-## Fix
-- Mark as completed is covered by autosave.
-- Mark as published is covered by autosave.
-- Actual completion/publication timestamps persist across reloads.
-- No storage schema migration is required.
+## Update
+- Open in Workspace keeps direct scroll + temporary highlight.
+- Open Completed now scrolls directly to the referenced Result.
+- Completed target uses the same temporary Calendar highlight.
+- No storage/state migration is required.
 
 ## Last updated
-2026-08-06
+2026-08-07

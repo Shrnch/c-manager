@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.8] — 2026-08-07
+
+### Improved
+
+- Calendar → Open Completed now scrolls directly to the referenced Result instead of opening the top of the Completed list;
+- the target Completed Result receives the same temporary highlight used by Calendar → Open in Workspace;
+- Calendar navigation now behaves consistently between active and completed Results.
+
+### Data safety
+
+- no state or storage schema changes;
+- no localStorage migration, reset or clearing.
+
+
 ## [1.5.7] — 2026-08-06
 
 ### Fixed

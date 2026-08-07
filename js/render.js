@@ -585,6 +585,7 @@
     const card = document.createElement('article');
     card.className =
       'status-item-card status-result-card';
+    card.dataset.resultId = result.id;
 
     const content = document.createElement('div');
     content.className = 'status-item-card-content';
