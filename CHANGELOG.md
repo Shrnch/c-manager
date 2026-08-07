@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.6.0] — 2026-08-07
+
+### Backend / reliability
+
+- replaced the manual autosave method list with state subscriptions, so new state mutations no longer need to be registered separately in `storage.js`;
+- added state transactions so related mutations can be persisted as one coherent change;
+- failed startup validation no longer clears localStorage, seeds demo data over it, or overwrites the unreadable save;
+- autosave is paused after a failed load until valid data is explicitly imported, protecting the original stored value;
+- every successful save keeps the previous valid state in a single local recovery snapshot;
+- moved Calendar lifecycle/event calculations into a pure `derived.js` layer;
+- moved reusable Statistics frequency and planning-performance calculations out of `render.js`;
+- kept the existing `contentIdeaOrganizer.state.v1` key and v1 JSON schema for compatibility.
+
+### Validation
+
+- tested against the real 2026-08-07 user export;
+- verified round-trip preservation of all collections and references;
+- verified optional Music artist data;
+- verified Completed and Published persistence through page-reload simulation;
+- verified corrupted localStorage is not modified during failed load;
+- verified recovery snapshot creation;
+- verified Calendar metrics and Statistics calculations on real data.
+
+### UI
+
+- no visual redesign;
+- existing Workspace, Calendar, Statistics, Completed and Archive workflows remain unchanged.
+
 ## [1.5.8] — 2026-08-07
 
 ### Improved

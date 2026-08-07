@@ -2,6 +2,7 @@
 
 (function createContentIdeaRenderer(global) {
   const i18n = global.ContentIdeaI18n;
+  const derived = global.ContentIdeaDerived;
   const t = (key, params) =>
     i18n?.t(key, params) ?? key;
 
@@ -1098,51 +1099,13 @@
     items,
     labelBuilder
   ) {
-    const counts = new Map();
-
-    results.forEach((result) => {
-      const itemId =
-        result[referenceKey];
-
-      if (!itemId) {
-        return;
-      }
-
-      counts.set(
-        itemId,
-        (counts.get(itemId) ?? 0) + 1
-      );
-    });
-
-    return Array.from(
-      counts.entries()
-    )
-      .map(([itemId, count]) => {
-        const item = items.find(
-          (candidate) =>
-            candidate.id === itemId
-        );
-
-        if (!item) {
-          return null;
-        }
-
-        return {
-          id: itemId,
-          count,
-          label: labelBuilder(item),
-        };
-      })
-      .filter(Boolean)
-      .sort(
-        (first, second) =>
-          second.count - first.count ||
-          first.label.localeCompare(
-            second.label,
-            i18n?.getLocale?.() ??
-              'ru-RU'
-          )
-      );
+    return derived.getFrequency(
+      results,
+      referenceKey,
+      items,
+      labelBuilder,
+      i18n?.getLocale?.() ?? 'ru-RU'
+    );
   }
 
   function createStatisticsRankList(
@@ -2370,63 +2333,11 @@
     plannedField,
     actualField
   ) {
-    const comparable =
-      results.filter(
-        (result) =>
-          result[plannedField] &&
-          result[actualField]
-      );
-
-    if (!comparable.length) {
-      return {
-        count: 0,
-        onTime: 0,
-        rate: null,
-        averageVarianceDays: null,
-      };
-    }
-
-    let onTime = 0;
-    let varianceTotal = 0;
-
-    comparable.forEach((result) => {
-      const planned =
-        getStatisticsDayStart(
-          result[plannedField]
-        );
-      const actual =
-        getStatisticsDayStart(
-          result[actualField]
-        );
-
-      if (!planned || !actual) {
-        return;
-      }
-
-      const difference =
-        (
-          actual.getTime() -
-          planned.getTime()
-        ) / 86400000;
-
-      varianceTotal += difference;
-
-      if (difference <= 0) {
-        onTime += 1;
-      }
-    });
-
-    return {
-      count: comparable.length,
-      onTime,
-      rate: Math.round(
-        (onTime / comparable.length) *
-          100
-      ),
-      averageVarianceDays:
-        varianceTotal /
-        comparable.length,
-    };
+    return derived.calculatePerformance(
+      results,
+      plannedField,
+      actualField
+    );
   }
 
   function createStatisticsPerformanceRow(
@@ -3194,41 +3105,6 @@
     );
   }
 
-  const CALENDAR_STAGES = [
-    {
-      key: 'planned-execution',
-      field: 'plannedExecutionAt',
-      translationKey: 'calendar.stage.plannedExecution',
-      planned: true,
-      resolutionField: 'completedAt',
-      priority: 1,
-    },
-    {
-      key: 'completed',
-      field: 'completedAt',
-      translationKey: 'calendar.stage.completed',
-      planned: false,
-      resolutionField: null,
-      priority: 2,
-    },
-    {
-      key: 'planned-publication',
-      field: 'plannedPublicationAt',
-      translationKey: 'calendar.stage.plannedPublication',
-      planned: true,
-      resolutionField: 'publishedAt',
-      priority: 3,
-    },
-    {
-      key: 'published',
-      field: 'publishedAt',
-      translationKey: 'calendar.stage.published',
-      planned: false,
-      resolutionField: null,
-      priority: 4,
-    },
-  ];
-
   function getDateKey(date) {
     const safeDate =
       date instanceof Date ? date : new Date(date);
@@ -3310,117 +3186,53 @@
   }
 
   function buildCalendarEvents(state) {
-    const events = [];
+    const events =
+      derived.buildCalendarEvents(state)
+        .map((event) => {
+          const result =
+            state.results[event.resultIndex];
 
-    state.results.forEach((result, resultIndex) => {
-      if (getWorkflowStatus(result) === 'archived') {
-        return;
-      }
+          if (!result) {
+            return null;
+          }
 
-      const idea = state.ideas.find(
-        (item) => item.id === result.ideaId
-      );
-      const concept = state.concepts.find(
-        (item) => item.id === result.conceptId
-      );
-      const music = state.music.find(
-        (item) => item.id === result.musicId
-      );
+          const idea = state.ideas.find(
+            (item) =>
+              item.id === result.ideaId
+          );
+          const concept =
+            state.concepts.find(
+              (item) =>
+                item.id === result.conceptId
+            );
+          const music = state.music.find(
+            (item) =>
+              item.id === result.musicId
+          );
 
-      CALENDAR_STAGES.forEach((stage) => {
-        const rawValue = result[stage.field];
-        const date = parseCalendarDateTime(
-          rawValue
-        );
-
-        if (!date) {
-          return;
-        }
-
-        const workflowStatus =
-          getWorkflowStatus(result);
-
-        const isPublicationPlan =
-          stage.key ===
-          'planned-publication';
-
-        const resultIsCompleted =
-          Boolean(result.completedAt) ||
-          workflowStatus === 'completed';
-
-        const publicationIsReady =
-          isPublicationPlan &&
-          resultIsCompleted &&
-          !result.publishedAt;
-
-        const publicationNeedsWork =
-          isPublicationPlan &&
-          !resultIsCompleted &&
-          !result.publishedAt;
-
-        const executionPlanResolved =
-          stage.key === 'planned-execution' &&
-          resultIsCompleted;
-
-        const calendarStageKey =
-          executionPlanResolved
-            ? 'planned-execution-resolved'
-            : publicationIsReady
-              ? 'planned-publication-ready'
-              : publicationNeedsWork
-                ? 'planned-publication-pending'
-                : stage.key;
-
-        const calendarStageTranslationKey =
-          executionPlanResolved
-            ? 'calendar.stage.plannedExecutionResolved'
-            : publicationIsReady
-              ? 'calendar.stage.readyPublication'
-              : publicationNeedsWork
-                ? 'calendar.stage.plannedPublicationPending'
-                : stage.translationKey;
-
-        events.push({
-          id: `${result.id}:${stage.key}`,
-          resultId: result.id,
-          resultTitle: getCalendarResultTitle(
-            result,
-            resultIndex
-          ),
-          workflowStatus,
-          stageKey: calendarStageKey,
-          baseStageKey: stage.key,
-          stageField: stage.field,
-          stageTranslationKey:
-            calendarStageTranslationKey,
-          stagePriority: stage.priority,
-          isPlanned: stage.planned,
-          isResolved:
-            !stage.resolutionField ||
-            Boolean(
-              result[stage.resolutionField]
-            ),
-          publicationIsReady,
-          publicationNeedsWork,
-          executionPlanResolved,
-          value: rawValue,
-          date,
-          dateKey: getDateKey(date),
-          ideaText:
-            idea?.text ??
-            t('result.deletedIdea'),
-          conceptText:
-            concept?.text ??
-            t('result.deletedConcept'),
-          musicText: music
-            ? getMusicDisplayLabel(music)
-            : t('result.deletedMusic'),
-          ideaUrl: idea?.url ?? null,
-          conceptUrl: concept?.url ?? null,
-          musicUrl: music?.url ?? null,
-        });
-      });
-    });
+          return {
+            ...event,
+            resultTitle:
+              getCalendarResultTitle(
+                result,
+                event.resultIndex
+              ),
+            ideaText:
+              idea?.text ??
+              t('result.deletedIdea'),
+            conceptText:
+              concept?.text ??
+              t('result.deletedConcept'),
+            musicText: music
+              ? getMusicDisplayLabel(music)
+              : t('result.deletedMusic'),
+            ideaUrl: idea?.url ?? null,
+            conceptUrl:
+              concept?.url ?? null,
+            musicUrl: music?.url ?? null,
+          };
+        })
+        .filter(Boolean);
 
     events.sort((first, second) => (
       first.date.getTime() -
@@ -3443,113 +3255,11 @@
       showProgress = true,
     } = {}
   ) {
-    const allEvents = buildCalendarEvents(state);
-    const visibleStageKeys = new Set([
-      'planned-execution',
-      'planned-publication-pending',
-      'planned-publication-ready',
-    ]);
-    const events = showProgress
-      ? allEvents
-      : allEvents.filter(
-          (event) =>
-            visibleStageKeys.has(
-              event.stageKey
-            )
-        );
-    const today = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
+    return derived.getCalendarMetrics(
+      state,
+      now,
+      { showProgress }
     );
-    const todayKey = getDateKey(today);
-
-    const nextSevenEnd = new Date(today);
-    nextSevenEnd.setDate(
-      nextSevenEnd.getDate() + 6
-    );
-    const nextSevenEndKey =
-      getDateKey(nextSevenEnd);
-
-    const plannedEvents = events.filter(
-      (event) =>
-        event.isPlanned &&
-        !event.isResolved
-    );
-
-    const futurePlannedEvents =
-      plannedEvents.filter(
-        (event) =>
-          event.dateKey >= todayKey
-      );
-
-    const plannedAheadDays =
-      new Set(
-        futurePlannedEvents.map(
-          (event) => event.dateKey
-        )
-      ).size;
-
-    const nextSevenEvents = events.filter(
-      (event) =>
-        event.dateKey >= todayKey &&
-        event.dateKey <= nextSevenEndKey
-    ).length;
-
-    const visibleResults = state.results.filter(
-      (result) =>
-        getWorkflowStatus(result) !== 'archived'
-    );
-
-    const hasCurrentOrFuturePublicationPlan =
-      (result) => {
-        const publicationDate =
-          parseCalendarDateTime(
-            result.plannedPublicationAt
-          );
-
-        if (!publicationDate) {
-          return false;
-        }
-
-        const publicationDateKey =
-          getDateKey(publicationDate);
-
-        return (
-          publicationDateKey !== null &&
-          publicationDateKey >= todayKey
-        );
-      };
-
-    const readyToPublish =
-      visibleResults.filter(
-        (result) =>
-          (
-            Boolean(result.completedAt) ||
-            getWorkflowStatus(result) ===
-              'completed'
-          ) &&
-          !result.publishedAt &&
-          hasCurrentOrFuturePublicationPlan(
-            result
-          )
-      ).length;
-
-    const scheduledPublications =
-      visibleResults.filter(
-        (result) =>
-          !result.publishedAt &&
-          hasCurrentOrFuturePublicationPlan(
-            result
-          )
-      ).length;
-
-    return {
-      plannedAheadDays,
-      nextSevenEvents,
-      readyToPublish,
-      scheduledPublications,
-    };
   }
 
   function formatCalendarDate(

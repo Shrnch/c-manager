@@ -12,6 +12,77 @@
 
   const state = structuredClone(initialState);
 
+  const stateSubscribers = new Set();
+  let stateRevision = 0;
+  let transactionDepth = 0;
+  let pendingStateChange = false;
+  const pendingReasons = new Set();
+
+  function flushStateChange() {
+    if (!pendingStateChange || transactionDepth > 0) {
+      return;
+    }
+
+    pendingStateChange = false;
+    stateRevision += 1;
+
+    const event = Object.freeze({
+      revision: stateRevision,
+      reasons: Array.from(pendingReasons),
+    });
+
+    pendingReasons.clear();
+
+    stateSubscribers.forEach((subscriber) => {
+      try {
+        subscriber(state, event);
+      } catch (error) {
+        console.error(
+          'State subscriber failed.',
+          error
+        );
+      }
+    });
+  }
+
+  function markStateChanged(reason = 'mutation') {
+    pendingStateChange = true;
+    pendingReasons.add(reason);
+    flushStateChange();
+  }
+
+  function transaction(callback) {
+    if (typeof callback !== 'function') {
+      throw new TypeError(
+        'Transaction callback must be a function.'
+      );
+    }
+
+    transactionDepth += 1;
+
+    try {
+      return callback();
+    } finally {
+      transactionDepth -= 1;
+      flushStateChange();
+    }
+  }
+
+  function subscribe(subscriber) {
+    if (typeof subscriber !== 'function') {
+      throw new TypeError(
+        'State subscriber must be a function.'
+      );
+    }
+
+    stateSubscribers.add(subscriber);
+
+    return () => {
+      stateSubscribers.delete(subscriber);
+    };
+  }
+
+
   const WORKFLOW_COLLECTIONS = new Set([
     'ideas',
     'concepts',
@@ -115,6 +186,9 @@
     };
 
     collection.push(item);
+    markStateChanged(
+      `${collectionName}:add`
+    );
     return item;
   }
 
@@ -144,6 +218,9 @@
     };
 
     collection[itemIndex] = updatedItem;
+    markStateChanged(
+      `${collectionName}:update`
+    );
     return updatedItem;
   }
 
@@ -182,6 +259,9 @@
     }
 
     const [deletedItem] = collection.splice(itemIndex, 1);
+    markStateChanged(
+      `${collectionName}:delete`
+    );
     return deletedItem;
   }
 
@@ -623,6 +703,12 @@
       (result) => result[referenceKey] !== referenceId
     );
 
+    if (deletedResults.length) {
+      markStateChanged(
+        'results:delete-by-reference'
+      );
+    }
+
     return deletedResults;
   }
 
@@ -630,6 +716,8 @@
     Object.keys(initialState).forEach((key) => {
       state[key] = [];
     });
+
+    markStateChanged('state:reset');
   }
 
   function seedDemoData() {
@@ -697,6 +785,8 @@
 
   global.ContentIdeaState = {
     state,
+    subscribe,
+    transaction,
     createId,
     calculateScore,
     normalizeWorkflowStatus,

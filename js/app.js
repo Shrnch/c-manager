@@ -1845,52 +1845,54 @@ function requestResultWorkflowChange(
       },
     ],
     action: (selectedOptions) => {
-      if (isArchive) {
-        stateApi.setWorkflowStatus(
-          'results',
-          resultId,
-          targetStatus
-        );
-      } else {
-        stateApi.markResultCompleted(
-          resultId
-        );
-      }
-
-      const sourceMap = {
-        idea: {
-          collection: 'ideas',
-          id: result.ideaId,
-          type: 'idea',
-        },
-        concept: {
-          collection: 'concepts',
-          id: result.conceptId,
-          type: 'concept',
-        },
-        music: {
-          collection: 'music',
-          id: result.musicId,
-          type: 'music',
-        },
-      };
-
-      selectedOptions.forEach((optionName) => {
-        const source = sourceMap[optionName];
-
-        if (!source) {
-          return;
+      stateApi.transaction(() => {
+        if (isArchive) {
+          stateApi.setWorkflowStatus(
+            'results',
+            resultId,
+            targetStatus
+          );
+        } else {
+          stateApi.markResultCompleted(
+            resultId
+          );
         }
 
-        stateApi.setWorkflowStatus(
-          source.collection,
-          source.id,
-          targetStatus
-        );
-        clearSelectionForItem(
-          source.type,
-          source.id
-        );
+        const sourceMap = {
+          idea: {
+            collection: 'ideas',
+            id: result.ideaId,
+            type: 'idea',
+          },
+          concept: {
+            collection: 'concepts',
+            id: result.conceptId,
+            type: 'concept',
+          },
+          music: {
+            collection: 'music',
+            id: result.musicId,
+            type: 'music',
+          },
+        };
+
+        selectedOptions.forEach((optionName) => {
+          const source = sourceMap[optionName];
+
+          if (!source) {
+            return;
+          }
+
+          stateApi.setWorkflowStatus(
+            source.collection,
+            source.id,
+            targetStatus
+          );
+          clearSelectionForItem(
+            source.type,
+            source.id
+          );
+        });
       });
 
       renderEverything();
@@ -3019,6 +3021,28 @@ importDataInput?.addEventListener('change', async () => {
 
         if (storage.isAvailable()) {
           storage.save(stateApi.state);
+          storage.enableAutosave(
+            stateApi,
+            (error) => {
+              console.error(
+                'Автосохранение не выполнено.',
+                error
+              );
+              showToast(
+                t('toast.autosaveFailed')
+              );
+            }
+          );
+
+          if (autosaveBadge) {
+            autosaveBadge.textContent =
+              t('data.autosave');
+            autosaveBadge.classList.remove(
+              'autosave-badge-unavailable'
+            );
+            autosaveBadge.title =
+              t('data.autosaveTitle');
+          }
         }
 
         resetViewAndSelection();
@@ -3704,26 +3728,44 @@ if (stateApi && renderer && connections && storage) {
   updateCalendarDayTypeFilterColor();
 
   const loadResult = storage.load(stateApi.state);
-  const storageAvailable = !loadResult.unavailable;
+  const storageAvailable =
+    !loadResult.unavailable;
+  const autosaveSafe =
+    storageAvailable &&
+    !loadResult.error;
 
-  if (autosaveBadge && !storageAvailable) {
-    autosaveBadge.textContent = t('data.noAutosave');
-    autosaveBadge.classList.add('autosave-badge-unavailable');
+  if (
+    autosaveBadge &&
+    !storageAvailable
+  ) {
+    autosaveBadge.textContent =
+      t('data.noAutosave');
+    autosaveBadge.classList.add(
+      'autosave-badge-unavailable'
+    );
     autosaveBadge.title =
       t('data.noAutosaveTitle');
   }
 
   if (loadResult.error) {
-    console.error('Сохранённые данные повреждены.', loadResult.error);
-    storage.clear();
-    stateApi.seedDemoData();
+    console.error(
+      'Сохранённые данные не удалось загрузить. ' +
+      'Исходный localStorage оставлен без изменений.',
+      loadResult.error
+    );
 
-    if (storageAvailable) {
-      storage.save(stateApi.state);
+    if (autosaveBadge) {
+      autosaveBadge.textContent =
+        t('data.autosaveProtected');
+      autosaveBadge.classList.add(
+        'autosave-badge-unavailable'
+      );
+      autosaveBadge.title =
+        t('data.autosaveProtectedTitle');
     }
 
     showToast(
-      t('toast.corruptedData')
+      t('toast.corruptedDataProtected')
     );
   } else if (!loadResult.loaded) {
     stateApi.seedDemoData();
@@ -3733,11 +3775,19 @@ if (stateApi && renderer && connections && storage) {
     }
   }
 
-  if (storageAvailable) {
-    storage.enableAutosave(stateApi, (error) => {
-      console.error('Автосохранение не выполнено.', error);
-      showToast(t('toast.autosaveFailed'));
-    });
+  if (autosaveSafe) {
+    storage.enableAutosave(
+      stateApi,
+      (error) => {
+        console.error(
+          'Автосохранение не выполнено.',
+          error
+        );
+        showToast(
+          t('toast.autosaveFailed')
+        );
+      }
+    );
   }
 
   renderEverything();
@@ -3762,4 +3812,4 @@ confirmModal?.addEventListener('close', () => {
   confirmOptionsList?.replaceChildren();
 });
 
-console.log('v1.5.3: Music artist is optional.');
+console.log('v1.6.0: backend reliability refactor active.');

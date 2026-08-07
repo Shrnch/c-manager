@@ -1,6 +1,6 @@
 # c-manager
 
-**Current version:** `v1.5.8`
+**Current version:** `v1.6.0`
 
 c-manager is a local browser app for building content plans by combining three reusable components:
 
@@ -75,6 +75,9 @@ The app does not send ideas, concepts, music, results, or settings to a remote s
 
 Important:
 
+- v1.6.0 keeps the original stored value untouched if startup validation fails;
+- autosave is automatically paused after a failed load so an unreadable save cannot be overwritten accidentally;
+- the previous valid state is kept in a single local recovery snapshot before a newer state replaces it;
 - browser storage belongs to a specific browser and site address;
 - opening the app through `file://` and through a local server creates separate storage locations;
 - export a JSON backup before changing browser, device, or launch method;

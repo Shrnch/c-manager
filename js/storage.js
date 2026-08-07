@@ -2,6 +2,8 @@
 
 (function createContentIdeaStorage(global) {
   const STORAGE_KEY = 'contentIdeaOrganizer.state.v1';
+  const RECOVERY_KEY =
+    'contentIdeaOrganizer.state.v1.recovery';
   const COLLECTION_NAMES = [
     'ideas',
     'conceptCategories',
@@ -11,30 +13,6 @@
     'results',
   ];
 
-  const MUTATING_METHODS = [
-    'addItem',
-    'updateItem',
-    'setWorkflowStatus',
-    'deleteItem',
-    'addIdea',
-    'addConceptCategory',
-    'updateConceptCategory',
-    'deleteConceptCategory',
-    'addConcept',
-    'addMusicCategory',
-    'updateMusicCategory',
-    'deleteMusicCategory',
-    'addMusic',
-    'addResult',
-    'updateResultTitle',
-    'updateResultTimelineDate',
-    'markResultCompleted',
-    'markResultPublished',
-    'updateResultSchedule',
-    'updateResultScore',
-    'deleteResultsByReference',
-    'resetState',
-  ];
 
   function cloneData(value) {
     return JSON.parse(JSON.stringify(value));
@@ -567,15 +545,46 @@
   function save(state) {
     const localStorage = getLocalStorage();
 
-    if (!localStorage || !isAvailable()) {
+    if (!localStorage) {
       throw new Error('localStorage недоступен.');
     }
 
     const normalizedState = normalizeState(state);
+    const serializedState =
+      JSON.stringify(normalizedState);
+
+    const previousState =
+      localStorage.getItem(STORAGE_KEY);
+
+    if (
+      previousState &&
+      previousState !== serializedState
+    ) {
+      try {
+        const parsedPrevious =
+          JSON.parse(previousState);
+
+        normalizeState(parsedPrevious);
+
+        try {
+          localStorage.setItem(
+            RECOVERY_KEY,
+            previousState
+          );
+        } catch (error) {
+          console.warn(
+            'Не удалось обновить recovery snapshot.',
+            error
+          );
+        }
+      } catch {
+        // Never replace the recovery slot with corrupted data.
+      }
+    }
 
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(normalizedState)
+      serializedState
     );
 
     return true;
@@ -605,6 +614,48 @@
 
       const parsedState = JSON.parse(serializedState);
       replaceState(targetState, parsedState);
+
+      return {
+        loaded: true,
+        error: null,
+        unavailable: false,
+      };
+    } catch (error) {
+      return {
+        loaded: false,
+        error,
+        unavailable: false,
+      };
+    }
+  }
+
+  function loadRecovery(targetState) {
+    const localStorage = getLocalStorage();
+
+    if (!localStorage) {
+      return {
+        loaded: false,
+        error: null,
+        unavailable: true,
+      };
+    }
+
+    try {
+      const serializedState =
+        localStorage.getItem(RECOVERY_KEY);
+
+      if (!serializedState) {
+        return {
+          loaded: false,
+          error: null,
+          unavailable: false,
+        };
+      }
+
+      replaceState(
+        targetState,
+        JSON.parse(serializedState)
+      );
 
       return {
         loaded: true,
@@ -690,54 +741,80 @@
     return normalizeState(rawState);
   }
 
-  function enableAutosave(stateApi, onError = null) {
+  const autosaveSubscriptions =
+    new WeakMap();
+
+  function enableAutosave(
+    stateApi,
+    onError = null
+  ) {
     if (!isAvailable()) {
       return false;
     }
 
-    MUTATING_METHODS.forEach((methodName) => {
-      const originalMethod = stateApi[methodName];
+    if (
+      !stateApi ||
+      typeof stateApi.subscribe !== 'function'
+    ) {
+      throw new Error(
+        'State API does not support subscriptions.'
+      );
+    }
 
-      if (
-        typeof originalMethod !== 'function' ||
-        originalMethod.__autosaveWrapped
-      ) {
-        return;
-      }
+    if (autosaveSubscriptions.has(stateApi)) {
+      return true;
+    }
 
-      const wrappedMethod = function autosavingMethod(...args) {
-        const result = originalMethod.apply(stateApi, args);
-
+    const unsubscribe =
+      stateApi.subscribe(() => {
         try {
           save(stateApi.state);
         } catch (error) {
           if (typeof onError === 'function') {
             onError(error);
           } else {
-            console.error('Не удалось автоматически сохранить данные.', error);
+            console.error(
+              'Не удалось автоматически сохранить данные.',
+              error
+            );
           }
         }
+      });
 
-        return result;
-      };
+    autosaveSubscriptions.set(
+      stateApi,
+      unsubscribe
+    );
 
-      wrappedMethod.__autosaveWrapped = true;
-      stateApi[methodName] = wrappedMethod;
-    });
+    return true;
+  }
 
+  function disableAutosave(stateApi) {
+    const unsubscribe =
+      autosaveSubscriptions.get(stateApi);
+
+    if (!unsubscribe) {
+      return false;
+    }
+
+    unsubscribe();
+    autosaveSubscriptions.delete(stateApi);
     return true;
   }
 
   global.ContentIdeaStorage = {
     STORAGE_KEY,
+    RECOVERY_KEY,
     normalizeState,
     replaceState,
     save,
     load,
+    loadRecovery,
     clear,
     isAvailable,
     downloadBackup,
     readBackupFile,
     enableAutosave,
+    disableAutosave,
   };
 })(window);

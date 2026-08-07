@@ -1,4 +1,4 @@
-# TEST CHECKLIST — Content Idea Organizer
+# TEST CHECKLIST — c-manager
 
 ## Базовый запуск
 
@@ -92,3 +92,18 @@
 - [ ] Chrome.
 - [ ] Firefox.
 - [ ] Edge.
+
+
+## v1.6.0 backend reliability
+
+- [ ] Existing v1 JSON backup imports with all collection counts unchanged.
+- [ ] Mark as completed survives reload.
+- [ ] Mark as published survives reload.
+- [ ] Editing any source item survives reload without adding the method to a storage allowlist.
+- [ ] Completing a Result together with linked sources persists all changes.
+- [ ] Invalid/corrupted localStorage is not cleared or replaced at startup.
+- [ ] Autosave stays paused after a failed startup load.
+- [ ] Importing a valid backup after a failed load restores normal autosave.
+- [ ] A successful save keeps the immediately previous valid state in the recovery slot.
+- [ ] Calendar renders the same lifecycle stages as before the refactor.
+- [ ] Statistics frequency and planning-performance sections still match existing data.
