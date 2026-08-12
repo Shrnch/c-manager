@@ -117,6 +117,12 @@ const statisticsView = document.querySelector(
 const calendarGrid = document.querySelector(
   '#calendar-grid'
 );
+const calendarDragResults = document.querySelector(
+  '#calendar-drag-results'
+);
+const calendarDragTray = document.querySelector(
+  '.calendar-drag-tray'
+);
 const calendarDayDetails = document.querySelector(
   '#calendar-day-details'
 );
@@ -207,6 +213,7 @@ let calendarCursor = new Date(
 );
 let calendarSelectedDateKey =
   renderer?.getDateKey?.(new Date()) ?? null;
+let calendarDragPayload = null;
 
 const resultsView = {
   sortBy: 'score-desc',
@@ -636,6 +643,231 @@ function renderCalendarView() {
         uiPreferences.calendarShowProgress,
     }
   );
+}
+
+function getCalendarDropTime(value) {
+  const match = String(value ?? '').match(
+    /T(\d{2}):(\d{2})/
+  );
+
+  return match
+    ? `${match[1]}:${match[2]}`
+    : '12:00';
+}
+
+function getCalendarDropField(result) {
+  if (!result || result.publishedAt) {
+    return null;
+  }
+
+  const workflowStatus =
+    result.workflowStatus ?? 'active';
+
+  if (workflowStatus === 'archived') {
+    return null;
+  }
+
+  const isCompleted =
+    Boolean(result.completedAt) ||
+    workflowStatus === 'completed';
+
+  return isCompleted
+    ? 'plannedPublicationAt'
+    : 'plannedExecutionAt';
+}
+
+function clearCalendarDropTarget() {
+  calendarGrid
+    ?.querySelectorAll(
+      '.calendar-day-drop-target'
+    )
+    .forEach((day) => {
+      day.classList.remove(
+        'calendar-day-drop-target'
+      );
+    });
+}
+
+function clearCalendarDragState() {
+  clearCalendarDropTarget();
+
+  calendarGrid?.classList.remove(
+    'calendar-grid-drag-active'
+  );
+
+  calendarDragResults
+    ?.querySelectorAll(
+      '.calendar-drag-result-dragging'
+    )
+    .forEach((card) => {
+      card.classList.remove(
+        'calendar-drag-result-dragging'
+      );
+    });
+
+  document
+    .querySelectorAll(
+      '.calendar-event-dragging'
+    )
+    .forEach((card) => {
+      card.classList.remove(
+        'calendar-event-dragging'
+      );
+    });
+
+  calendarDragTray?.classList.remove(
+    'calendar-drag-tray-drop-target'
+  );
+
+  calendarDragPayload = null;
+}
+
+function scheduleDraggedResult(
+  resultId,
+  requestedField,
+  dateKey
+) {
+  const result = stateApi.getItemById(
+    'results',
+    resultId
+  );
+
+  if (!result || !dateKey) {
+    return false;
+  }
+
+  const fieldName =
+    getCalendarDropField(result);
+
+  if (
+    !fieldName ||
+    fieldName !== requestedField
+  ) {
+    return false;
+  }
+
+  const time = getCalendarDropTime(
+    result[fieldName]
+  );
+
+  stateApi.updateResultTimelineDate(
+    resultId,
+    fieldName,
+    `${dateKey}T${time}`
+  );
+
+  calendarSelectedDateKey = dateKey;
+
+  const droppedDate =
+    new Date(`${dateKey}T12:00`);
+
+  if (
+    !Number.isNaN(
+      droppedDate.getTime()
+    ) &&
+    (
+      droppedDate.getMonth() !==
+        calendarCursor.getMonth() ||
+      droppedDate.getFullYear() !==
+        calendarCursor.getFullYear()
+    )
+  ) {
+    calendarCursor = new Date(
+      droppedDate.getFullYear(),
+      droppedDate.getMonth(),
+      1
+    );
+  }
+
+  renderCalendarView();
+
+  showToast(
+    t(
+      fieldName === 'plannedPublicationAt'
+        ? 'calendar.drag.publicationSaved'
+        : 'calendar.drag.executionSaved'
+    )
+  );
+
+  return true;
+}
+
+function unscheduleDraggedResult(
+  resultId,
+  requestedField
+) {
+  const result = stateApi.getItemById(
+    'results',
+    resultId
+  );
+
+  if (!result) {
+    return false;
+  }
+
+  const fieldName =
+    getCalendarDropField(result);
+
+  if (
+    !fieldName ||
+    fieldName !== requestedField ||
+    !result[fieldName]
+  ) {
+    return false;
+  }
+
+  stateApi.updateResultTimelineDate(
+    resultId,
+    fieldName,
+    null
+  );
+
+  renderCalendarView();
+
+  showToast(
+    t(
+      fieldName === 'plannedPublicationAt'
+        ? 'calendar.drag.publicationRemoved'
+        : 'calendar.drag.executionRemoved'
+    )
+  );
+
+  return true;
+}
+
+function startCalendarPlanDrag(
+  event,
+  element,
+  payload
+) {
+  calendarDragPayload = payload;
+
+  element.classList.add(
+    payload.source === 'calendar'
+      ? 'calendar-event-dragging'
+      : 'calendar-drag-result-dragging'
+  );
+
+  calendarGrid?.classList.add(
+    'calendar-grid-drag-active'
+  );
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed =
+      'move';
+
+    const serialized =
+      JSON.stringify(calendarDragPayload);
+
+    event.dataTransfer.setData(
+      'application/x-c-manager-result',
+      serialized
+    );
+    event.dataTransfer.setData(
+      'text/plain',
+      serialized
+    );
+  }
 }
 
 function moveCalendarMonth(offset) {
@@ -1081,6 +1313,15 @@ function populateSourceColumnFilters() {
       t('columns.allConceptCategories');
     conceptColumnCategoryFilter.append(allOption);
 
+    const unusedOption =
+      document.createElement('option');
+    unusedOption.value = 'unused';
+    unusedOption.textContent =
+      t('columns.unusedConceptsOnly');
+    conceptColumnCategoryFilter.append(
+      unusedOption
+    );
+
     stateApi.state.conceptCategories
       .slice()
       .sort((first, second) =>
@@ -1181,12 +1422,22 @@ function getVisibleSourceItems() {
     (item) => getWorkflowStatus(item) === 'active'
   );
 
+  const usedConceptIds = new Set(
+    stateApi.state.results
+      .map((result) => result.conceptId)
+      .filter(Boolean)
+  );
+
   const concepts = activeConcepts.filter((concept) => {
     const selected =
       sourceColumnFilters.conceptCategoryId;
 
     return (
       selected === 'all' ||
+      (
+        selected === 'unused' &&
+        !usedConceptIds.has(concept.id)
+      ) ||
       (
         selected === 'uncategorized' &&
         !concept.categoryId
@@ -3305,6 +3556,260 @@ calendarTodayButton?.addEventListener(
   'click',
   () => {
     showCalendarToday();
+  }
+);
+
+calendarDragResults?.addEventListener(
+  'dragstart',
+  (event) => {
+    const card = event.target.closest(
+      '[data-calendar-drag-result-id]'
+    );
+
+    if (!card) {
+      return;
+    }
+
+    startCalendarPlanDrag(
+      event,
+      card,
+      {
+        resultId:
+          card.dataset.calendarDragResultId,
+        fieldName:
+          card.dataset.calendarDragField,
+        source: 'tray',
+      }
+    );
+  }
+);
+
+calendarDragResults?.addEventListener(
+  'dragend',
+  () => {
+    clearCalendarDragState();
+  }
+);
+
+calendarGrid?.addEventListener(
+  'dragstart',
+  (event) => {
+    const card = event.target.closest(
+      '[data-calendar-plan-result-id]'
+    );
+
+    if (!card) {
+      return;
+    }
+
+    startCalendarPlanDrag(
+      event,
+      card,
+      {
+        resultId:
+          card.dataset.calendarPlanResultId,
+        fieldName:
+          card.dataset.calendarPlanField,
+        dateKey:
+          card.dataset.calendarPlanDate,
+        source: 'calendar',
+      }
+    );
+  }
+);
+
+calendarGrid?.addEventListener(
+  'dragend',
+  () => {
+    clearCalendarDragState();
+  }
+);
+
+calendarDayDetails?.addEventListener(
+  'dragstart',
+  (event) => {
+    const card = event.target.closest(
+      '[data-calendar-plan-result-id]'
+    );
+
+    if (!card) {
+      return;
+    }
+
+    startCalendarPlanDrag(
+      event,
+      card,
+      {
+        resultId:
+          card.dataset.calendarPlanResultId,
+        fieldName:
+          card.dataset.calendarPlanField,
+        dateKey:
+          card.dataset.calendarPlanDate,
+        source: 'calendar',
+      }
+    );
+  }
+);
+
+calendarDayDetails?.addEventListener(
+  'dragend',
+  () => {
+    clearCalendarDragState();
+  }
+);
+
+calendarGrid?.addEventListener(
+  'dragover',
+  (event) => {
+    if (!calendarDragPayload) {
+      return;
+    }
+
+    const day = event.target.closest(
+      '[data-calendar-date]'
+    );
+
+    if (!day) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect =
+        'move';
+    }
+
+    clearCalendarDropTarget();
+    day.classList.add(
+      'calendar-day-drop-target'
+    );
+  }
+);
+
+calendarGrid?.addEventListener(
+  'dragleave',
+  (event) => {
+    const day = event.target.closest(
+      '[data-calendar-date]'
+    );
+
+    if (!day) {
+      return;
+    }
+
+    const related =
+      event.relatedTarget;
+
+    if (
+      related instanceof Node &&
+      day.contains(related)
+    ) {
+      return;
+    }
+
+    day.classList.remove(
+      'calendar-day-drop-target'
+    );
+  }
+);
+
+calendarGrid?.addEventListener(
+  'drop',
+  (event) => {
+    const day = event.target.closest(
+      '[data-calendar-date]'
+    );
+
+    if (
+      !day ||
+      !calendarDragPayload
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const payload = {
+      ...calendarDragPayload,
+    };
+
+    clearCalendarDragState();
+
+    scheduleDraggedResult(
+      payload.resultId,
+      payload.fieldName,
+      day.dataset.calendarDate
+    );
+  }
+);
+
+calendarDragTray?.addEventListener(
+  'dragover',
+  (event) => {
+    if (
+      !calendarDragPayload ||
+      calendarDragPayload.source !==
+        'calendar'
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect =
+        'move';
+    }
+
+    calendarDragTray.classList.add(
+      'calendar-drag-tray-drop-target'
+    );
+  }
+);
+
+calendarDragTray?.addEventListener(
+  'dragleave',
+  (event) => {
+    const related = event.relatedTarget;
+
+    if (
+      related instanceof Node &&
+      calendarDragTray.contains(related)
+    ) {
+      return;
+    }
+
+    calendarDragTray.classList.remove(
+      'calendar-drag-tray-drop-target'
+    );
+  }
+);
+
+calendarDragTray?.addEventListener(
+  'drop',
+  (event) => {
+    if (
+      !calendarDragPayload ||
+      calendarDragPayload.source !==
+        'calendar'
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const payload = {
+      ...calendarDragPayload,
+    };
+
+    clearCalendarDragState();
+
+    unscheduleDraggedResult(
+      payload.resultId,
+      payload.fieldName
+    );
   }
 );
 

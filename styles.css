@@ -4949,3 +4949,265 @@ input:focus-visible {
   margin-bottom: 1px;
 }
 
+
+
+/* =========================================================
+   v1.7.0 — drag Results directly onto Calendar
+   ========================================================= */
+
+.calendar-drag-tray {
+  display: grid;
+  gap: 9px;
+  padding: 11px 14px 12px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(
+    in srgb,
+    var(--accent) 2.5%,
+    var(--surface)
+  );
+}
+
+.calendar-drag-tray-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.calendar-drag-tray-header > div {
+  min-width: 0;
+}
+
+.calendar-drag-tray-eyebrow {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text-muted);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
+.calendar-drag-tray-header strong {
+  display: block;
+  font-size: 12px;
+}
+
+.calendar-drag-tray-header p {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.calendar-drag-tray-count {
+  display: grid;
+  min-width: 24px;
+  height: 24px;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  color: var(--text-muted);
+  background: var(--surface-muted);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.calendar-drag-results {
+  display: flex;
+  gap: 7px;
+  padding-bottom: 2px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.calendar-drag-result {
+  --calendar-drag-color:
+    var(--calendar-execution);
+
+  display: grid;
+  width: 126px;
+  min-width: 126px;
+  min-height: 72px;
+  align-content: space-between;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid color-mix(
+    in srgb,
+    var(--calendar-drag-color) 40%,
+    var(--border)
+  );
+  border-top: 3px solid
+    var(--calendar-drag-color);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: grab;
+  user-select: none;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    opacity 120ms ease;
+}
+
+.calendar-drag-result:hover,
+.calendar-drag-result:focus {
+  outline: none;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px color-mix(
+    in srgb,
+    var(--calendar-drag-color) 13%,
+    transparent
+  );
+}
+
+.calendar-drag-result:active {
+  cursor: grabbing;
+}
+
+.calendar-drag-result-publication {
+  --calendar-drag-color:
+    var(--calendar-publication-ready);
+}
+
+.calendar-drag-result-dragging {
+  opacity: 0.42;
+  transform: scale(0.97);
+}
+
+.calendar-drag-result-stage {
+  color: var(--calendar-drag-color);
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.calendar-drag-result-title {
+  overflow: hidden;
+  font-size: 10px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-drag-result-meta {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 8px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-drag-results-empty {
+  margin: 0;
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.calendar-grid-drag-active
+  .calendar-day {
+  cursor: copy;
+}
+
+.calendar-grid-drag-active
+  .calendar-day::after {
+  position: absolute;
+  inset: 4px;
+  z-index: 4;
+  border: 1px dashed color-mix(
+    in srgb,
+    var(--accent) 38%,
+    transparent
+  );
+  border-radius: 8px;
+  content: '';
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.calendar-day-drop-target {
+  z-index: 5;
+  background: color-mix(
+    in srgb,
+    var(--accent) 12%,
+    var(--surface)
+  ) !important;
+  box-shadow:
+    inset 0 0 0 2px var(--accent);
+}
+
+.calendar-day-drop-target::after {
+  border: 2px dashed
+    var(--accent) !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 760px) {
+  .calendar-drag-result {
+    width: 118px;
+    min-width: 118px;
+  }
+}
+
+
+/* =========================================================
+   v1.7.1 — two-way Calendar drag & drop
+   ========================================================= */
+
+.calendar-event-draggable {
+  cursor: grab;
+  user-select: none;
+}
+
+.calendar-event-draggable:active {
+  cursor: grabbing;
+}
+
+.calendar-event-draggable:hover {
+  box-shadow:
+    inset 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--calendar-stage-color) 38%,
+      transparent
+    ),
+    0 2px 7px
+    color-mix(
+      in srgb,
+      var(--calendar-stage-color) 10%,
+      transparent
+    );
+}
+
+.calendar-event-dragging {
+  opacity: 0.4 !important;
+}
+
+.calendar-detail-card.calendar-event-draggable {
+  cursor: grab;
+}
+
+.calendar-drag-tray {
+  transition:
+    box-shadow 120ms ease,
+    background 120ms ease;
+}
+
+.calendar-drag-tray-drop-target {
+  background:
+    color-mix(
+      in srgb,
+      var(--accent) 10%,
+      var(--surface)
+    );
+  box-shadow:
+    inset 0 0 0 2px var(--accent);
+}
+
+.calendar-drag-tray-drop-target
+  .calendar-drag-tray-title,
+.calendar-drag-tray-drop-target
+  #calendar-drag-tray-title {
+  color: var(--accent);
+}

@@ -107,3 +107,44 @@
 - [ ] A successful save keeps the immediately previous valid state in the recovery slot.
 - [ ] Calendar renders the same lifecycle stages as before the refactor.
 - [ ] Statistics frequency and planning-performance sections still match existing data.
+
+
+## v1.6.1 unused Concepts filter
+
+- [ ] Concepts filter contains `Unused only`.
+- [ ] `Unused only` hides Concepts referenced by active Results.
+- [ ] `Unused only` hides Concepts referenced by Completed Results.
+- [ ] `Unused only` hides Concepts referenced by Archived Results.
+- [ ] Concepts never referenced by any Result remain visible.
+- [ ] Completed/Archived source Concepts remain excluded from Workspace as before.
+- [ ] Random uses only currently visible unused Concepts while the filter is enabled.
+- [ ] Switching back to `All categories` restores the normal active Concepts list.
+
+
+## v1.7.0 drag-to-calendar
+
+- [ ] Calendar shows draggable Result cards above the month grid.
+- [ ] Active unfinished Result drops onto a day as Execution planned.
+- [ ] Completed unpublished Result drops onto a day as Publication planned.
+- [ ] Existing planned time is preserved when the date is moved.
+- [ ] A Result without a plan gets 12:00 on its first drop.
+- [ ] Published Results are not shown in the drag tray.
+- [ ] Archived Results are not shown in the drag tray.
+- [ ] Drop target day is visibly highlighted during dragging.
+- [ ] Dropping onto an adjacent-month day navigates to that month.
+- [ ] The new date survives page reload.
+
+
+## v1.7.1 two-way Calendar drag
+
+- [ ] Execution planned card inside Calendar can move to another day.
+- [ ] Ready to publish / Publication planned card can move to another day.
+- [ ] Existing time stays unchanged when moving between dates.
+- [ ] Day Overview planned card can also be dragged.
+- [ ] Calendar plan can be dragged back into the Result tray.
+- [ ] Dragging Execution back clears plannedExecutionAt.
+- [ ] Dragging Publication back clears plannedPublicationAt.
+- [ ] Completed actual event is not draggable.
+- [ ] Published actual event is not draggable.
+- [ ] Resolved historical execution plan is not draggable.
+- [ ] Changed/cleared plan survives reload.

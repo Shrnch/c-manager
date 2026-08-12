@@ -210,6 +210,31 @@
       'calendar.openResult': 'Открыть результат',
       'calendar.openCompleted':
         'Открыть «Выполнено»',
+      'calendar.drag.eyebrow': 'DRAG TO PLAN',
+      'calendar.drag.title':
+        'Перетащи Result на нужный день',
+      'calendar.drag.help':
+        'В работе → Execution planned. Готовые → Publication planned.',
+      'calendar.drag.execution': 'Execution',
+      'calendar.drag.publication': 'Publication',
+      'calendar.drag.notPlanned': 'Пока без даты',
+      'calendar.drag.hasPlan': 'Дата уже назначена',
+      'calendar.drag.currentPlan':
+        'Сейчас: {date}, {time}',
+      'calendar.drag.empty':
+        'Нет Results, которые сейчас можно запланировать.',
+      'calendar.drag.cardTitle':
+        'Зажми и перетащи на нужный день календаря',
+      'calendar.drag.executionSaved':
+        'Execution planned перенесён на выбранный день.',
+      'calendar.drag.publicationSaved':
+        'Publication planned перенесён на выбранный день.',
+      'calendar.drag.calendarCardTitle':
+        'Перетащи на другой день или обратно в Results, чтобы убрать план',
+      'calendar.drag.executionRemoved':
+        'Execution planned убран с календаря.',
+      'calendar.drag.publicationRemoved':
+        'Publication planned убран с календаря.',
 
       'toggle.autoJump.label': 'Автопереход к результатам',
       'toggle.autoJump.title':
@@ -255,6 +280,8 @@
         'Фильтр категорий музыки',
       'columns.allConceptCategories':
         'Все категории',
+      'columns.unusedConceptsOnly':
+        'Только неиспользованные',
       'columns.allMusicCategories':
         'Все категории',
 
@@ -776,6 +803,31 @@
         'Result not completed yet',
       'calendar.openResult': 'Open result',
       'calendar.openCompleted': 'Open Completed',
+      'calendar.drag.eyebrow': 'DRAG TO PLAN',
+      'calendar.drag.title':
+        'Drag a Result onto a day',
+      'calendar.drag.help':
+        'In progress → Execution planned. Completed → Publication planned.',
+      'calendar.drag.execution': 'Execution',
+      'calendar.drag.publication': 'Publication',
+      'calendar.drag.notPlanned': 'Not planned yet',
+      'calendar.drag.hasPlan': 'Already planned',
+      'calendar.drag.currentPlan':
+        'Now: {date}, {time}',
+      'calendar.drag.empty':
+        'There are no Results available to plan.',
+      'calendar.drag.cardTitle':
+        'Drag this Result onto a calendar day',
+      'calendar.drag.executionSaved':
+        'Execution planned moved to the selected day.',
+      'calendar.drag.publicationSaved':
+        'Publication planned moved to the selected day.',
+      'calendar.drag.calendarCardTitle':
+        'Drag to another day or back to Results to remove the plan',
+      'calendar.drag.executionRemoved':
+        'Execution planned removed from Calendar.',
+      'calendar.drag.publicationRemoved':
+        'Publication planned removed from Calendar.',
 
       'toggle.autoJump.label': 'Jump to results',
       'toggle.autoJump.title':
@@ -821,6 +873,8 @@
         'Filter music categories',
       'columns.allConceptCategories':
         'All categories',
+      'columns.unusedConceptsOnly':
+        'Unused only',
       'columns.allMusicCategories':
         'All categories',
 

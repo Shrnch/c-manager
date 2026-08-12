@@ -7,7 +7,7 @@
     name="description"
     content="Локальное приложение для соединения идей, концептов и музыки в готовые планы контента."
   >
-  <title>c-manager — v1.6.0</title>
+  <title>c-manager — v1.7.1</title>
   <link rel="stylesheet" href="styles.css">
   <script src="js/i18n.js" defer></script>
   <script src="js/state.js" defer></script>
@@ -482,6 +482,43 @@
             <h3 id="calendar-month-title"></h3>
           </div>
 
+          <section
+            class="calendar-drag-tray"
+            aria-labelledby="calendar-drag-tray-title"
+          >
+            <div class="calendar-drag-tray-header">
+              <div>
+                <span
+                  class="calendar-drag-tray-eyebrow"
+                  data-i18n="calendar.drag.eyebrow"
+                >
+                  DRAG TO PLAN
+                </span>
+                <strong
+                  id="calendar-drag-tray-title"
+                  data-i18n="calendar.drag.title"
+                >
+                  Перетащи Result на нужный день
+                </strong>
+                <p data-i18n="calendar.drag.help">
+                  В работе → Execution planned. Готовые → Publication planned.
+                </p>
+              </div>
+
+              <span
+                class="calendar-drag-tray-count"
+                id="calendar-drag-tray-count"
+                aria-live="polite"
+              >0</span>
+            </div>
+
+            <div
+              class="calendar-drag-results"
+              id="calendar-drag-results"
+              aria-live="polite"
+            ></div>
+          </section>
+
           <div
             class="calendar-legend"
             aria-label="Легенда календаря"
@@ -706,7 +743,7 @@
 
     <footer class="app-footer">
       <span>c-manager</span>
-      <span>v1.6.0</span>
+      <span>v1.7.1</span>
     </footer>
   </main>
 

@@ -3290,6 +3290,212 @@
     ).format(date);
   }
 
+  function getCalendarDragPlan(result) {
+    const workflowStatus =
+      getWorkflowStatus(result);
+
+    if (
+      workflowStatus === 'archived' ||
+      result.publishedAt
+    ) {
+      return null;
+    }
+
+    const isCompleted =
+      Boolean(result.completedAt) ||
+      workflowStatus === 'completed';
+
+    if (isCompleted) {
+      return {
+        fieldName: 'plannedPublicationAt',
+        stageKey: 'publication',
+        value: result.plannedPublicationAt,
+        labelKey: 'calendar.drag.publication',
+      };
+    }
+
+    return {
+      fieldName: 'plannedExecutionAt',
+      stageKey: 'execution',
+      value: result.plannedExecutionAt,
+      labelKey: 'calendar.drag.execution',
+    };
+  }
+
+  function renderCalendarDragResults(state) {
+    const container = document.querySelector(
+      '#calendar-drag-results'
+    );
+    const count = document.querySelector(
+      '#calendar-drag-tray-count'
+    );
+
+    if (!container) {
+      return;
+    }
+
+    const candidates = state.results
+      .map((result, resultIndex) => ({
+        result,
+        resultIndex,
+        plan: getCalendarDragPlan(result),
+      }))
+      .filter((item) => item.plan)
+      .sort((first, second) => {
+        const firstHasPlan =
+          Boolean(first.plan.value);
+        const secondHasPlan =
+          Boolean(second.plan.value);
+
+        if (firstHasPlan !== secondHasPlan) {
+          return firstHasPlan ? 1 : -1;
+        }
+
+        if (
+          firstHasPlan &&
+          secondHasPlan &&
+          first.plan.value !== second.plan.value
+        ) {
+          return first.plan.value.localeCompare(
+            second.plan.value
+          );
+        }
+
+        return getCalendarResultTitle(
+          first.result,
+          first.resultIndex
+        ).localeCompare(
+          getCalendarResultTitle(
+            second.result,
+            second.resultIndex
+          ),
+          i18n?.getLocale?.() ?? 'ru-RU'
+        );
+      });
+
+    if (count) {
+      count.textContent = String(
+        candidates.length
+      );
+    }
+
+    container.replaceChildren();
+
+    if (!candidates.length) {
+      const empty =
+        document.createElement('p');
+      empty.className =
+        'calendar-drag-results-empty';
+      empty.textContent =
+        t('calendar.drag.empty');
+      container.append(empty);
+      return;
+    }
+
+    candidates.forEach(
+      ({ result, resultIndex, plan }) => {
+        const card =
+          document.createElement('article');
+
+        card.className =
+          `calendar-drag-result calendar-drag-result-${plan.stageKey}`;
+        card.draggable = true;
+        card.dataset.calendarDragResultId =
+          result.id;
+        card.dataset.calendarDragField =
+          plan.fieldName;
+        card.tabIndex = 0;
+        card.title =
+          t('calendar.drag.cardTitle');
+
+        const stage =
+          document.createElement('span');
+        stage.className =
+          'calendar-drag-result-stage';
+        stage.textContent =
+          t(plan.labelKey);
+
+        const title =
+          document.createElement('strong');
+        title.className =
+          'calendar-drag-result-title';
+        title.textContent =
+          getCalendarResultTitle(
+            result,
+            resultIndex
+          );
+
+        const meta =
+          document.createElement('span');
+        meta.className =
+          'calendar-drag-result-meta';
+
+        if (plan.value) {
+          const date =
+            parseCalendarDateTime(
+              plan.value
+            );
+
+          meta.textContent = date
+            ? t(
+                'calendar.drag.currentPlan',
+                {
+                  date:
+                    formatCalendarDate(
+                      date,
+                      {
+                        day: 'numeric',
+                        month: 'short',
+                      }
+                    ),
+                  time:
+                    formatCalendarTime(
+                      plan.value
+                    ),
+                }
+              )
+            : t('calendar.drag.hasPlan');
+        } else {
+          meta.textContent =
+            t('calendar.drag.notPlanned');
+        }
+
+        card.append(stage, title, meta);
+        container.append(card);
+      }
+    );
+  }
+
+  function isCalendarEventDraggable(event) {
+    return (
+      event.stageKey === 'planned-execution' ||
+      event.stageKey ===
+        'planned-publication-ready'
+    );
+  }
+
+  function applyCalendarEventDragData(
+    element,
+    event
+  ) {
+    if (!isCalendarEventDraggable(event)) {
+      return;
+    }
+
+    element.draggable = true;
+    element.dataset.calendarPlanResultId =
+      event.resultId;
+    element.dataset.calendarPlanField =
+      event.stageField;
+    element.dataset.calendarPlanDate =
+      event.dateKey;
+    element.classList.add(
+      'calendar-event-draggable'
+    );
+    element.title =
+      t('calendar.drag.calendarCardTitle');
+  }
+
   function createCalendarEventPreview(
     event,
     todayKey
@@ -3317,6 +3523,12 @@
     label.textContent = event.resultTitle;
 
     preview.append(dot, label);
+
+    applyCalendarEventDragData(
+      preview,
+      event
+    );
+
     return preview;
   }
 
@@ -3327,6 +3539,11 @@
     const card = document.createElement('article');
     card.className =
       `calendar-detail-card calendar-detail-${event.stageKey}`;
+
+    applyCalendarEventDragData(
+      card,
+      event
+    );
 
     const header = document.createElement('div');
     header.className =
@@ -3504,6 +3721,8 @@
     ) {
       return;
     }
+
+    renderCalendarDragResults(state);
 
     const safeCursor = new Date(
       cursorDate.getFullYear(),

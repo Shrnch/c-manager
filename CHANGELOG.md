@@ -1,5 +1,61 @@
 # Changelog
 
+## [1.7.1] — 2026-08-12
+
+### Improved — two-way Calendar drag & drop
+
+- planned Result cards inside the month Calendar can now be dragged directly to another day;
+- moving a Calendar card preserves its existing time and updates only the date;
+- the same draggable behavior is available from Day Overview cards;
+- a planned Calendar card can be dragged back into the Result tray to remove that plan completely;
+- removing an unfinished Result from Calendar clears `Execution planned`;
+- removing a completed unpublished Result from Calendar clears `Publication planned`;
+- only the currently actionable plan is draggable:
+  - unfinished Result → Execution planned;
+  - completed unpublished Result → Publication planned;
+- historical Completed / Published / resolved execution events remain non-draggable.
+
+### Data safety
+
+- no storage schema changes;
+- moves and removals use the existing persisted timeline update path;
+- v1.6 recovery/autosave protections remain unchanged.
+
+## [1.7.0] — 2026-08-12
+
+### Added — drag-to-calendar planning
+
+- Calendar now includes a compact draggable Result tray above the month grid;
+- unfinished Results can be dragged directly onto a day to set or move **Execution planned**;
+- completed but unpublished Results can be dragged directly onto a day to set or move **Publication planned**;
+- existing plan time is preserved when a Result is moved to another day;
+- Results without an existing plan receive `12:00` as the default time when first dropped;
+- draggable cards show whether they control Execution or Publication and display the current plan when one exists;
+- archived and already published Results are excluded from the drag tray;
+- calendar days receive a clear visual drop target while dragging;
+- dropping onto an adjacent-month day automatically opens that month and selects the dropped day.
+
+### Data safety
+
+- no storage schema changes;
+- existing planned dates remain compatible;
+- drag-and-drop uses the existing `updateResultTimelineDate()` persistence path.
+
+## [1.6.1] — 2026-08-12
+
+### Added
+
+- added **Unused only** to the Concepts column filter;
+- when enabled, Workspace shows only active Concepts that are not referenced by any Result;
+- usage checks include active, completed and archived Results, so a Concept is considered used once it has ever been added to a Result;
+- Random automatically respects the filtered Concepts pool, matching the existing source-filter behavior.
+
+### Data safety
+
+- no storage schema changes;
+- no migration or localStorage reset;
+- existing Results and Concepts are unchanged.
+
 ## [1.6.0] — 2026-08-07
 
 ### Backend / reliability
